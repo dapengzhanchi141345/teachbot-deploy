@@ -1,0 +1,1063 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>万物生·生物专家团 | 生物知识体系全学段导航</title>
+<style>
+:root {
+  --primary: #2e7d32;
+  --primary-light: #4caf50;
+  --primary-lighter: #81c784;
+  --primary-bg: #e8f5e9;
+  --accent: #66bb6a;
+  --white: #ffffff;
+  --off-white: #f9fff9;
+  --dark: #1b5e20;
+  --text: #2e3b2e;
+  --text-light: #5a6b5a;
+  --gray: #f5f5f5;
+  --border: #c8e6c9;
+  --shadow: rgba(46,125,50,0.1);
+}
+* { margin: 0; padding: 0; box-sizing: border-box; }
+body {
+  font-family: "Microsoft YaHei", "PingFang SC", "Helvetica Neue", sans-serif;
+  background: var(--off-white);
+  color: var(--text);
+  line-height: 1.6;
+}
+/* Header */
+header {
+  background: linear-gradient(135deg, var(--primary) 0%, var(--primary-light) 100%);
+  color: var(--white);
+  padding: 24px 32px;
+  text-align: center;
+  position: relative;
+}
+header h1 {
+  font-size: 2.2em;
+  margin-bottom: 8px;
+  text-shadow: 0 2px 4px rgba(0,0,0,0.2);
+}
+header p {
+  font-size: 1em;
+  opacity: 0.95;
+}
+/* Nav tabs */
+nav {
+  background: var(--white);
+  border-bottom: 3px solid var(--primary);
+  padding: 0 32px;
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: center;
+  gap: 0;
+  position: sticky;
+  top: 0;
+  z-index: 100;
+}
+nav button {
+  background: none;
+  border: none;
+  padding: 14px 24px;
+  font-size: 1.05em;
+  cursor: pointer;
+  color: var(--text-light);
+  border-bottom: 3px solid transparent;
+  transition: all 0.2s;
+  font-weight: 500;
+}
+nav button:hover { color: var(--primary); background: var(--primary-bg); }
+nav button.active {
+  color: var(--primary);
+  border-bottom: 3px solid var(--primary);
+  font-weight: 700;
+  background: var(--primary-bg);
+}
+/* Main */
+main { max-width: 1100px; margin: 0 auto; padding: 24px 16px; }
+.section { display: none; }
+.section.active { display: block; }
+/* Knowledge map cards */
+.kmap {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(240px, 1fr));
+  gap: 16px;
+  margin-top: 16px;
+}
+.kmap-card {
+  background: var(--white);
+  border-radius: 12px;
+  padding: 20px;
+  box-shadow: 0 2px 12px var(--shadow);
+  border-top: 4px solid var(--primary-light);
+  cursor: pointer;
+  transition: transform 0.2s, box-shadow 0.2s;
+}
+.kmap-card:hover {
+  transform: translateY(-3px);
+  box-shadow: 0 6px 20px var(--shadow);
+}
+.kmap-card h3 { color: var(--primary); font-size: 1.15em; margin-bottom: 8px; }
+.kmap-card .stage { font-size: 0.85em; color: var(--text-light); margin-bottom: 10px; }
+.kmap-card ul { list-style: none; font-size: 0.95em; }
+.kmap-card ul li { padding: 3px 0; color: var(--text); }
+.kmap-card ul li::before { content: "•"; color: var(--primary-light); margin-right: 6px; }
+/* Detail panel */
+.detail-panel {
+  background: var(--white);
+  border-radius: 12px;
+  padding: 24px;
+  margin-top: 20px;
+  box-shadow: 0 2px 12px var(--shadow);
+  display: none;
+}
+.detail-panel.show { display: block; }
+.detail-panel h2 { color: var(--primary); margin-bottom: 12px; }
+.detail-panel .points { margin-top: 12px; }
+.detail-panel .points li { margin-bottom: 8px; padding-left: 4px; }
+/* Quiz section */
+.quiz-box {
+  background: var(--white);
+  border-radius: 12px;
+  padding: 24px;
+  box-shadow: 0 2px 12px var(--shadow);
+  margin-bottom: 20px;
+}
+.quiz-box h2 { color: var(--primary); margin-bottom: 12px; font-size: 1.3em; }
+.quiz-box .prompt { font-size: 1.05em; margin-bottom: 12px; padding: 12px; background: var(--primary-bg); border-radius: 8px; }
+.quiz-box .options { display: flex; flex-wrap: wrap; gap: 8px; }
+.quiz-box .opt-btn {
+  padding: 8px 16px;
+  border: 2px solid var(--border);
+  border-radius: 8px;
+  background: var(--white);
+  cursor: pointer;
+  font-size: 0.95em;
+  transition: all 0.2s;
+}
+.quiz-box .opt-btn:hover { border-color: var(--primary-light); background: var(--primary-bg); }
+.quiz-box .opt-btn.correct { border-color: var(--primary); background: var(--primary-bg); }
+.quiz-box .opt-btn.wrong { border-color: #e57373; background: #ffebee; }
+.quiz-box .feedback { margin-top: 12px; font-size: 0.95em; display: none; }
+/* Genetics calculator */
+.calc-box {
+  background: var(--white);
+  border-radius: 12px;
+  padding: 24px;
+  box-shadow: 0 2px 12px var(--shadow);
+  margin-bottom: 20px;
+}
+.calc-box h2 { color: var(--primary); margin-bottom: 16px; }
+.calc-box label { display: block; margin-bottom: 6px; font-weight: 600; }
+.calc-box select, .calc-box input {
+  width: 100%;
+  padding: 10px;
+  border: 2px solid var(--border);
+  border-radius: 8px;
+  font-size: 1em;
+  margin-bottom: 12px;
+  background: var(--white);
+}
+.calc-box button {
+  background: var(--primary);
+  color: var(--white);
+  border: none;
+  padding: 12px 24px;
+  border-radius: 8px;
+  font-size: 1em;
+  cursor: pointer;
+  transition: background 0.2s;
+}
+.calc-box button:hover { background: var(--primary-light); }
+.result-box {
+  background: var(--primary-bg);
+  border-radius: 8px;
+  padding: 16px;
+  margin-top: 16px;
+  display: none;
+  white-space: pre-line;
+}
+/* Match game */
+.match-grid {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 8px;
+  margin-top: 12px;
+}
+.match-item {
+  padding: 10px;
+  border: 2px solid var(--border);
+  border-radius: 8px;
+  cursor: pointer;
+  text-align: center;
+  font-size: 0.95em;
+  transition: all 0.2s;
+  background: var(--white);
+}
+.match-item:hover { border-color: var(--primary-light); }
+.match-item.selected { border-color: var(--primary); background: var(--primary-bg); font-weight: 700; }
+.match-item.matched { border-color: var(--primary); background: var(--primary-bg); opacity: 0.6; cursor: default; }
+.match-item.wrong-flash { border-color: #e57373; background: #ffebee; }
+/* Tree explorer */
+.tree-box {
+  background: var(--white);
+  border-radius: 12px;
+  padding: 24px;
+  box-shadow: 0 2px 12px var(--shadow);
+  margin-bottom: 20px;
+}
+.tree-box h2 { color: var(--primary); margin-bottom: 16px; }
+.tree-visual { text-align: center; padding: 16px; background: var(--primary-bg); border-radius: 12px; min-height: 120px; }
+.tree-visual .branch { display: flex; flex-direction: column; align-items: center; }
+.tree-node {
+  padding: 8px 20px;
+  background: var(--primary);
+  color: var(--white);
+  border-radius: 20px;
+  font-weight: 700;
+  margin: 4px;
+  font-size: 0.95em;
+}
+.tree-node.child {
+  background: var(--accent);
+  font-weight: 500;
+  font-size: 0.85em;
+}
+.tree-node.leaf {
+  background: var(--white);
+  color: var(--primary);
+  border: 2px solid var(--accent);
+  font-weight: 400;
+  font-size: 0.8em;
+}
+.tree-branches { display: flex; justify-content: center; gap: 12px; flex-wrap: wrap; margin-top: 12px; }
+.tree-sub { display: flex; flex-direction: column; align-items: center; }
+.tree-sub .node {
+  padding: 4px 12px;
+  background: var(--white);
+  border: 2px solid var(--border);
+  border-radius: 8px;
+  font-size: 0.8em;
+  margin: 2px;
+  cursor: pointer;
+}
+.tree-sub .node:hover { border-color: var(--primary-light); }
+.tree-sub .node.active { border-color: var(--primary); background: var(--primary-bg); }
+/* Footer */
+footer {
+  background: var(--dark);
+  color: var(--white);
+  text-align: center;
+  padding: 20px;
+  margin-top: 40px;
+  font-size: 0.95em;
+}
+footer .watermark {
+  font-size: 1.1em;
+  font-weight: 700;
+  margin-top: 8px;
+  opacity: 0.9;
+}
+/* Responsive */
+@media (max-width: 600px) {
+  header h1 { font-size: 1.6em; }
+  nav { padding: 0 8px; }
+  nav button { padding: 10px 14px; font-size: 0.9em; }
+  .kmap { grid-template-columns: 1fr; }
+  .match-grid { grid-template-columns: 1fr; }
+}
+</style>
+</head>
+<body>
+<header>
+  <h1>万物生·生物专家团</h1>
+  <p>全学段生物知识体系导航 · 初中→高中 · 交互学习工具</p>
+</header>
+<nav>
+  <button class="active" data-target="sec-kmap">知识地图</button>
+  <button data-target="sec-quiz">概念测验</button>
+  <button data-target="sec-genetics">遗传计算</button>
+  <button data-target="sec-match">概念配对</button>
+  <button data-target="sec-tree">分类树</button>
+</nav>
+<main>
+<!-- Section 1: Knowledge Map -->
+<div id="sec-kmap" class="section active">
+  <h2 style="color:var(--primary);margin-bottom:16px;">🌿 生物知识体系导航（初中→高中）</h2>
+  <p style="color:var(--text-light);margin-bottom:16px;">点击卡片展开各模块核心知识点，覆盖细胞、遗传、生态、人体生理四大主线。</p>
+  <div class="kmap" id="kmap-grid"></div>
+  <div class="detail-panel" id="detail-panel">
+    <h2 id="detail-title"></h2>
+    <div id="detail-content"></div>
+  </div>
+</div>
+
+<!-- Section 2: Concept Quiz -->
+<div id="sec-quiz" class="section">
+  <h2 style="color:var(--primary);margin-bottom:16px;">📝 概念快测（全学段混合）</h2>
+  <div class="quiz-box" id="quiz-box">
+    <div class="prompt" id="quiz-prompt">加载中...</div>
+    <div class="options" id="quiz-options"></div>
+    <div class="feedback" id="quiz-feedback"></div>
+    <div style="margin-top:12px;">
+      <button class="calc-box-btn" style="background:var(--primary);color:#fff;border:none;padding:10px 20px;border-radius:8px;cursor:pointer;font-size:1em;" onclick="loadNextQuiz()">下一题 →</button>
+      <span id="quiz-score" style="margin-left:12px;font-weight:700;color:var(--primary);">得分：0</span>
+    </div>
+  </div>
+</div>
+
+<!-- Section 3: Genetics Calculator -->
+<div id="sec-genetics" class="section">
+  <h2 style="color:var(--primary);margin-bottom:16px;">🧬 遗传概率计算器</h2>
+  <div class="calc-box">
+    <p style="margin-bottom:16px;color:var(--text-light);">输入双亲基因型，计算子代表型/基因型概率。支持常染色体（Aa 型）与伴 X 隐性（色盲型）两种遗传模式。</p>
+    <label>遗传模式：</label>
+    <select id="calc-mode" onchange="updateCalcOptions()">
+      <option value="auto">常染色体（Aa 型）</option>
+      <option value="xlinked">伴 X 隐性（色盲，X^A/X^a）</option>
+    </select>
+    <label>父本基因型：</label>
+    <select id="calc-father">
+      <option value="AA">AA（显性纯合）</option>
+      <option value="Aa" selected>Aa（杂合）</option>
+      <option value="aa">aa（隐性纯合）</option>
+    </select>
+    <label>母本基因型：</label>
+    <select id="calc-mother">
+      <option value="AA">AA（显性纯合）</option>
+      <option value="Aa" selected>Aa（杂合）</option>
+      <option value="aa">aa（隐性纯合）</option>
+    </select>
+    <button onclick="calcGenetics()">计算子代概率</button>
+    <div class="result-box" id="calc-result"></div>
+  </div>
+</div>
+
+<!-- Section 4: Concept Matching -->
+<div id="sec-match" class="section">
+  <h2 style="color:var(--primary);margin-bottom:16px;">🎯 概念配对挑战</h2>
+  <p style="color:var(--text-light);margin-bottom:16px;">左侧为术语，右侧为释义。点击左侧术语后点击右侧释义，配对正确则锁定，错误则闪烁。全部配对方可获得 ★ 标识。</p>
+  <div style="display:flex;gap:12px;margin-bottom:12px;">
+    <button style="background:var(--primary);color:#fff;border:none;padding:8px 16px;border-radius:8px;cursor:pointer;" onclick="initMatchGame()">重新开始</button>
+    <span id="match-score" style="font-weight:700;color:var(--primary);align-self:center;">已配对：0 / 8</span>
+  </div>
+  <div class="match-grid" id="match-grid">
+    <div id="match-left" style="display:flex;flex-direction:column;gap:8px;"></div>
+    <div id="match-right" style="display:flex;flex-direction:column;gap:8px;"></div>
+  </div>
+</div>
+
+<!-- Section 5: Taxonomy Tree -->
+<div id="sec-tree" class="section">
+  <h2 style="color:var(--primary);margin-bottom:16px;">🌳 生物分类树（互动探索）</h2>
+  <div class="tree-box">
+    <p style="color:var(--text-light);margin-bottom:16px;">从界开始逐层点击，探索生物分类的层级结构。点击节点高亮当前路径，了解各层级含义。</p>
+    <div class="tree-visual" id="tree-visual">
+      <div class="branch">
+        <div class="tree-node" id="tree-root" onclick="selectTreeLevel('root')">界（Kingdom）</div>
+        <div class="tree-branches">
+          <div class="tree-sub">
+            <div class="node" onclick="selectTreeLevel('phylum',this)">门（Phylum）</div>
+          </div>
+          <div class="tree-sub">
+            <div class="node" onclick="selectTreeLevel('class',this)">纲（Class）</div>
+          </div>
+          <div class="tree-sub">
+            <div class="node" onclick="selectTreeLevel('order',this)">目（Order）</div>
+          </div>
+          <div class="tree-sub">
+            <div class="node" onclick="selectTreeLevel('family',this)">科（Family）</div>
+          </div>
+          <div class="tree-sub">
+            <div class="node" onclick="selectTreeLevel('genus',this)">属（Genus）</div>
+          </div>
+          <div class="tree-sub">
+            <div class="node" onclick="selectTreeLevel('species',this)">种（Species）</div>
+          </div>
+        </div>
+      </div>
+    </div>
+    <div style="margin-top:16px;padding:12px;background:var(--primary-bg);border-radius:8px;">
+      <div id="tree-explain" style="font-size:0.95em;">💡 提示：点击任意层级节点，这里会显示该层级的定义与示例。</div>
+    </div>
+  </div>
+</div>
+</main>
+<footer>
+  <div>万物生·生物专家团 — 全学段生物学习导航</div>
+  <div class="watermark">李彦明 15684394135</div>
+
+<div style="background:#fffbe6;border-left:4px solid #f5a623;padding:10px;margin:12px 0;font-size:14px">📅 2026-10-05 升级 · 【概念+2026-10-05】基因 = 有遗传效应的 DNA 片段 (不是任意 DNA 片段)</div>
+
+<div style="background:#fffbe6;border-left:4px solid #f5a623;padding:10px;margin:12px 0;font-size:14px">📅 2026-10-09 升级 · 【实验+2026-10-09】观察质壁分离用紫色洋葱鳞片叶外表皮(液泡有色，便于观察)</div>
+
+<div style="background:#fffbe6;border-left:4px solid #f5a623;padding:10px;margin:12px 0;font-size:14px">📅 2026-10-09 升级 · 【光合+2026-10-09】光反应在类囊体膜(水光解+合成ATP)，暗反应在叶绿体基质</div>
+
+<div style="background:#fffbe6;border-left:4px solid #f5a623;padding:10px;margin:12px 0;font-size:14px">📅 2026-10-09 升级 · 【遗传+2026-10-09】红绿色盲伴 X 隐性：男发病率>女，交叉遗传(外公→女→外孙)</div>
+
+<div style="background:#fffbe6;border-left:4px solid #f5a623;padding:10px;margin:12px 0;font-size:14px">📅 2026-10-10 升级 · 【神经+2026-10-10】兴奋在膜内由兴奋区→未兴奋区传导，膜外方向相反</div>
+
+<div style="background:#fffbe6;border-left:4px solid #f5a623;padding:10px;margin:12px 0;font-size:14px">📅 2026-10-11 升级 · 【实验+2026-10-11】噬菌体侵染实验：³²P 标记组放射性在沉淀，证明 DNA 是遗传物质</div>
+
+<div style="background:#fffbe6;border-left:4px solid #f5a623;padding:10px;margin:12px 0;font-size:14px">📅 2026-10-12 升级 · 【生态+2026-10-12】能量金字塔不会倒挂(单向流动递减)；数量金字塔可能倒挂</div>
+
+<div style="background:#fffbe6;border-left:4px solid #f5a623;padding:10px;margin:12px 0;font-size:14px">📅 2026-10-13 升级 · 【免疫+2026-10-13】体液免疫靠抗体；细胞免疫靠效应 T 细胞对付胞内寄生菌</div>
+
+<div style="background:#fffbe6;border-left:4px solid #f5a623;padding:10px;margin:12px 0;font-size:14px">📅 2026-10-14 升级 · 【概念+2026-10-14】ATP 是细胞的直接能源物质；太阳能是生态系统的根本能量来源</div>
+
+<div style="background:#fffbe6;border-left:4px solid #f5a623;padding:10px;margin:12px 0;font-size:14px">📅 2026-10-15 升级 · 【实验+2026-10-15】还原糖用斐林试剂水浴呈砖红色；蛋白质用双缩脲呈紫色</div>
+
+<div style="background:#fffbe6;border-left:4px solid #f5a623;padding:10px;margin:12px 0;font-size:14px">📅 2026-10-16 升级 · 【细胞+2026-10-16】有丝分裂中期着丝粒排在赤道板上，染色体形态最清晰</div>
+
+<div style="background:#fffbe6;border-left:4px solid #f5a623;padding:10px;margin:12px 0;font-size:14px">📅 2026-10-17 升级 · 【遗传+2026-10-17】分离定律 F1 产生配子 1:1；自由组合双杂合 F2 = 9:3:3:1</div>
+
+<div style="background:#fffbe6;border-left:4px solid #f5a623;padding:10px;margin:12px 0;font-size:14px">📅 2026-10-18 升级 · 【概念+2026-10-18】酶绝大多数是蛋白质(少数 RNA)，催化效率比无机催化剂高 10⁷~10¹³ 倍</div>
+
+<div style="background:#fffbe6;border-left:4px solid #f5a623;padding:10px;margin:12px 0;font-size:14px">📅 2026-10-20 升级 · 【细胞+2026-10-20】线粒体=有氧呼吸主场所(内膜折叠成嵴增面积)；叶绿体双层膜</div>
+
+<div style="background:#fffbe6;border-left:4px solid #f5a623;padding:10px;margin:12px 0;font-size:14px">📅 2026-10-21 升级 · 【神经+2026-10-21】静息电位 K⁺ 外流形成(内负外正)，动作电位 Na⁺ 内流(内正外负)</div>
+
+<div style="background:#fffbe6;border-left:4px solid #f5a623;padding:10px;margin:12px 0;font-size:14px">📅 2026-10-22 升级 · 【遗传+2026-10-22】DNA 复制半保留：亲代双链各作模板；碱基配对 A=T G≡C</div>
+
+<div style="background:#fffbe6;border-left:4px solid #f5a623;padding:10px;margin:12px 0;font-size:14px">📅 2026-10-23 升级 · 【生态+2026-10-23】碳循环：CO₂ 经光合进生物群落，经呼吸/分解回大气；温室效应=CO₂ 过量</div>
+
+<div style="background:#fffbe6;border-left:4px solid #f5a623;padding:10px;margin:12px 0;font-size:14px">📅 2026-10-24 升级 · 【实验+2026-10-24】孟德尔测交=杂合子×隐性纯合，后代表型比反映配子比</div>
+
+<div style="background:#fffbe6;border-left:4px solid #f5a623;padding:10px;margin:12px 0;font-size:14px">📅 2026-10-25 升级 · 【免疫+2026-10-25】记忆细胞在二次免疫中快速增殖分化为浆细胞，产生抗体更快更多</div>
+
+<div style="background:#fffbe6;border-left:4px solid #f5a623;padding:10px;margin:12px 0;font-size:14px">📅 2026-10-26 升级 · 【概念+2026-10-26】基因=有遗传效应的 DNA 片段；遗传信息指碱基排列顺序</div>
+
+<div style="background:#fffbe6;border-left:4px solid #f5a623;padding:10px;margin:12px 0;font-size:14px">📅 2026-10-27 升级 · 【调节+2026-10-27】下丘脑=体温/血糖/水盐调节中枢；垂体分泌促激素生长激素</div>
+
+<div style="background:#fffbe6;border-left:4px solid #f5a623;padding:10px;margin:12px 0;font-size:14px">📅 2026-11-02 升级 · 【进化+2026-11-02】自然选择决定进化方向；隔离是新物种形成的必要条件(生殖隔离)</div>
+
+<div style="background:#fffbe6;border-left:4px solid #f5a623;padding:10px;margin:12px 0;font-size:14px">📅 2026-11-03 升级 · 【基因工程+2026-11-03】限制酶识别特定序列切 DNA；DNA 连接酶连黏端，载体常用质粒</div>
+
+<div style="background:#fffbe6;border-left:4px solid #f5a623;padding:10px;margin:12px 0;font-size:14px">📅 2026-11-06 升级 · 【呼吸+2026-11-06】有氧呼吸第一阶段(糖酵解)在细胞质基质；第二三阶段在线粒体</div>
+
+<div style="background:#fffbe6;border-left:4px solid #f5a623;padding:10px;margin:12px 0;font-size:14px">📅 2026-11-12 升级 · 【免疫+2026-11-12】HIV 攻击 T 细胞(CD4⁺)致细胞免疫崩溃；传播性/血/母婴</div>
+
+<div style="background:#fffbe6;border-left:4px solid #f5a623;padding:10px;margin:12px 0;font-size:14px">📅 2026-11-12 升级 · 【生态+2026-11-12】生物多样性：基因/物种/生态系统三层；就地保护(自然保护区)最根本</div>
+
+<div style="background:#fffbe6;border-left:4px solid #f5a623;padding:10px;margin:12px 0;font-size:14px">📅 2026-11-13 升级 · 【神经+2026-11-13】反射弧至少两个神经元(单突触)；突触是传导的"慢点"(电信号→化学→电)</div>
+
+<div style="background:#fffbe6;border-left:4px solid #f5a623;padding:10px;margin:12px 0;font-size:14px">📅 2026-11-14 升级 · 【遗传+2026-11-14】密码子简并性：多个密码子编码同一氨基酸，缓冲突变危害</div>
+
+<div style="background:#fffbe6;border-left:4px solid #f5a623;padding:10px;margin:12px 0;font-size:14px">📅 2026-11-15 升级 · 【细胞+2026-11-15】内质网连核膜与细胞膜(膜系统)；高尔基体对蛋白包装分泌</div>
+
+<div style="background:#fffbe6;border-left:4px solid #f5a623;padding:10px;margin:12px 0;font-size:14px">📅 2026-11-16 升级 · 【生态+2026-11-16】演替：初生演替(裸岩)慢、次生演替(弃耕农田)快</div>
+
+<div style="background:#fffbe6;border-left:4px solid #f5a623;padding:10px;margin:12px 0;font-size:14px">📅 2026-11-17 升级 · 【遗传+2026-11-17】基因工程可跨物种；杂交育种限于有性生殖物种</div>
+
+<div style="background:#fffbe6;border-left:4px solid #f5a623;padding:10px;margin:12px 0;font-size:14px">📅 2026-11-18 升级 · 【调节+2026-11-18】胰岛素唯一降血糖激素；胰高血糖素、肾上腺素升血糖</div>
+
+<div style="background:#fffbe6;border-left:4px solid #f5a623;padding:10px;margin:12px 0;font-size:14px">📅 2026-11-19 升级 · 【实验+2026-11-19】孟德尔假说—演绎法：假说→测交验证(1:1)→分离定律成立</div>
+
+<div style="background:#fffbe6;border-left:4px solid #f5a623;padding:10px;margin:12px 0;font-size:14px">📅 2026-11-20 升级 · 【免疫+2026-11-20】过敏=再次免疫的速发型超敏反应；肥大细胞释放组胺，防治避过敏原</div>
+
+<div style="background:#fffbe6;border-left:4px solid #f5a623;padding:10px;margin:12px 0;font-size:14px">📅 2026-11-21 升级 · 【细胞+2026-11-21】凋亡=基因调控的程序性死亡(有益)；坏死=病理性死亡(肿胀破裂)</div>
+
+<div style="background:#fffbe6;border-left:4px solid #f5a623;padding:10px;margin:12px 0;font-size:14px">📅 2026-11-22 升级 · 【生态+2026-11-22】种群是基因库基本单位；数量过少致遗传多样性下降</div>
+
+<div style="background:#fffbe6;border-left:4px solid #f5a623;padding:10px;margin:12px 0;font-size:14px">📅 2026-11-23 升级 · 【遗传+2026-11-23】上位效应：双杂合子表型可被另一基因掩盖，9:3:3:1 比例改变</div>
+</footer>
+
+<script>
+// ========== Nav Tab Switching ==========
+document.querySelectorAll('nav button').forEach(function(btn) {
+  btn.addEventListener('click', function() {
+    document.querySelectorAll('nav button').forEach(function(b) { b.classList.remove('active'); });
+    btn.classList.add('active');
+    var target = document.getElementById(btn.dataset.target);
+    document.querySelectorAll('.section').forEach(function(s) { s.classList.remove('active'); });
+    target.classList.add('active');
+  });
+});
+
+// ========== Knowledge Map Data ==========
+var kmapData = [
+  {
+    id: 'cell-junior',
+    title: '🔬 细胞（初中）',
+    stage: '七-八年级 · 基础入门',
+    points: [
+      '细胞是生物体结构和功能的基本单位',
+      '植物细胞 vs 动物细胞：细胞壁、液泡、叶绿体',
+      '细胞膜、细胞质、细胞核的功能分工',
+      '显微镜的使用：放大倍数、成像方向',
+      '细胞分裂：有丝分裂、减数分裂概述'
+    ]
+  },
+  {
+    id: 'cell-senior',
+    title: '🔬 细胞（高中）',
+    stage: '高一-高二 · 深入机制',
+    points: [
+      '细胞学说与建立过程',
+      '线粒体与叶绿体：双膜结构、半自主性',
+      '内质网、高尔基体、溶酶体等细胞器',
+      '被动运输/主动运输/胞吞胞吐机制',
+      '细胞分化、衰老、凋亡与癌变'
+    ]
+  },
+  {
+    id: 'genetics-junior',
+    title: '🧬 遗传（初中）',
+    stage: '七-八年级 · 直观认知',
+    points: [
+      '性状与遗传的关系：显性/隐性',
+      'DNA 双螺旋结构（沃森·克里克）',
+      '染色体、DNA、基因三者关系',
+      '孟德尔豌豆实验（简化版）',
+      '遗传病的类型：显性/隐性'
+    ]
+  },
+  {
+    id: 'genetics-senior',
+    title: '🧬 遗传（高中）',
+    stage: '高一-高二 · 核心计算',
+    points: [
+      '分离定律：1:2:1 基因型比、3:1 表型比',
+      '自由组合定律：9:3:3:1 双因子杂交',
+      '伴性遗传：X/Y 染色体携带基因',
+      '基因突变、基因重组、染色体变异',
+      '遗传概率计算与系谱图分析'
+    ]
+  },
+  {
+    id: 'ecology-junior',
+    title: '🌍 生态（初中）',
+    stage: '七-八年级 · 系统观念',
+    points: [
+      '生态系统的组成：生产者、消费者、分解者',
+      '食物链与食物网：能量流动方向',
+      '生物多样性及其意义',
+      '人类活动对生态的影响',
+      '生态平衡与自我调节能力'
+    ]
+  },
+  {
+    id: 'ecology-senior',
+    title: '🌍 生态（高中）',
+    stage: '高一-高二 · 定量分析',
+    points: [
+      '能量传递效率（10%-20%）逐级递减',
+      '物质循环：碳循环、氮循环路径',
+      '种群增长模型：J型 vs S型曲线',
+      '生态位概念与种间关系（竞争/捕食/共生）',
+      '生态学调查方法与样方法、标志重捕法'
+    ]
+  },
+  {
+    id: 'physiology-junior',
+    title: '💗 人体生理（初中）',
+    stage: '七-八年级 · 系统整合',
+    points: [
+      '八大系统概述：消化/呼吸/循环/泌尿/神经/内分泌/运动/生殖',
+      '血液循环：体循环 vs 肺循环',
+      '反射弧结构：感受器→传入→中枢→传出→效应器',
+      '激素调节：胰岛素、生长激素等',
+      '免疫防线：非特异性 vs 特异性免疫'
+    ]
+  },
+  {
+    id: 'physiology-senior',
+    title: '💗 人体生理（高中）',
+    stage: '高一-高二 · 深入机制',
+    points: [
+      '内环境稳态：水盐平衡、体温调节、血糖调节',
+      '神经调节：突触传递、神经递质',
+      '免疫调节：细胞免疫与体液免疫详细过程',
+      '体液调节：下丘脑-垂体-靶腺轴',
+      '神经-体液-免疫调节网络'
+    ]
+  }
+];
+
+// Render kmap cards
+var kmapGrid = document.getElementById('kmap-grid');
+kmapData.forEach(function(item) {
+  var card = document.createElement('div');
+  card.className = 'kmap-card';
+  card.onclick = function() { showDetail(item); };
+  card.innerHTML = '<h3>' + item.title + '</h3><div class="stage">' + item.stage + '</div><ul>' +
+    item.points.slice(0, 3).map(function(p) { return '<li>' + p + '</li>'; }).join('') +
+    '</ul><div style="margin-top:10px;font-size:0.85em;color:var(--text-light);">点击查看完整要点 →</div>';
+  kmapGrid.appendChild(card);
+});
+
+function showDetail(item) {
+  var panel = document.getElementById('detail-panel');
+  document.getElementById('detail-title').textContent = item.title + ' — ' + item.stage;
+  var content = document.getElementById('detail-content');
+  var html = '<ul class="points">';
+  item.points.forEach(function(p) { html += '<li>' + p + '</li>'; });
+  html += '</ul>';
+  html += '<div style="margin-top:16px;padding:12px;background:var(--primary-bg);border-radius:8px;font-size:0.9em;">💡 学习建议：先掌握「' + item.stage.split(' ')[0] + '」阶段核心概念，再进阶至深层机制。可结合「概念快测」与「概念配对」模块进行巩固练习。</div>';
+  content.innerHTML = html;
+  panel.classList.add('show');
+  panel.scrollIntoView({ behavior: 'smooth' });
+}
+
+// ========== Concept Quiz ==========
+var quizData = [
+  {
+    prompt: '下列关于 DNA 双螺旋结构的描述，哪一项是正确的？',
+    options: ['A链与B链方向相同', 'A-T 碱基配对，G-C 碱基配对', 'DNA 由核糖和磷酸组成骨架', '双螺旋直径约 10nm，螺距约 10nm'],
+    correct: 1,
+    explain: 'DNA 双螺旋中 A 与 T 配对（2个氢键），G 与 C 配对（3个氢键）。磷酸-脱氧核糖骨架中两条链方向相反（反平行）。'
+  },
+  {
+    prompt: '在孟德尔两对相对性状的杂交实验中，F2 代出现 9:3:3:1 的前提条件是？',
+    options: ['两对基因位于同一染色体上', '两对基因独立分配（自由组合）', '显性基因完全抑制隐性基因', 'F1 代只产生一种配子'],
+    correct: 1,
+    explain: '9:3:3:1 是自由组合定律的典型比例，前提条件是两对等位基因位于非同源染色体上，在减数分裂时独立分配。'
+  },
+  {
+    prompt: '人体免疫系统中，T 细胞和 B 细胞分别在哪个器官中发育成熟？',
+    options: ['骨髓、胸腺', '胸腺、骨髓', '脾脏、淋巴结', '淋巴结、脾脏'],
+    correct: 1,
+    explain: 'T 细胞在胸腺（Thymus）中成熟，B 细胞在骨髓（Bone marrow）中成熟。记忆口诀：T→胸，B→骨。'
+  },
+  {
+    prompt: '某植物种群中，AA 占 40%，Aa 占 40%，aa 占 20%。该种群中 A 的基因频率为？',
+    options: ['60%', '50%', '40%', '80%'],
+    correct: 0,
+    explain: 'A 基因频率 = AA频率 + Aa频率的一半 = 40% + 40%×50% = 40% + 20% = 60%。'
+  },
+  {
+    prompt: '下列哪种结构在动物细胞中存在但植物细胞中不存在？',
+    options: ['核糖体', '中心体', '线粒体', '高尔基体'],
+    correct: 1,
+    explain: '中心体存在于动物细胞和低级植物细胞中，参与有丝分裂时纺锤体的形成。高等植物细胞没有中心体，由细胞两极发出纺锤丝。'
+  },
+  {
+    prompt: '光合作用中，暗反应（Calvin Cycle）发生的场所是？',
+    options: ['类囊体膜上', '叶绿体基质中', '细胞质基质中', '线粒体内膜上'],
+    correct: 1,
+    explain: '暗反应（卡尔文循环）发生在叶绿体基质中，利用光反应产生的 ATP 和 NADPH 将 CO2 固定为有机物（G3P）。'
+  },
+  {
+    prompt: '关于种群增长的 S 型曲线，以下说法正确的是？',
+    options: ['种群数量会无限增长', 'K 值（环境容纳量）是固定不变的', '种群达到 K 值后数量完全不再变化', 'S 型曲线初期增长较慢，中期增长最快，后期趋于稳定'],
+    correct: 3,
+    explain: 'S 型曲线：初期资源充足增长慢，中期资源相对充足增长最快（K/2处），后期资源受限增长放缓趋于 K 值。K 值会随环境改变。'
+  },
+  {
+    prompt: '下列关于非特异性免疫（先天免疫），哪项正确？',
+    options: ['T 细胞介导的细胞免疫', '抗体介导的体液免疫', '皮肤和黏膜的物理屏障', '记忆细胞的二次应答'],
+    correct: 2,
+    explain: '非特异性免疫（先天免疫）包括第一道防线（皮肤/黏膜）和第二道防线（吞噬细胞/溶菌酶），不针对特定病原体。'
+  },
+  {
+    prompt: '减数分裂中，同源染色体分离与着丝粒分裂分别发生在哪个时期？',
+    options: ['减数第一次分裂后期和减数第二次分裂后期', '都在减数第一次分裂后期', '都在减数第二次分裂后期', '减数第二次分裂后期和减数第一次分裂后期'],
+    correct: 0,
+    explain: '减Ⅰ后期同源染色体分离移向两极（着丝粒不分裂，姐妹染色单体相连）；减Ⅱ后期着丝粒分裂、姐妹染色单体分开。这是减数分裂与有丝分裂的关键区别。'
+  },
+  {
+    prompt: '关于翻译过程的描述，正确的是？',
+    options: ['翻译场所是核糖体，模板是 mRNA', '模板是 DNA，场所在细胞核', 'tRNA 上的反密码子识别 mRNA 密码子，携带特定氨基酸', '真核细胞中转录与翻译同时同地发生'],
+    correct: 2,
+    explain: '翻译在核糖体上进行：mRNA 为模板，tRNA（反密码子与密码子配对）携带特定氨基酸。DNA 是转录的模板；真核细胞转录在核内、翻译在质中，不同步（原核生物可边转录边翻译）。'
+  },
+  {
+    prompt: '关于食物链与食物网，下列说法正确的是？',
+    options: ['食物链从生产者开始，分解者不进入食物链', '食物链可以从蝗虫（初级消费者）开始', '营养级越多，能量传递效率越高', '食物链都是孤立的，不能相互连接'],
+    correct: 0,
+    explain: '食物链从生产者（绿色植物）开始，到最高级消费者结束；分解者不进入食物链。能量传递效率（10%~20%）不随营养级数量增加；多条食物链彼此交错互相联系形成食物网。'
+  },
+  {
+    prompt: '疫苗注射预防传染病的原理是：',
+    options: ['减毒/片段病原体作抗原，刺激特异性免疫而不致病', '疫苗直接杀死体内细菌', '疫苗补充人体营养不足', '疫苗主要激活非特异性免疫'],
+    correct: 0,
+    explain: '疫苗是减毒/灭活病原体或其片段（抗原）：接种→刺激 B/T 细胞产生记忆细胞与抗体→真正病原体入侵时二次应答更快更强。减毒疫苗可引起极轻微应答但不致病。'
+  },
+  {
+    prompt: '丈夫 O 型血、妻子 AB 型血，其后代血型可能是：',
+    options: ['A 型或 B 型', 'O 型或 AB 型', '只有 O 型', '只有 AB 型'],
+    correct: 0,
+    explain: 'O 型 = ii，AB 型 = I^A I^B。后代：I^A i（A 型）与 I^B i（B 型）各 1/2，不会出现 O 型或 AB 型。体现多等位基因共显性与隐性关系。'
+  },
+  {
+    prompt: '关于细胞膜结构（流动镶嵌模型），正确的是？',
+    options: ['磷脂双分子层是基本支架，蛋白质分子镶在、嵌入、横跨其中', '膜是静态的刚性结构', '胆固醇是植物细胞膜成分', '细胞膜只含脂质，不含蛋白质'],
+    correct: 0,
+    explain: '流动镶嵌模型：磷脂双分子层构成基本支架，蛋白质分子镶在/嵌入/横跨膜中；动物细胞膜含胆固醇（植物没有）。磷脂与多数蛋白质可运动→膜具有流动性。'
+  },
+  {
+    prompt: '关于无氧呼吸，下列说法正确的是？',
+    options: ['人体细胞无氧呼吸产物是乳酸，不释放 CO₂', '多数植物细胞无氧呼吸产物是乳酸', '酵母菌无氧呼吸产物是乳酸', '无氧呼吸发生在线粒体中'],
+    correct: 0,
+    explain: '人体/动物细胞、马铃薯块茎、萝卜、甜菜块根：无氧呼吸→乳酸（不产 CO₂）；多数植物与酵母菌：→乙醇+CO₂。场所是细胞质基质，第一阶段糖酵解释放少量能量。'
+  },
+  {
+    prompt: '激素调节的共同特点是：',
+    options: ['微量高效、经体液运输、作用于靶器官靶细胞', '只由神经系统分泌', '都是蛋白质，口服会被胃消化', '作用于体内所有细胞'],
+    correct: 0,
+    explain: '激素：微量高效、随血液运输、与靶细胞上特异性受体结合。并非都是蛋白质：性激素属脂质，甲状腺激素是含碘氨基酸衍生物；有的激素水溶。'
+  },
+  {
+    prompt: '关于近亲繁殖，下列说法正确的是？',
+    options: ['不改变基因频率，但纯合子比例逐代增加', '近交会改变基因频率', '近交可以消灭所有隐性基因', '近交提高遗传多样性'],
+    correct: 0,
+    explain: '近交不改变基因频率，但隐性纯合子（aa）逐代增多，有害隐性基因更易表达→后代发病率上升（近交衰退），因此禁止近亲结婚。改变基因频率靠突变/选择/迁移/小样本漂变。'
+  },
+  {
+    prompt: '植物在光补偿点时：',
+    options: ['光合速率 = 呼吸速率，CO₂ 净交换为零', '光合作用停止', '呼吸作用停止', '净光合速率最大'],
+    correct: 0,
+    explain: '光补偿点：光合放 O₂ 量 = 呼吸耗 O₂ 量（净交换为零）。低于补偿点呼吸>光合；高于补偿点光合>呼吸（净光合为正）。'
+  },
+  {
+    prompt: '关于微生物，下列说法正确的是？',
+    options: ['真菌是真核生物（有核膜），细菌是原核生物', '细菌有完整的线粒体', '酸奶制作利用酵母菌厌氧发酵', '病毒可以独立生活'],
+    correct: 0,
+    explain: '真菌（霉菌/酵母菌/蘑菇）是真核生物：有核膜；细菌是原核生物：无核膜与除核糖体外的细胞器。酸奶=乳酸菌厌氧发酵产乳酸；酿酒/发面用酵母菌。病毒不能独立生活，必须寄生活细胞。'
+  },
+  {
+    prompt: '植物组织培养技术的细胞学基础是：',
+    options: ['细胞全能性：已分化细胞保留完整遗传信息', '基因重组', '细胞分化', '细胞生长'],
+    correct: 0,
+    explain: '已分化的植物细胞仍保留该物种全套遗传物质→适宜培养条件下可脱分化形成完整植株（细胞全能性）。这是体细胞杂交与快速繁殖的理论基础。'
+  }
+];
+var quizIndex = 0;
+var quizScore = 0;
+
+function loadNextQuiz() {
+  var q = quizData[quizIndex];
+  document.getElementById('quiz-prompt').textContent = q.prompt;
+  var optDiv = document.getElementById('quiz-options');
+  optDiv.innerHTML = '';
+  q.options.forEach(function(opt, i) {
+    var btn = document.createElement('button');
+    btn.className = 'opt-btn';
+    btn.textContent = opt;
+    btn.onclick = function() { checkQuiz(i, btn, q); };
+    optDiv.appendChild(btn);
+  });
+  document.getElementById('quiz-feedback').style.display = 'none';
+}
+
+function checkQuiz(chosen, btn, q) {
+  var allBtns = document.querySelectorAll('#quiz-options .opt-btn');
+  allBtns.forEach(function(b) { b.disabled = true; });
+  if (chosen === q.correct) {
+    btn.classList.add('correct');
+    quizScore++;
+    document.getElementById('quiz-score').textContent = '得分：' + quizScore;
+    showFeedback(q.explain, true);
+  } else {
+    btn.classList.add('wrong');
+    allBtns[q.correct].classList.add('correct');
+    showFeedback(q.explain, false);
+  }
+  quizIndex = (quizIndex + 1) % quizData.length;
+  setTimeout(function() { loadNextQuiz(); }, 1800);
+}
+
+function showFeedback(text, correct) {
+  var fb = document.getElementById('quiz-feedback');
+  fb.style.display = 'block';
+  fb.style.color = correct ? 'var(--primary)' : '#c62828';
+  fb.textContent = (correct ? '✅ 正确！' : '❌ 错误。') + ' ' + text;
+}
+
+// ========== Genetics Calculator ==========
+function calcGenetics() {
+  var f = document.getElementById('calc-father').value;
+  var m = document.getElementById('calc-mother').value;
+  var mode = document.getElementById('calc-mode').value;
+  if (mode === 'xlinked') {
+    var xDiv = document.getElementById('calc-result');
+    xDiv.style.display = 'block';
+    xDiv.textContent = calcXLinked(f, m);
+    return;
+  }
+  var fatherG = [f[0], f[1]];
+  var motherG = [m[0], m[1]];
+  var combos = [
+    fatherG[0] + motherG[0],
+    fatherG[0] + motherG[1],
+    fatherG[1] + motherG[0],
+    fatherG[1] + motherG[1]
+  ];
+  // Normalize (always capital first)
+  combos = combos.map(function(c) {
+    var cap = c.split('').sort(function(a,b) {
+      var isCapA = a === a.toUpperCase() ? 1 : 0;
+      var isCapB = b === b.toUpperCase() ? 1 : 0;
+      return isCapB - isCapA;
+    }).join('');
+    return cap;
+  });
+
+  var genotypeCount = {};
+  combos.forEach(function(g) {
+    if (!genotypeCount[g]) genotypeCount[g] = 0;
+    genotypeCount[g]++;
+  });
+
+  var phenotypeCount = {};
+  combos.forEach(function(g) {
+    var phen = g === 'aa' ? '隐性性状' : '显性性状';
+    if (!phenotypeCount[phen]) phenotypeCount[phen] = 0;
+    phenotypeCount[phen]++;
+  });
+
+  var resultText = '';
+  resultText += '═══════════════════════════\n';
+  resultText += '  遗传概率计算结果\n';
+  resultText += '═══════════════════════════\n\n';
+  resultText += '亲本：' + f + ' × ' + m + '\n\n';
+  resultText += '【基因型比例】\n';
+  for (var g in genotypeCount) {
+    var count = genotypeCount[g];
+    var pct = (count / 4 * 100).toFixed(0);
+    resultText += '  ' + g + '  →  ' + count + '/4  =  ' + pct + '%\n';
+  }
+  resultText += '\n【表型比例】\n';
+  for (var p in phenotypeCount) {
+    var count = phenotypeCount[p];
+    var pct = (count / 4 * 100).toFixed(0);
+    resultText += '  ' + p + '  →  ' + count + '/4  =  ' + pct + '%\n';
+  }
+  resultText += '\n【遗传图解（棋盘格）】\n';
+  resultText += '        母本: ' + motherG[0] + '   ' + motherG[1] + '\n';
+  resultText += '  父本 ' + fatherG[0] + '  |  ' + fatherG[0] + motherG[0] + '   |  ' + fatherG[0] + motherG[1] + '   |\n';
+  resultText += '  父本 ' + fatherG[1] + '  |  ' + fatherG[1] + motherG[0] + '   |  ' + fatherG[1] + motherG[1] + '   |\n';
+  resultText += '\n💡 提示：隐性性状只有在基因型为 aa 时才表现出来。\n';
+  resultText += '   若双亲均为杂合（Aa），子代出现隐性性状的概率为 25%。';
+
+  var resultDiv = document.getElementById('calc-result');
+  resultDiv.style.display = 'block';
+  resultDiv.textContent = resultText;
+}
+
+// ========== X-linked Recessive (Colorblindness) Calculator ==========
+var xPhenoMap = {
+  'XAXA': 'X^A X^A (正常女)',
+  'XAXa': 'X^A X^a (携带者女, 表型正常)',
+  'XaXa': 'X^a X^a (色盲女)',
+  'XAY': 'X^A Y (正常男)',
+  'XaY': 'X^a Y (色盲男)'
+};
+function xLabel(g) {
+  return xPhenoMap[g] || g;
+}
+function calcXLinked(f, m) {
+  var fX = f === 'XAY' ? 'A' : 'a';
+  var mX = [m.charAt(1), m.charAt(3)];
+  var girls = ['X' + fX + 'X' + mX[0], 'X' + fX + 'X' + mX[1]];
+  var boys = ['X' + mX[0] + 'Y', 'X' + mX[1] + 'Y'];
+  var t = '';
+  t += '═══════════════════════════\n';
+  t += '  伴 X 隐性遗传（色盲）计算\n';
+  t += '═══════════════════════════\n\n';
+  t += '双亲：父 ' + xLabel(f) + ' × 母 ' + xLabel(m) + '\n\n';
+  t += '【子代】（各 25%）\n';
+  girls.forEach(function(g) { t += '  ' + g + '  →  ' + xPhenoMap[g] + '\n'; });
+  boys.forEach(function(g) { t += '  ' + g + '  →  ' + xPhenoMap[g] + '\n'; });
+  t += '\n💡 要点：色盲男（X^a Y）的 X^a 只来自母亲；\n';
+  t += '   色盲女（X^a X^a）的儿子全色盲、女儿全携带。\n';
+  t += '   色盲男 × 正常非携带女 → 儿子全正常，女儿全携带。';
+  return t;
+}
+function updateCalcOptions() {
+  var mode = document.getElementById('calc-mode').value;
+  var fSel = document.getElementById('calc-father');
+  var mSel = document.getElementById('calc-mother');
+  document.getElementById('calc-result').style.display = 'none';
+  if (mode === 'auto') {
+    fSel.innerHTML = '<option value="AA">AA（显性纯合）</option><option value="Aa" selected>Aa（杂合）</option><option value="aa">aa（隐性纯合）</option>';
+    mSel.innerHTML = '<option value="AA">AA（显性纯合）</option><option value="Aa" selected>Aa（杂合）</option><option value="aa">aa（隐性纯合）</option>';
+  } else {
+    fSel.innerHTML = '<option value="XAY">X^A Y（正常男）</option><option value="XaY">X^a Y（色盲男）</option>';
+    mSel.innerHTML = '<option value="XAXA">X^A X^A（正常女）</option><option value="XAXa" selected>X^A X^a（携带女）</option><option value="XaXa">X^a X^a（色盲女）</option>';
+  }
+}
+
+// ========== Concept Matching Game ==========
+var matchPairs = [
+  { left: 'DNA', right: '脱氧核糖核酸，遗传物质' },
+  { left: 'mRNA', right: '信使RNA，携带遗传信息到核糖体' },
+  { left: 'tRNA', right: '转运RNA，携带特定氨基酸' },
+  { left: '核糖体', right: '蛋白质合成的场所' },
+  { left: '中心体', right: '与动物细胞有丝分裂有关' },
+  { left: '溶酶体', right: '含水解酶，消化衰老损伤的自身结构' },
+  { left: '叶绿体', right: '光合作用场所，双膜+类囊体堆叠' },
+  { left: '乙酰胆碱', right: '最常见的兴奋性神经递质' }
+];
+var matchState = { selected: null, matched: 0, total: 8, pairs: [] };
+
+function initMatchGame() {
+  matchState = { selected: null, matched: 0, total: 8, pairs: [] };
+  document.getElementById('match-score').textContent = '已配对：0 / 8';
+
+  var leftDiv = document.getElementById('match-left');
+  var rightDiv = document.getElementById('match-right');
+  leftDiv.innerHTML = '';
+  rightDiv.innerHTML = '';
+
+  // Create left items (shuffled order)
+  var leftItems = matchPairs.map(function(p, i) { return { text: p.left, id: i }; });
+  leftItems.sort(function() { return Math.random() - 0.5; });
+  leftItems.forEach(function(item) {
+    var el = document.createElement('div');
+    el.className = 'match-item';
+    el.textContent = item.text;
+    el.dataset.id = item.id;
+    el.dataset.side = 'left';
+    el.onclick = function() { selectMatchItem(el); };
+    leftDiv.appendChild(el);
+  });
+
+  // Create right items (shuffled order)
+  var rightItems = matchPairs.map(function(p, i) { return { text: p.right, id: i }; });
+  rightItems.sort(function() { return Math.random() - 0.5; });
+  rightItems.forEach(function(item) {
+    var el = document.createElement('div');
+    el.className = 'match-item';
+    el.textContent = item.text;
+    el.dataset.id = item.id;
+    el.dataset.side = 'right';
+    el.onclick = function() { selectMatchItem(el); };
+    rightDiv.appendChild(el);
+  });
+}
+
+function selectMatchItem(el) {
+  if (el.classList.contains('matched')) return;
+  if (el.dataset.side === 'left') {
+    // Deselect other left items
+    document.querySelectorAll('#match-left .match-item').forEach(function(item) {
+      if (!item.classList.contains('matched')) item.classList.remove('selected');
+    });
+    el.classList.add('selected');
+    matchState.selected = el;
+  } else {
+    // Check match
+    if (matchState.selected) {
+      var leftEl = matchState.selected;
+      if (leftEl.dataset.id === el.dataset.id) {
+        // Correct match
+        leftEl.classList.remove('selected');
+        leftEl.classList.add('matched');
+        el.classList.add('matched');
+        matchState.matched++;
+        matchState.selected = null;
+        document.getElementById('match-score').textContent = '已配对：' + matchState.matched + ' / 8';
+        if (matchState.matched === matchState.total) {
+          setTimeout(function() {
+            alert('🎉 全部配对成功！你已完成概念配对挑战！');
+          }, 300);
+        }
+      } else {
+        // Wrong match
+        el.classList.add('wrong-flash');
+        leftEl.classList.add('wrong-flash');
+        setTimeout(function() {
+          el.classList.remove('wrong-flash');
+          leftEl.classList.remove('wrong-flash');
+          leftEl.classList.remove('selected');
+          matchState.selected = null;
+        }, 600);
+      }
+    }
+  }
+}
+
+// ========== Taxonomy Tree Explorer ==========
+var treeExplain = {
+  root: {
+    title: '界（Kingdom）',
+    text: '生物分类的最高层级。原五界系统：动物界、植物界、真菌界、原生生物界、原核生物界。现代系统已扩展为六界或三域系统（细菌域、古菌域、真核域）。示例：人属于动物界。'
+  },
+  phylum: {
+    title: '门（Phylum）',
+    text: '界之下的层级，按基本身体结构分类。动物界下有脊索动物门、节肢动物门、软体动物门等。示例：人属于脊索动物门。'
+  },
+  class: {
+    title: '纲（Class）',
+    text: '门之下的层级。脊索动物门下分哺乳纲、鸟纲、爬行纲、两栖纲、鱼纲等。示例：人属于哺乳纲。'
+  },
+  order: {
+    title: '目（Order）',
+    text: '纲之下的层级。哺乳纲下有灵长目、食肉目、啮齿目等。示例：人属于灵长目。'
+  },
+  family: {
+    title: '科（Family）',
+    text: '目之下的层级。灵长目下有人科、猴科等。示例：人属于人科（Hominidae）。'
+  },
+  genus: {
+    title: '属（Genus）',
+    text: '科之下的层级，双名法的第一个词。示例：人属于人属（Homo）。'
+  },
+  species: {
+    title: '种（Species）',
+    text: '分类的基本单位，双名法的第二个词。同一物种内个体可以交配产生可育后代。示例：人的学名是 Homo sapiens（智人）。'
+  }
+};
+
+function selectTreeLevel(level, el) {
+  document.querySelectorAll('.tree-sub .node').forEach(function(n) { n.classList.remove('active'); });
+  if (el) el.classList.add('active');
+  if (level === 'root') {
+    document.getElementById('tree-root').style.background = 'var(--dark)';
+  } else {
+    document.getElementById('tree-root').style.background = 'var(--primary)';
+  }
+  var data = treeExplain[level];
+  document.getElementById('tree-explain').innerHTML = '<strong>' + data.title + '</strong><br>' + data.text;
+}
+
+// Initialize
+loadNextQuiz();
+initMatchGame();
+updateCalcOptions();
+</script>
+
+<div id="agent-panel" style="margin:20px auto;max-width:720px;border:2px solid #4a90d9;border-radius:12px;padding:16px;background:#f7fbff;font-family:system-ui">
+  <h3 style="margin:0 0 8px;color:#2c5d8f">🤖 万物生·生物专家团 · 智能体问答（本地题库模式）</h3>
+  <p style="font-size:13px;color:#555;margin:0 0 10px">本地题库模式（离线·零外链）：关键词匹配本站本地题库作答。在线 AI 问答待李老师定 key 策略后统一开通。</p>
+  <div style="display:flex;flex-wrap:wrap;gap:8px;margin-bottom:10px"><button style="padding:6px 10px;border-radius:8px;border:1px solid #888;background:#fff;color:#333;cursor:pointer;font-size:12px" onclick="agentAsk('伴 X 隐性遗传\'母病子必病\'原理')">伴 X 隐性遗传'母病子必病'原理</button><button style="padding:6px 10px;border-radius:8px;border:1px solid #888;background:#fff;color:#333;cursor:pointer;font-size:12px" onclick="agentAsk('基因与 DNA 片段区别')">基因与 DNA 片段区别</button><button style="padding:6px 10px;border-radius:8px;border:1px solid #888;background:#fff;color:#333;cursor:pointer;font-size:12px" onclick="agentAsk('一道遗传系谱图题')">一道遗传系谱图题</button>
+    <button style="padding:6px 12px;border-radius:8px;border:1px solid #4a90d9;background:#4a90d9;color:#fff;cursor:pointer" onclick="agentAsk('')">问 万物生·生物专家团</button>
+  </div>
+  <textarea id="agent-q" placeholder="输入问题，匹配 万物生·生物专家团 本地题库..." style="width:100%;height:60px;padding:8px;border:1px solid #ccc;border-radius:8px;font-size:14px;box-sizing:border-box"></textarea>
+  <button style="margin-top:8px;padding:8px 16px;border-radius:8px;border:none;background:#2c8a3d;color:#fff;cursor:pointer;font-size:14px" onclick="agentAsk(document.getElementById('agent-q').value)">匹配本地题库</button>
+  <div id="agent-a" style="margin-top:12px;padding:12px;background:#fff;border-left:4px solid #2c8a3d;border-radius:6px;font-size:14px;min-height:40px;white-space:pre-wrap;color:#333">（等待回答）</div>
+  <script>
+  // 本地题库模式: 离线·零外链·无 key。在线(key 注入)待李老师定 key 策略后统一切, 此处 AGENT_MODE 为切换点。
+  var AGENT_MODE="local";
+  var AGENT_KB=(typeof window.AGENT_KB==="object"&&window.AGENT_KB)?window.AGENT_KB:[];
+  var LOCAL_TIPS=["遗传题先判显隐与染色体(常/性), 再逐个体核对表型。", "实验设对照(空白/相互); 结论要'现象+数据'双支撑。"];
+  function _kbTokens(q){
+    var t=[];
+    (q.toLowerCase().match(/[a-z0-9]+/g)||[]).forEach(function(x){t.push(x);});
+    q.replace(/[^\u4e00-\u9fff]/g,'').split('').forEach(function(c){t.push(c);});
+    return t;
+  }
+  function agentAsk(q){
+    if(!q)q=document.getElementById('agent-q').value;
+    if(!q){document.getElementById('agent-a').textContent='请输入问题';return;}
+    document.getElementById('agent-q').value=q;
+    var a=document.getElementById('agent-a');
+    var uniq=Array.from(new Set(_kbTokens(q)));
+    var hits=AGENT_KB.map(function(it){
+      var hay=((it.q||"")+" "+(it.a||"")).toLowerCase();
+      var n=uniq.filter(function(t){return hay.indexOf(t)>-1;}).length;
+      return {s:n,it:it};
+    }).filter(function(x){return x.s>=Math.min(uniq.length,2);}).sort(function(x,y){return y.s-x.s;}).slice(0,3);
+    if(hits.length){
+      a.textContent="\u{1F4D6} 本地题库 · 离线（万物生·生物专家团 本地条目）\n\n"+hits.map(function(h){return "Q: "+h.it.q+"\nA: "+h.it.a;}).join("\n\n")+"\n\n（在线 AI 问答待李老师定 key 策略后开通）";
+    } else {
+      a.textContent="\u26A0\uFE0F 本地题库模式（离线）：未匹配到本地条目。在线 AI 问答待李老师定 key 策略后开通。\n学习提示：\n- "+LOCAL_TIPS.join("\n- ")+"\n并见站内【题库/知识】模块。";
+    }
+  }
+  </script>
+</div>
+</body>
+</html>

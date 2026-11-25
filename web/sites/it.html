@@ -1,0 +1,391 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>码智君·信息科技专家团 — 全学段信息科技系统</title>
+<style>
+:root{--bg:#0f172a;--card:#1e293b;--ink:#e2e8f0;--accent:#38bdf8;--accent2:#22d3ee;--soft:#1e3a5f;--ok:#4ade80;--bad:#f87171;--line:#334155}
+*{margin:0;box-sizing:border-box}
+body{font-family:Consolas,"Microsoft YaHei",monospace,sans-serif;background:var(--bg);color:var(--ink);line-height:1.7}
+header{background:linear-gradient(120deg,#0f172a,#1e3a5f);color:#fff;padding:26px 30px}
+header h1{font-size:26px}
+header p{opacity:.9;font-size:14px;margin-top:6px}
+nav{display:flex;gap:8px;flex-wrap:wrap;padding:12px 30px;background:var(--card);border-bottom:1px solid var(--line);position:sticky;top:0;z-index:5}
+nav button{border:1px solid var(--line);background:#0f172a;color:#e2e8f0;padding:8px 14px;border-radius:8px;cursor:pointer;font-size:14px}
+nav button.on{background:var(--accent);color:#0f172a;border-color:var(--accent);font-weight:bold}
+section{display:none;padding:24px 30px;max-width:1000px;margin:0 auto}
+section.on{display:block}
+h2{color:var(--accent);margin:6px 0 14px;font-size:20px}
+.grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(220px,1fr));gap:12px}
+.card{background:var(--card);border:1px solid var(--line);border-radius:10px;padding:14px}
+.card h3{font-size:15px;color:var(--accent2);margin-bottom:6px}
+.card ul{padding-left:18px;font-size:14px}
+.btn{background:var(--accent);color:#0f172a;border:none;padding:8px 14px;border-radius:8px;cursor:pointer;font-size:14px;margin:4px;font-weight:bold}
+.btn.g{background:#0f172a;color:var(--accent2);border:1px solid var(--line)}
+textarea,input,select{padding:8px;border:1px solid var(--line);border-radius:8px;font-size:14px;background:#0f172a;color:#e2e8f0;width:100%}
+.out{margin-top:12px;padding:12px;background:var(--soft);border-radius:8px;min-height:40px;font-size:15px;white-space:pre-wrap}
+.tag{display:inline-block;background:var(--soft);color:var(--accent);padding:2px 8px;border-radius:20px;font-size:12px;margin:2px}
+.note{background:var(--soft);border-radius:8px;padding:12px;font-size:14px;margin:10px 0}
+.step{background:var(--card);border-left:4px solid var(--accent);padding:10px 14px;margin:8px 0;border-radius:6px;font-size:14px}
+.step b{color:var(--accent2)}
+table{border-collapse:collapse;width:100%;font-size:13px;margin:10px 0}
+th,td{border:1px solid var(--line);padding:6px 8px;text-align:left}
+th{background:var(--soft);color:var(--accent2)}
+footer{text-align:center;padding:20px;color:#64748b;font-size:13px;margin-top:30px;border-top:1px solid var(--line)}
+.qbank .q{margin-bottom:10px}
+.qbank select{width:auto;display:inline-block;margin:0 6px}
+.score{font-size:16px;color:var(--ok);font-weight:bold}
+.bit{display:inline-block;width:30px;height:30px;text-align:center;line-height:30px;border:1px solid var(--line);margin:2px;border-radius:4px;background:#0f172a}
+.bit.on{background:var(--accent);color:#0f172a;font-weight:bold}
+</style>
+</head>
+<body>
+<header>
+<h1>码智君 · 信息科技专家团</h1>
+<p>全学段信息科技系统 · 小学→高中→竞赛 · 计算思维/数据/编程 · 代码判读 · 伪代码 · 信息编码 · 建模思维 · 双击即用(离线单文件)</p>
+</header>
+<nav>
+<button class="on" data-t="know">知识体系</button>
+<button data-t="code">代码判读</button>
+<button data-t="pseudo">伪代码</button>
+<button data-t="bits">信息编码</button>
+<button data-t="algo">算法基础</button>
+<button data-t="model">建模思维</button>
+</nav>
+
+<section id="know" class="on">
+<h2>全学段知识体系</h2>
+<div class="note">按模块点卡片看考点; 编程用「代码判读」练, 信息学奥赛看「算法基础」, 建模思维看「建模思维」(五步法·全国首创线)。</div>
+<div class="grid" id="knowGrid"></div>
+</section>
+
+<section id="code">
+<h2>代码判读(看代码选输出)</h2>
+<p>当前: <span class="score" id="cScore">已答 0 对 0</span> / 共 <span id="cTotal">0</span> 题</p>
+<p><label>语言 <select id="cLang"><option value="ALL">全部</option><option>Python</option><option>C语言</option><option>算法</option><option>数组</option></select></label>
+<button class="btn" onclick="cNext()">下一题</button> <button class="btn g" onclick="cReset()">重置计分</button></p>
+<div id="cBox"></div>
+</section>
+
+<section id="pseudo">
+<h2>伪代码练习(输入求输出)</h2>
+<p>当前: 第 <span id="pIdx">1</span>/<span id="pTotal">6</span> 道</p>
+<p><button class="btn" onclick="pPrev()">‹上一道</button> <button class="btn g" onclick="pNext()">下一道›</button></p>
+<div class="card" id="pBox"></div>
+</section>
+
+<section id="bits">
+<h2>信息编码(进制 + 位运算 + 字符)</h2>
+<p>十进制 <input id="d" value="42" style="width:80px;display:inline-block"> → 二进制/八进制/十六进制 <button class="btn" onclick="toBin()">转换</button></p>
+<p style="margin-top:8px"><b>字符 ASCII</b> 数字 <input id="ci" value="A" style="width:50px;display:inline-block"> → <button class="btn" onclick="toAsc()">ASCII码</button></p>
+<div class="out" id="bOut"></div>
+
+<h3 style="margin-top:24px;color:var(--accent2)">位运算演示(8位)</h3>
+<p>输入两个 0~255 的数，看 与/或/非/异或 结果(二进制8位)：</p>
+<p>A <input id="ba" value="12" style="width:70px;display:inline-block"> B <input id="bb" value="10" style="width:70px;display:inline-block">
+<button class="btn" onclick="bitOp()">计算</button></p>
+<div id="bitOut"></div>
+
+<h3 style="margin-top:24px;color:var(--accent2)">高频 ASCII 对照表</h3>
+<table>
+<tr><th>字符</th><th>码点</th><th>字符</th><th>码点</th><th>字符</th><th>码点</th></tr>
+<tr><td>0</td><td>48</td><td>A</td><td>65</td><td>a</td><td>97</td></tr>
+<tr><td>9</td><td>57</td><td>Z</td><td>90</td><td>z</td><td>122</td></tr>
+<tr><td>空格</td><td>32</td><td>?</td><td>63</td><td>!</td><td>33</td></tr>
+</table>
+<div class="note">汉字编码线(概念): 区位码(区×94+位) → GB2312(双字节, 各+0xA0) → Unicode码点(U+4E2D=中) → UTF-8多字节。考"某汉字GB码"记住: 每个字节 = 区位+160。</div>
+</section>
+
+<section id="algo">
+<h2>算法基础(信息学奥赛高频)</h2>
+<div class="grid" id="aGrid"></div>
+<div class="note" id="algoEx"></div>
+</section>
+
+<section id="model">
+<h2>建模思维 · 五步法(全国首创线)</h2>
+<div class="note">用「设计校园图书借阅小程序」做样例: 问题→假设→建模→求解→验证。把建模思维(计算思维5维: 分解/抽象/模式/算法/自动)落进信息科技场景。</div>
+<div id="modelSteps"></div>
+<p style="margin-top:14px"><b>你的练习:</b> 换一个真实问题(如「班级值日排班」「食堂排队」), 按五步各写一句:</p>
+<p>①问题 <input id="m1" style="width:auto"><br>②假设 <input id="m2" style="width:auto" value="留空=待填"><br>③建模 <input id="m3" style="width:auto"><br>④求解 <input id="m4" style="width:auto"><br>⑤验证 <input id="m5" style="width:auto"></p>
+<button class="btn" onclick="modelCheck()">自检五步完整度</button>
+<div class="out" id="mOut"></div>
+</section>
+
+<footer>李彦明 15684394135 · 码智君·信息科技专家团 · 离线单文件 · 每日升级
+<div style="background:#fffbe6;border-left:4px solid #f5a623;padding:10px;margin:12px 0;font-size:14px">📅 2026-10-07 升级 · 代码判读 5→25 题 / 伪代码 1→6 道 / 信息编码加位运算+ASCII表 / 算法 4→8 卡 / 新增「建模思维」五步法 tab(全国首创线)</div>
+<div style="background:#fffbe6;border-left:4px solid #f5a623;padding:10px;margin:12px 0;font-size:14px">📅 2026-10-05 升级 · 【代码】递归求阶乘: fact(n)=n*fact(n-1), fact(0)=1 (必须写终止条件)</div>
+
+<div style="background:#fffbe6;border-left:4px solid #f5a623;padding:10px;margin:12px 0;font-size:14px">📅 2026-10-09 升级 · 【安全+2026-10-09】密码强度：长度>复杂度，加符号比纯字母数字更抗暴破</div>
+
+<div style="background:#fffbe6;border-left:4px solid #f5a623;padding:10px;margin:12px 0;font-size:14px">📅 2026-10-09 升级 · 【网络+2026-10-09】HTTP 状态码：200 成功 / 301 永久跳转 / 404 未找到 / 500 服务端错</div>
+
+<div style="background:#fffbe6;border-left:4px solid #f5a623;padding:10px;margin:12px 0;font-size:14px">📅 2026-10-09 升级 · 【概念+2026-10-09】程序=指令+数据+算法；算法三大基本结构：顺序/选择/循环</div>
+
+<div style="background:#fffbe6;border-left:4px solid #f5a623;padding:10px;margin:12px 0;font-size:14px">📅 2026-10-10 升级 · 【概念+2026-10-10】变量命名：见名知义+驼峰/下划线；禁中文空格和数字开头</div>
+
+<div style="background:#fffbe6;border-left:4px solid #f5a623;padding:10px;margin:12px 0;font-size:14px">📅 2026-10-11 升级 · 【存储+2026-10-11】文件按扩展名识别类型：.py 脚本 / .exe 可执行 / .dll 动态库</div>
+
+<div style="background:#fffbe6;border-left:4px solid #f5a623;padding:10px;margin:12px 0;font-size:14px">📅 2026-10-12 升级 · 【网络+2026-10-12】IP 地址分 A/B/C 段，C 段(192-223开头)最常用；路由器做 NAT</div>
+
+<div style="background:#fffbe6;border-left:4px solid #f5a623;padding:10px;margin:12px 0;font-size:14px">📅 2026-10-13 升级 · 【算法+2026-10-13】二分查找前提=有序，时间复杂度 O(logn)，1000个数至多约10步</div>
+
+<div style="background:#fffbe6;border-left:4px solid #f5a623;padding:10px;margin:12px 0;font-size:14px">📅 2026-10-14 升级 · 【代码+2026-10-14】for 循环 vs while：次数已知用 for，条件驱动用 while</div>
+
+<div style="background:#fffbe6;border-left:4px solid #f5a623;padding:10px;margin:12px 0;font-size:14px">📅 2026-10-15 升级 · 【递归+2026-10-15】递归三要素：基准情形/递归调用/子问题与原问题同构</div>
+
+<div style="background:#fffbe6;border-left:4px solid #f5a623;padding:10px;margin:12px 0;font-size:14px">📅 2026-10-16 升级 · 【算法+2026-10-16】冒泡 O(n²)；快排平均 O(n·logn)，最好情况退化 O(n²)</div>
+
+<div style="background:#fffbe6;border-left:4px solid #f5a623;padding:10px;margin:12px 0;font-size:14px">📅 2026-10-17 升级 · 【进制+2026-10-17】二进制 1010₂=10₁₀；1 字节=8 位，1KB=1024B</div>
+
+<div style="background:#fffbe6;border-left:4px solid #f5a623;padding:10px;margin:12px 0;font-size:14px">📅 2026-10-18 升级 · 【HTML+2026-10-18】<div>块级独占一行；<span>行内不独占，样式常配 class</div>
+
+<div style="background:#fffbe6;border-left:4px solid #f5a623;padding:10px;margin:12px 0;font-size:14px">📅 2026-10-20 升级 · 【概念+2026-10-20】算法=解决问题的有限步骤；特性：有穷性/确定性/可行性/输出</div>
+
+<div style="background:#fffbe6;border-left:4px solid #f5a623;padding:10px;margin:12px 0;font-size:14px">📅 2026-10-21 升级 · 【存储+2026-10-21】栈先进后出(LIFO)队列先进先出(FIFO)；树表图是基本数据结构</div>
+
+<div style="background:#fffbe6;border-left:4px solid #f5a623;padding:10px;margin:12px 0;font-size:14px">📅 2026-10-22 升级 · 【网络+2026-10-22】双绞线(有线)/Wi-Fi(无线)；局域网内数据经交换机/路由器转发</div>
+
+<div style="background:#fffbe6;border-left:4px solid #f5a623;padding:10px;margin:12px 0;font-size:14px">📅 2026-10-23 升级 · 【安全+2026-10-23】计算机病毒=恶意程序可自我复制；木马=伪装正常程序骗用户</div>
+
+<div style="background:#fffbe6;border-left:4px solid #f5a623;padding:10px;margin:12px 0;font-size:14px">📅 2026-10-24 升级 · 【开发+2026-10-24】算法设计：先明确输入输出，再画流程图，最后写代码验证</div>
+
+<div style="background:#fffbe6;border-left:4px solid #f5a623;padding:10px;margin:12px 0;font-size:14px">📅 2026-10-25 升级 · 【网络+2026-10-25】域名系统 DNS 把域名转成 IP；www=万维网是服务不是网络</div>
+
+<div style="background:#fffbe6;border-left:4px solid #f5a623;padding:10px;margin:12px 0;font-size:14px">📅 2026-10-26 升级 · 【数据+2026-10-26】数据=数字/文字/图像/声音/视频；大数据 4 特点=量大/多样/高速/价值密度低</div>
+
+<div style="background:#fffbe6;border-left:4px solid #f5a623;padding:10px;margin:12px 0;font-size:14px">📅 2026-10-27 升级 · 【编程+2026-10-27】异常处理 try-except：捕获错误不崩溃；break 跳出循环</div>
+
+<div style="background:#fffbe6;border-left:4px solid #f5a623;padding:10px;margin:12px 0;font-size:14px">📅 2026-11-02 升级 · 【存储+2026-11-02】内存(RAM)断电丢失，硬盘(ROM/U 盘等)断电不丢；缓存速度最快</div>
+
+<div style="background:#fffbe6;border-left:4px solid #f5a623;padding:10px;margin:12px 0;font-size:14px">📅 2026-11-03 升级 · 【网络+2026-11-03】路由器拨号给 IP；WiFi 密码加密(WPA2)防窃听</div>
+
+<div style="background:#fffbe6;border-left:4px solid #f5a623;padding:10px;margin:12px 0;font-size:14px">📅 2026-11-06 升级 · 【数据+2026-11-06】SQL：SELECT...WHERE...ORDER BY；主键唯一非空，外键保参照完整</div>
+
+<div style="background:#fffbe6;border-left:4px solid #f5a623;padding:10px;margin:12px 0;font-size:14px">📅 2026-11-12 升级 · 【编程+2026-11-12】列表推导 [x*2 for x in lst if x>0]；嵌套过深可读性差</div>
+
+<div style="background:#fffbe6;border-left:4px solid #f5a623;padding:10px;margin:12px 0;font-size:14px">📅 2026-11-12 升级 · 【网络+2026-11-12】TCP 三次握手 SYN→SYN+ACK→ACK；四次挥手断开</div>
+
+<div style="background:#fffbe6;border-left:4px solid #f5a623;padding:10px;margin:12px 0;font-size:14px">📅 2026-11-13 升级 · 【安全+2026-11-13】对称加密(AES)快、非对称(RSA)慢；HTTPS=TLS+证书</div>
+
+<div style="background:#fffbe6;border-left:4px solid #f5a623;padding:10px;margin:12px 0;font-size:14px">📅 2026-11-14 升级 · 【算法+2026-11-14】动态规划：重叠子问题+最优子结构；自上而下记忆化 vs 自下而上填表</div>
+
+<div style="background:#fffbe6;border-left:4px solid #f5a623;padding:10px;margin:12px 0;font-size:14px">📅 2026-11-15 升级 · 【编程+2026-11-15】深拷贝 copy.deepcopy vs 浅拷贝 copy(嵌套对象仍共享)</div>
+
+<div style="background:#fffbe6;border-left:4px solid #f5a623;padding:10px;margin:12px 0;font-size:14px">📅 2026-11-16 升级 · 【网页+2026-11-16】前端三件套 HTML 结构/CSS 样式/JS 行为；响应式用媒体查询</div>
+
+<div style="background:#fffbe6;border-left:4px solid #f5a623;padding:10px;margin:12px 0;font-size:14px">📅 2026-11-17 升级 · 【数据+2026-11-17】24 位真彩色=RGB 各 8 位，1 像素 3 字节</div>
+
+<div style="background:#fffbe6;border-left:4px solid #f5a623;padding:10px;margin:12px 0;font-size:14px">📅 2026-11-18 升级 · 【网络+2026-11-18】无线 AP(接入点)把局域网接 Wi-Fi；上行路由取公网 IP</div>
+
+<div style="background:#fffbe6;border-left:4px solid #f5a623;padding:10px;margin:12px 0;font-size:14px">📅 2026-11-19 升级 · 【安全+2026-11-19】钓鱼=仿冒页骗账号；双因素(短信/验证器)防单密码泄露</div>
+
+<div style="background:#fffbe6;border-left:4px solid #f5a623;padding:10px;margin:12px 0;font-size:14px">📅 2026-11-20 升级 · 【算法+2026-11-20】贪心法：每步局部最优(找零)；不总全局最优需证明</div>
+
+<div style="background:#fffbe6;border-left:4px solid #f5a623;padding:10px;margin:12px 0;font-size:14px">📅 2026-11-21 升级 · 【编程+2026-11-21】函数作参数：传函数名不带()；map/filter/sorted(key=) 高阶函数</div>
+
+<div style="background:#fffbe6;border-left:4px solid #f5a623;padding:10px;margin:12px 0;font-size:14px">📅 2026-11-22 升级 · 【存储+2026-11-22】SSD 无机械件快但写寿命有限；HDD 大容量便宜</div>
+
+<div style="background:#fffbe6;border-left:4px solid #f5a623;padding:10px;margin:12px 0;font-size:14px">📅 2026-11-23 升级 · 【网络+2026-11-23】HTTP(80 明文) vs HTTPS(443 加密 TLS)</div>
+
+<div style="background:#fffbe6;border-left:4px solid #f5a623;padding:10px;margin:12px 0;font-size:14px">📅 2026-11-24 升级 · 【代码+2026-11-24】斐波那契 fib(n)=fib(n-1)+fib(n-2)：朴素递归 O(2ⁿ) 大量重复算，记忆化/迭代可降到 O(n)</div>
+
+<div style="background:#fffbe6;border-left:4px solid #f5a623;padding:10px;margin:12px 0;font-size:14px">📅 2026-11-25 升级 · 【代码+2026-11-25】f-string f"{x:.2f}" 控制两位小数；Python round() 是银行家舍入(0.5 舍到偶数): round(2.5)=2</div>
+</footer>
+
+<script>
+document.querySelectorAll("nav button").forEach(b=>b.onclick=()=>{
+  document.querySelectorAll("nav button").forEach(x=>x.classList.remove("on"));
+  document.querySelectorAll("section").forEach(x=>x.classList.remove("on"));
+  b.classList.add("on");document.getElementById(b.dataset.t).classList.add("on");
+});
+const K=[
+ ["小学","计算机组成 · 信息获取与处理 · 简单程序体验 · 网络常识 · 数字安全"],
+ ["初中","算法与程序设计(顺序/分支/循环) · 数据与数据结构 · 过程与方法 · 网络与信息安全"],
+ ["高中","编程基础(函数/模块) · 数据结构(栈队列树图) · 算法(排序/查找/递归) · 数据模型 · 人工智能初探"],
+ ["信息学奥赛(NOIP)","C++ 基础 · 动态规划 · 图论 · 数论 · 字符串 · 数据结构(线段树)"],
+];
+document.getElementById("knowGrid").innerHTML=K.map(s=>`<div class="card"><h3>${s[0]}</h3><ul>${s[1].split(" · ").map(x=>`<li>${x}</li>`).join("")}</ul></div>`).join("");
+
+/* ===== 代码判读: 25 题 ===== */
+const CODE=[
+ ["Python","for i in range(1,4): print(i, end=' ') 输出?","1 2 3","循环·range左闭右开"],
+ ["Python","s='abc'; s=s.upper() 后 s==?","ABC","字符串不可变, 重赋值"],
+ ["Python","[1,2,3][::-1] 输出?","[3, 2, 1]","切片·步长-1反转"],
+ ["Python","f=lambda x: x*2; print(f(5)) 输出?","10","lambda匿名函数"],
+ ["Python","print(3 in [1,2,3]) 输出?","True","成员运算符"],
+ ["Python","for i in range(1,5,2): print(i) 输出?","1 3","range(start,stop,step)"],
+ ["C语言","a=3; b=5; c=a+b*2; 输出 c = ?","13","运算符优先级: 先乘后加"],
+ ["C语言","int x=7; x+=2; 输出 x","9","复合赋值 x+=2 等价 x=x+2"],
+ ["C语言","printf(\"%d\\n\", 5%2); 输出?","1","取模: 5除2余1"],
+ ["C语言","for(i=0;i<3;i++) 循环体执行几次?","3 次(i=0,1,2)","循环边界"],
+ ["C语言","char c='A'+5; 输出 c?","F","字符码: 65+5=70='F'"],
+ ["C语言","if(0) A(); else B(); 执行?","B()","0为假, 走else分支"],
+ ["C语言","a=1; a&&=0; 输出 a","0","短路与: a&&=0 等价 a=a&&0=0"],
+ ["算法","冒泡排序 5 个元素, 最坏比较次数?","10 次(C(5,2))","冒泡 O(n²/2)"],
+ ["算法","快排平均时间复杂度?","O(n log n)","快排基准·分区"],
+ ["算法","堆排序最坏?","O(n log n)","堆·建堆O(n)+调整"],
+ ["算法","归并排序空间复杂度?","O(n)","需临时数组合并"],
+ ["算法","Dijkstra 不能处理?","负权边","非负权最短路·贪心"],
+ ["算法","BFS 适合求什么?","无权图最短路(层数)","队列·广度优先"],
+ ["数组","a[0]=0, a[i]=a[i-1]+i, a[3]=?","6 (0+1+2+3)","前缀和递推"],
+ ["数组","数组长度 5, 下标范围?","0~4","下标从0开始"],
+ ["数组","二维 a[2][3] 共有多少元素?","6","行×列"],
+ ["数组","栈的特点是?","后进先出(LIFO)","栈·push/pop"],
+ ["数组","队列的特点是?","先进先出(FIFO)","队列·入队出队"],
+ ["算法","哈希表平均查找复杂度?","O(1)","哈希·均摊常数"]
+ ];
+let cs=0,cf=0,ci=0;
+function cNext(){
+  const lang=document.getElementById("cLang").value;
+  const pool=CODE.map((x,i)=>i).filter(i=>lang==="ALL"||CODE[i][0]===lang);
+  ci=pool.length?pool[Math.floor(Math.random()*pool.length)]:0;
+  const it=CODE[ci];
+  document.getElementById("cTotal").textContent=CODE.length;
+  document.getElementById("cScore").textContent=`已答 ${cs+cf} 对 ${cs}`;
+  document.getElementById("cBox").innerHTML=`<div class="card q"><span class="tag">${it[0]}</span><span class="tag" style="background:#0f172a;color:var(--ok)">考点: ${it[3]}</span>
+  <h3 style="margin-top:6px">${it[1]}</h3>
+  你的答案: <input id="cAns" placeholder="输入答案" style="width:auto">
+  <button class="btn" onclick="cJudge()">判一下</button> <button class="btn g" onclick="cShow()">看答案</button>
+  <div class="out" id="cFb" style="min-height:20px"></div></div>`;
+}
+function cJudge(){
+  const it=CODE[ci], you=(document.getElementById("cAns").value||"").trim();
+  const ans=it[2];
+  const ok=you.length&&(you===ans||ans.includes(you)&&you.includes(ans[0]));
+  const fb=document.getElementById("cFb");
+  cf++;
+  if(ok){cs++;fb.innerHTML=`<span style="color:var(--ok)">✔ 答对了!</span> 考点: ${it[3]}`;}
+  else fb.innerHTML=`✘ 不对。正确答案: <b>${ans}</b><br>考点: ${it[3]}`;
+  document.getElementById("cScore").textContent=`已答 ${cs+cf} 对 ${cs}`;
+}
+function cShow(){
+  const it=CODE[ci];cf++;
+  document.getElementById("cFb").innerHTML=`答案: <b>${it[2]}</b><br>考点: ${it[3]}`;
+  document.getElementById("cScore").textContent=`已答 ${cs+cf} 对 ${cs}`;
+}
+function cReset(){cs=0;cf=0;document.getElementById("cScore").textContent="已答 0 对 0";cNext();}
+cNext();
+
+/* ===== 伪代码: 6 道 ===== */
+const PSEUDO=[
+ {t:"求 1..n 的和",code:"s = 0\nfor i = 1 to n:\n    s = s + i\nprint(s)",inp:"n=100",run:n=>{let s=0;for(let i=1;i<=n;i++)s+=i;return s;}},
+ {t:"冒泡排序(升序)",code:"arr = [5,2,9,1]\nfor i = 0 to len-1:\n  for j = 0 to len-i-2:\n    if arr[j]>arr[j+1]: 交换\nprint(arr)",inp:"固定数组",run:()=>{const a=[5,2,9,1];for(let i=0;i<a.length;i++)for(let j=0;j<a.length-i-1;j++)if(a[j]>a[j+1])[a[j],a[j+1]]=[a[j+1],a[j]];return a.join(",");}},
+ {t:"求最大公约数 GCD",code:"function gcd(a,b):\n  while b!=0:\n    (a,b) = (b, a%b)\n  return a",inp:"a=12, b=8",run:()=>{let a=12,b=8;while(b!==0){[a,b]=[b,a%b];}return a;}},
+ {t:"数组反转",code:"arr=[1,2,3,4,5]\nfor i=0 to len/2-1:\n  交换 arr[i] 与 arr[末-i]\nprint(arr)",inp:"固定数组",run:()=>[1,2,3,4,5].reverse().join(",")},
+ {t:"斐波那契第n项",code:"f(0)=0; f(1)=1\nfor i=2 to n:\n  f(i)=f(i-1)+f(i-2)\nprint(f(n))",inp:"n=10",run:()=>{let a=0,b=1;for(let i=0;i<10;i++){[a,b]=[b,a+b];}return a;}},
+ {t:"递归求阶乘",code:"function fact(n):\n  if n==0: return 1\n  return n * fact(n-1)",inp:"n=5",run:()=>{let r=1;for(let i=2;i<=5;i++)r*=i;return r;}}
+];
+let pI=0;
+function pRender(){
+  document.getElementById("pIdx").textContent=pI+1;
+  document.getElementById("pTotal").textContent=PSEUDO.length;
+  const p=PSEUDO[pI];
+  document.getElementById("pBox").innerHTML=`<h3>程序: ${p.t}</h3>
+  <pre style="background:#0f172a;padding:10px;border-radius:6px;font-size:14px">${p.code}</pre>
+  输入: <b>${p.inp}</b> <button class="btn" onclick="pRun()">运行求输出</button>
+  <div class="out" id="pOut"></div>`;
+}
+function pRun(){document.getElementById("pOut").textContent="输出: "+PSEUDO[pI].run();}
+function pNext(){pI=(pI+1)%PSEUDO.length;pRender();}
+function pPrev(){pI=(pI-1+PSEUDO.length)%PSEUDO.length;pRender();}
+pRender();
+
+/* ===== 信息编码 ===== */
+function toBin(){
+  const d=parseInt(document.getElementById("d").value)||0;
+  document.getElementById("bOut").textContent=`十进制 ${d} →\n二进制 ${d.toString(2)}\n八进制 ${d.toString(8)}\n十六进制 ${d.toString(16).toUpperCase()}`;
+}
+function toAsc(){
+  const c=document.getElementById("ci").value.trim().charAt(0)||"A";
+  document.getElementById("bOut").textContent=`字符 '${c}' 的 ASCII 码 = ${c.charCodeAt(0)}`;
+}
+function bitOp(){
+  const a=parseInt(document.getElementById("ba").value)||0,b=parseInt(document.getElementById("bb").value)||0;
+  const show=(x,label)=>`<div style="margin:4px 0"><span style="display:inline-block;width:80px">${label}(${x})</span> ${x.toString(2).padStart(8,"0").split("").map(x=>`<span class="bit${x==="1"?" on":""}">${x}</span>`).join("")}</div>`;
+  document.getElementById("bitOut").innerHTML=show(a,"A")+show(b,"B")+show(a&b,"A&B")+show(a|b,"A|B")+show(a^b,"A^B")+show(~a&255,"~A");
+}
+
+/* ===== 算法基础: 8 卡 ===== */
+const AL=[
+ ["排序","冒泡 O(n²) · 快排 O(nlogn) · 归并(稳定) · 堆排(原地)"],
+ ["查找","顺序 O(n) · 二分(有序,O(logn)) · 哈希 O(1) · 跳表"],
+ ["递归与DP","斐波那契 · 背包 · LCS · 状态转移方程"],
+ ["图论","BFS/DFS · Dijkstra(非负权) · 并查集 · 拓扑排序"],
+ ["动态规划入门","dp[i]最优子结构 · 填表/记忆化 · 例题:爬楼梯/零钱兑换"],
+ ["贪心","局部最优→全局(需证明) · 例题:分数背包/区间调度"],
+ ["字符串","KMP(前缀函数) · 串匹配 · 哈希判重"],
+ ["复杂度分析","O(1)常数 · O(logn)二分 · O(nlogn)快排 · O(n²)冒泡 · 最好/最坏/平均"]
+];
+document.getElementById("aGrid").innerHTML=AL.map(f=>`<div class="card" onclick="algoEx('${f[0]}')"><h3>${f[0]}</h3><ul>${f[1].split(" · ").map(x=>`<li>${x}</li>`).join("")}</ul></div>`).join("");
+function algoEx(name){
+  const EX={
+  "动态规划入门":"例题: 零钱兑换 coins=[1,2,5], 凑 11 最少几枚? dp[i]=min(dp[i-c]+1) → dp[11]=3 (5+5+1)。关键: 最优子结构+重叠子问题。",
+  "贪心":"例题: 分数背包 按单位价值降序装 → 贪心成立因可分割。区间调度: 每次选结束最早 → 最多不重叠区间。",
+  "复杂度分析":"O记法看最高阶: 双重循环O(n²); 二分每次折半O(logn); 快排平均O(nlogn)最坏O(n²)(已有序数组+固定首元素)。",
+  };
+  document.getElementById("algoEx").innerHTML=EX[name]?"<b>"+name+" 最小例题:</b> "+EX[name]:"点其他卡片看最小例题(动态规划/贪心/复杂度已配)";
+}
+
+/* ===== 建模思维五步法 ===== */
+const MS=[
+ ["① 问题","把「校园图书借阅」拆成: 谁借(学生/教师)? 借什么(书/期刊)? 规则(限10本?30天)? 痛点(书去哪了/到期没还)?"],
+ ["② 假设","设定: 每生限借10本, 30天归还, 逾期每天罚0.1元, 馆藏书量不变, 不做预约。——写清假设才能建模。"],
+ ["③ 建模","实体: 读者/书/借阅记录。关系: 1读者:N书:N借阅。状态: 在馆/借出/逾期/归还。用表+规则描述(这是信息系统的E-R雏形)。"],
+ ["④ 求解","功能模块: 借书(扣库存+写记录) · 还书(销记录+算逾期费) · 查询(按人/按书)。伪代码: 借书() { 校验限10本 → 库存-1 → 插入记录 }。"],
+ ["⑤ 验证","测边界: 第11本被拒? 逾期31天罚1.1元? 同一本书被2人同时借→库存0第3人报错? 回归: 借还各10次数据一致?"]
+];
+document.getElementById("modelSteps").innerHTML=MS.map(x=>`<div class="step"><b>${x[0]}</b> ${x[1]}</div>`).join("");
+function modelCheck(){
+  const vals=[1,2,3,4,5].map(i=>document.getElementById("m"+i).value.trim());
+  const full=vals.filter(v=>v&&v!=="留空=待填").length;
+  let score=Math.round(full/5*100);
+  let fb=`五步完成 ${full}/5 → 完成度 ${score}%`;
+  if(full<3)fb+=" — 薄弱: 至少写清问题与假设(建模的地基)";
+  else if(full<5)fb+=" — 还差"+(5-full)+"步, 补上「建模/求解/验证」";
+  else fb+=" — 五步齐全! 这是合格的建模思维完整链路 ✓";
+  document.getElementById("mOut").textContent=fb;
+}
+</script>
+
+<div id="agent-panel" style="margin:20px auto;max-width:720px;border:2px solid #4a90d9;border-radius:12px;padding:16px;background:#f7fbff;font-family:system-ui">
+  <h3 style="margin:0 0 8px;color:#2c5d8f">🤖 码智君·信息科技专家团 · 智能体问答（本地题库模式）</h3>
+  <p style="font-size:13px;color:#555;margin:0 0 10px">本地题库模式（离线·零外链）：关键词匹配本站本地题库作答。在线 AI 问答待李老师定 key 策略后统一开通。</p>
+  <div style="display:flex;flex-wrap:wrap;gap:8px;margin-bottom:10px"><button style="padding:6px 10px;border-radius:8px;border:1px solid #888;background:#fff;color:#333;cursor:pointer;font-size:12px" onclick="agentAsk('递归求阶乘代码+终止条件')">递归求阶乘代码+终止条件</button><button style="padding:6px 10px;border-radius:8px;border:1px solid #888;background:#fff;color:#333;cursor:pointer;font-size:12px" onclick="agentAsk('二进制/十六进制互转')">二进制/十六进制互转</button><button style="padding:6px 10px;border-radius:8px;border:1px solid #888;background:#fff;color:#333;cursor:pointer;font-size:12px" onclick="agentAsk('一道信息科技编程题')">一道信息科技编程题</button>
+    <button style="padding:6px 12px;border-radius:8px;border:1px solid #4a90d9;background:#4a90d9;color:#fff;cursor:pointer" onclick="agentAsk('')">问 码智君·信息科技专家团</button>
+  </div>
+  <textarea id="agent-q" placeholder="输入问题，匹配 码智君·信息科技专家团 本地题库..." style="width:100%;height:60px;padding:8px;border:1px solid #ccc;border-radius:8px;font-size:14px;box-sizing:border-box"></textarea>
+  <button style="margin-top:8px;padding:8px 16px;border-radius:8px;border:none;background:#2c8a3d;color:#fff;cursor:pointer;font-size:14px" onclick="agentAsk(document.getElementById('agent-q').value)">匹配本地题库</button>
+  <div id="agent-a" style="margin-top:12px;padding:12px;background:#fff;border-left:4px solid #2c8a3d;border-radius:6px;font-size:14px;min-height:40px;white-space:pre-wrap;color:#333">（等待回答）</div>
+  <script>
+  // 本地题库模式: 离线·零外链·无 key。在线(key 注入)待李老师定 key 策略后统一切, 此处 AGENT_MODE 为切换点。
+  var AGENT_MODE="local";
+  var AGENT_KB=(typeof window.AGENT_KB==="object"&&window.AGENT_KB)?window.AGENT_KB:[];
+  var LOCAL_TIPS=["编程先写伪代码(大白话算法)再翻译; 查终止条件与 0/1/空边界。", "数据结构先估时间复杂度再选; 用极小例子手算验证。"];
+  function _kbTokens(q){
+    var t=[];
+    (q.toLowerCase().match(/[a-z0-9]+/g)||[]).forEach(function(x){t.push(x);});
+    q.replace(/[^\u4e00-\u9fff]/g,'').split('').forEach(function(c){t.push(c);});
+    return t;
+  }
+  function agentAsk(q){
+    if(!q)q=document.getElementById('agent-q').value;
+    if(!q){document.getElementById('agent-a').textContent='请输入问题';return;}
+    document.getElementById('agent-q').value=q;
+    var a=document.getElementById('agent-a');
+    var uniq=Array.from(new Set(_kbTokens(q)));
+    var hits=AGENT_KB.map(function(it){
+      var hay=((it.q||"")+" "+(it.a||"")).toLowerCase();
+      var n=uniq.filter(function(t){return hay.indexOf(t)>-1;}).length;
+      return {s:n,it:it};
+    }).filter(function(x){return x.s>=Math.min(uniq.length,2);}).sort(function(x,y){return y.s-x.s;}).slice(0,3);
+    if(hits.length){
+      a.textContent="\u{1F4D6} 本地题库 · 离线（码智君·信息科技专家团 本地条目）\n\n"+hits.map(function(h){return "Q: "+h.it.q+"\nA: "+h.it.a;}).join("\n\n")+"\n\n（在线 AI 问答待李老师定 key 策略后开通）";
+    } else {
+      a.textContent="\u26A0\uFE0F 本地题库模式（离线）：未匹配到本地条目。在线 AI 问答待李老师定 key 策略后开通。\n学习提示：\n- "+LOCAL_TIPS.join("\n- ")+"\n并见站内【题库/知识】模块。";
+    }
+  }
+  </script>
+</div>
+</body></html>

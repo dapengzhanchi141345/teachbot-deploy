@@ -1,0 +1,302 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>炼金士·化学专家团 — 全学段化学系统</title>
+<style>
+:root{--bg:#f6faf6;--card:#fff;--ink:#1f3a2b;--accent:#1a7a4a;--accent2:#3fa35f;--soft:#e3f2e8;--ok:#16a34a;--bad:#dc2626;--line:#d5e6dc}
+*{margin:0;box-sizing:border-box}
+body{font-family:"Segoe UI","Microsoft YaHei",sans-serif;background:var(--bg);color:var(--ink);line-height:1.7}
+header{background:linear-gradient(120deg,#0f5132,#3fa35f);color:#fff;padding:26px 30px}
+header h1{font-size:26px}
+header p{opacity:.9;font-size:14px;margin-top:6px}
+nav{display:flex;gap:8px;flex-wrap:wrap;padding:12px 30px;background:var(--card);border-bottom:1px solid var(--line);position:sticky;top:0;z-index:5}
+nav button{border:1px solid var(--line);background:#fff;padding:8px 14px;border-radius:8px;cursor:pointer;font-size:14px}
+nav button.on{background:var(--accent);color:#fff;border-color:var(--accent)}
+section{display:none;padding:24px 30px;max-width:1000px;margin:0 auto}
+section.on{display:block}
+h2{color:var(--accent);margin:6px 0 14px;font-size:20px}
+.grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(220px,1fr));gap:12px}
+.card{background:var(--card);border:1px solid var(--line);border-radius:10px;padding:14px}
+.card h3{font-size:15px;color:var(--accent2);margin-bottom:6px}
+.card ul{padding-left:18px;font-size:14px}
+.btn{background:var(--accent);color:#fff;border:none;padding:8px 14px;border-radius:8px;cursor:pointer;font-size:14px;margin:4px}
+input,select{padding:8px;border:1px solid var(--line);border-radius:8px;font-size:14px}
+.out{margin-top:12px;padding:12px;background:var(--soft);border-radius:8px;min-height:40px;font-size:15px}
+.tag{display:inline-block;background:var(--soft);color:var(--accent);padding:2px 8px;border-radius:20px;font-size:12px;margin:2px}
+.note{background:#fff7e6;border:1px solid #ffd580;border-radius:8px;padding:12px;font-size:14px;margin:10px 0}
+footer{text-align:center;padding:20px;color:#888;font-size:13px;margin-top:30px;border-top:1px solid var(--line)}
+table{border-collapse:collapse;width:100%;background:#fff;font-size:14px;margin:10px 0}
+th,td{border:1px solid var(--line);padding:6px 8px;text-align:left}
+th{background:var(--soft)}
+</style>
+</head>
+<body>
+<header>
+<h1>炼金士 · 化学专家团</h1>
+<p>全学段化学系统 · 初中→高中 · 无机/有机/实验/计算 · 元素周期表 · 方程式配平 · 摩尔计算 · 双击即用(离线单文件)</p>
+</header>
+<nav>
+<button class="on" data-t="know">知识体系</button>
+<button data-t="eq">方程式配平</button>
+<button data-t="mole">摩尔计算</button>
+<button data-t="exp">实验探究</button>
+<button data-t="table">元素速查</button>
+</nav>
+
+<section id="know" class="on">
+<h2>全学段知识体系</h2>
+<div class="note">按模块点卡片看核心考点; 化学计算用「摩尔计算」, 方程式用「配平」。</div>
+<div class="grid" id="knowGrid"></div>
+</section>
+
+<section id="eq">
+<h2>化学方程式配平(点击检查系数)</h2>
+<p>输入各物质前系数, 点「检查」看是否配平(按原子守恒判)。</p>
+<div class="card">
+<h3>示例: a C₃H₈ + b O₂ → c CO₂ + d H₂O</h3>
+C₃H₈系数 <input id="a1" value="1" style="width:50px"> O₂系数 <input id="a2" value="5" style="width:50px">
+CO₂系数 <input id="a3" value="3" style="width:50px"> H₂O系数 <input id="a4" value="4" style="width:50px">
+<button class="btn" onclick="checkEq()">检查配平</button>
+<div class="out" id="eqOut"></div>
+</div>
+</section>
+
+<section id="mole">
+<h2>摩尔计算(三大守恒)</h2>
+<p>已知 <select id="mType"><option value="nM">物质的量(n)</option><option value="M">摩尔质量(M)</option><option value="N">微粒数(N)</option></select>
+值 <input id="mV" value="1" style="width:70px"> 求 <select id="mWant"><option value="M">质量(m)</option><option value="N">微粒数(N)</option><option value="V">气体体积(标准状况)</option><option value="n">物质的量(n)</option></select>
+<input id="mM" value="44" placeholder="摩尔质量(如CO₂=44)" style="width:100px"> <button class="btn" onclick="calcMole()">计算</button>
+<div class="out" id="mOut"></div>
+</section>
+
+<section id="exp">
+<h2>实验探究(高频实验)</h2>
+<div class="grid" id="eGrid"></div>
+</section>
+
+<section id="table">
+<h2>元素速查(常用)</h2>
+<div class="grid" id="tGrid"></div>
+</section>
+
+<footer>李彦明 15684394135 · 炼金士·化学专家团 · 离线单文件 · 每日升级
+<div style="background:#fffbe6;border-left:4px solid #f5a623;padding:10px;margin:12px 0;font-size:14px">📅 2026-10-05 升级 · 【配平+2026-10-05】4 P + 5 O₂ → 2 P₂O₅ (磷燃烧, 固体+气体=固体)</div>
+
+<div style="background:#fffbe6;border-left:4px solid #f5a623;padding:10px;margin:12px 0;font-size:14px">📅 2026-10-09 升级 · 【实验+2026-10-09】容量瓶不能加热、不能装热溶液、不能用来配非本规格体积</div>
+
+<div style="background:#fffbe6;border-left:4px solid #f5a623;padding:10px;margin:12px 0;font-size:14px">📅 2026-10-09 升级 · 【分解+2026-10-09】2NaHCO₃ =△= Na₂CO₃ + H₂O + CO₂↑ (受热分解)</div>
+
+<div style="background:#fffbe6;border-left:4px solid #f5a623;padding:10px;margin:12px 0;font-size:14px">📅 2026-10-09 升级 · 【氧化+2026-10-09】氧化剂得电子被还原→还原产物；歧化：Cl₂+2NaOH=NaCl+NaClO+H₂O</div>
+
+<div style="background:#fffbe6;border-left:4px solid #f5a623;padding:10px;margin:12px 0;font-size:14px">📅 2026-10-10 升级 · 【pH+2026-10-10】常温 0.01mol/L HCl 的 pH=2；同浓度弱酸 pH 比强酸大</div>
+
+<div style="background:#fffbe6;border-left:4px solid #f5a623;padding:10px;margin:12px 0;font-size:14px">📅 2026-10-11 升级 · 【计算+2026-10-11】质量分数 w=m(溶质)/m(溶液)；物质的量浓度 c=n/V(升)</div>
+
+<div style="background:#fffbe6;border-left:4px solid #f5a623;padding:10px;margin:12px 0;font-size:14px">📅 2026-10-12 升级 · 【鉴别+2026-10-12】CO₂ 与 SO₂ 都能使石灰水变浑→改用 KMnO₄，褪色的是 SO₂</div>
+
+<div style="background:#fffbe6;border-left:4px solid #f5a623;padding:10px;margin:12px 0;font-size:14px">📅 2026-10-13 升级 · 【反应+2026-10-13】2Al + 2NaOH + 2H₂O = 2NaAlO₂ + 3H₂↑ (铝与强碱)</div>
+
+<div style="background:#fffbe6;border-left:4px solid #f5a623;padding:10px;margin:12px 0;font-size:14px">📅 2026-10-14 升级 · 【配平+2026-10-14】3Fe + 4H₂O(气) =高温= Fe₃O₄ + 4H₂ (铁与水蒸气)</div>
+
+<div style="background:#fffbe6;border-left:4px solid #f5a623;padding:10px;margin:12px 0;font-size:14px">📅 2026-10-15 升级 · 【共存+2026-10-15】OH⁻ 与 NH₄⁺ 反应生成 NH₃·H₂O，不能大量共存</div>
+
+<div style="background:#fffbe6;border-left:4px solid #f5a623;padding:10px;margin:12px 0;font-size:14px">📅 2026-10-16 升级 · 【反应+2026-10-16】2H₂O₂ =MnO₂= 2H₂O + O₂↑ (过氧化氢分解制氧)</div>
+
+<div style="background:#fffbe6;border-left:4px solid #f5a623;padding:10px;margin:12px 0;font-size:14px">📅 2026-10-17 升级 · 【性质+2026-10-17】SO₂ 漂白(化合、可逆)且强还原，可使酸性 KMnO₄ 褪色</div>
+
+<div style="background:#fffbe6;border-left:4px solid #f5a623;padding:10px;margin:12px 0;font-size:14px">📅 2026-10-18 升级 · 【顺序+2026-10-18】金属活动性：K Ca Na Mg Al Zn Fe Sn Pb (H) Cu Hg Ag Pt Au</div>
+
+<div style="background:#fffbe6;border-left:4px solid #f5a623;padding:10px;margin:12px 0;font-size:14px">📅 2026-10-20 升级 · 【性质+2026-10-20】钠焰色反应黄色(物理变化)；钾焰色紫色(隔钴玻璃)</div>
+
+<div style="background:#fffbe6;border-left:4px solid #f5a623;padding:10px;margin:12px 0;font-size:14px">📅 2026-10-21 升级 · 【配平+2026-10-21】氧化还原先标变价、再配电子得失相等，最后配平其余原子</div>
+
+<div style="background:#fffbe6;border-left:4px solid #f5a623;padding:10px;margin:12px 0;font-size:14px">📅 2026-10-22 升级 · 【实验+2026-10-22】蒸馏：温度计水银球在支管口；冷凝水下进上出</div>
+
+<div style="background:#fffbe6;border-left:4px solid #f5a623;padding:10px;margin:12px 0;font-size:14px">📅 2026-10-23 升级 · 【性质+2026-10-23】Cl₂ 既能氧化又能被还原(歧化)；NaClO 强氧化可漂白</div>
+
+<div style="background:#fffbe6;border-left:4px solid #f5a623;padding:10px;margin:12px 0;font-size:14px">📅 2026-10-24 升级 · 【离子+2026-10-24】离子放电顺序：阴极阳离子氧化性强的先放(Fe³⁺>H⁺>Cu²⁺>H⁺>Al³⁺)</div>
+
+<div style="background:#fffbe6;border-left:4px solid #f5a623;padding:10px;margin:12px 0;font-size:14px">📅 2026-10-25 升级 · 【有机+2026-10-25】乙醇→乙醛→乙酸：氧化链；酯化反应用于同位素示踪找氧</div>
+
+<div style="background:#fffbe6;border-left:4px solid #f5a623;padding:10px;margin:12px 0;font-size:14px">📅 2026-10-26 升级 · 【计算+2026-10-26】摩尔质量 M=m/n；气体摩尔体积 22.4L/mol 只在标况(0℃101kPa)用</div>
+
+<div style="background:#fffbe6;border-left:4px solid #f5a623;padding:10px;margin:12px 0;font-size:14px">📅 2026-10-27 升级 · 【性质+2026-10-27】Fe 在常温浓硫酸/浓硝酸中钝化(不是不反应，是表面成氧化膜)</div>
+
+<div style="background:#fffbe6;border-left:4px solid #f5a623;padding:10px;margin:12px 0;font-size:14px">📅 2026-11-02 升级 · 【鉴别+2026-11-02】鉴别 Cl⁻ 用 AgNO₃+稀 HNO₃ 白沉淀；SO₄²⁻ 用 BaCl₂+稀 HNO₃</div>
+
+<div style="background:#fffbe6;border-left:4px solid #f5a623;padding:10px;margin:12px 0;font-size:14px">📅 2026-11-03 升级 · 【金属+2026-11-03】铝热反应 Fe₂O₃+2Al=Al₂O₃+2Fe(点燃)，用于焊接铁轨</div>
+
+<div style="background:#fffbe6;border-left:4px solid #f5a623;padding:10px;margin:12px 0;font-size:14px">📅 2026-11-06 升级 · 【离子+2026-11-06】铝两性：Al(OH)₃ 溶于强酸也溶于强碱；Al³⁺+3OH⁻=Al(OH)₃↓</div>
+
+<div style="background:#fffbe6;border-left:4px solid #f5a623;padding:10px;margin:12px 0;font-size:14px">📅 2026-11-12 升级 · 【有机+2026-11-12】甲醇毒性：被氧化成甲醛伤视神经；防冻剂中毒用乙醇竞态解毒</div>
+
+<div style="background:#fffbe6;border-left:4px solid #f5a623;padding:10px;margin:12px 0;font-size:14px">📅 2026-11-12 升级 · 【电化学+2026-11-12】原电池负极=较活泼金属(被氧化)，但负极不一定是最活泼(看是否参与反应)</div>
+
+<div style="background:#fffbe6;border-left:4px solid #f5a623;padding:10px;margin:12px 0;font-size:14px">📅 2026-11-13 升级 · 【有机+2026-11-13】苯不使酸性 KMnO₄ 褪色，发生取代而非加成(苯环稳定)</div>
+
+<div style="background:#fffbe6;border-left:4px solid #f5a623;padding:10px;margin:12px 0;font-size:14px">📅 2026-11-14 升级 · 【离子+2026-11-14】盐类水解显酸/碱性：弱碱强酸盐酸性(FeCl₃)、弱酸强碱盐碱性(Na₂CO₃)</div>
+
+<div style="background:#fffbe6;border-left:4px solid #f5a623;padding:10px;margin:12px 0;font-size:14px">📅 2026-11-15 升级 · 【有机+2026-11-15】葡萄糖/果糖同分异构 C₆H₁₂O₆；斐林试剂只检出葡萄糖(醛基)</div>
+
+<div style="background:#fffbe6;border-left:4px solid #f5a623;padding:10px;margin:12px 0;font-size:14px">📅 2026-11-16 升级 · 【氮+2026-11-16】工业合成氨 N₂+3H₂⇌2NH₃ 放热：高压、铁触媒，低温利于平衡但速率慢</div>
+
+<div style="background:#fffbe6;border-left:4px solid #f5a623;padding:10px;margin:12px 0;font-size:14px">📅 2026-11-17 升级 · 【配位+2026-11-17】铜氨络离子 [Cu(NH₃)₄]²⁺ 深蓝色，可溶油污</div>
+
+<div style="background:#fffbe6;border-left:4px solid #f5a623;padding:10px;margin:12px 0;font-size:14px">📅 2026-11-18 升级 · 【有机+2026-11-18】乙烯催熟果实；乙炔燃烧温度高可切割金属</div>
+
+<div style="background:#fffbe6;border-left:4px solid #f5a623;padding:10px;margin:12px 0;font-size:14px">📅 2026-11-19 升级 · 【氧化+2026-11-19】MnO₄⁻(紫)在酸性中被还原为 Mn²⁺(近无色)，用于检验还原剂</div>
+
+<div style="background:#fffbe6;border-left:4px solid #f5a623;padding:10px;margin:12px 0;font-size:14px">📅 2026-11-20 升级 · 【离子+2026-11-20】Ca²⁺/Ba²⁺ 与 SO₄²⁻/CO₃²⁻ 不能大量共存(生成沉淀)</div>
+
+<div style="background:#fffbe6;border-left:4px solid #f5a623;padding:10px;margin:12px 0;font-size:14px">📅 2026-11-21 升级 · 【有机+2026-11-21】酯的水解：酸催化可逆、碱催化(皂化)不可逆，用于除油污</div>
+
+<div style="background:#fffbe6;border-left:4px solid #f5a623;padding:10px;margin:12px 0;font-size:14px">📅 2026-11-22 升级 · 【氮+2026-11-22】反硝化：硝酸盐被微生物还原为 N₂；化肥过量致水体富营养化</div>
+
+<div style="background:#fffbe6;border-left:4px solid #f5a623;padding:10px;margin:12px 0;font-size:14px">📅 2026-11-23 升级 · 【钙+2026-11-23】纯碱制烧碱：Na₂CO₃+Ca(OH)₂=CaCO₃↓+2NaOH</div>
+
+<div style="background:#fffbe6;border-left:4px solid #f5a623;padding:10px;margin:12px 0;font-size:14px">📅 2026-11-24 升级 · 【配平+2026-11-24】2KMnO₄ + 16HCl(浓) = 2KCl + 2MnCl₂ + 5Cl₂↑ + 8H₂O (实验室制Cl₂，得失电子10e⁻守恒)</div>
+
+<div style="background:#fffbe6;border-left:4px solid #f5a623;padding:10px;margin:12px 0;font-size:14px">📅 2026-11-25 升级 · 【配平+2026-11-25】3Cu + 8HNO₃(稀) = 3Cu(NO₃)₂ + 2NO↑ + 4H₂O；Cu + 4HNO₃(浓) = Cu(NO₃)₂ + 2NO₂↑ + 2H₂O</div>
+</footer>
+
+<script>
+document.querySelectorAll("nav button").forEach(b=>b.onclick=()=>{
+  document.querySelectorAll("nav button").forEach(x=>x.classList.remove("on"));
+  document.querySelectorAll("section").forEach(x=>x.classList.remove("on"));
+  b.classList.add("on");document.getElementById(b.dataset.t).classList.add("on");
+});
+const K=[
+ ["无机化学","原子结构 · 元素周期律 · 化学键 · 离子反应 · 氧化还原 · 金属/非金属及其化合物"],
+ ["有机化学","烃(烷烯炔芳香) · 烃衍生物(醇醛酸酯) · 官能团 · 同分异构 · 有机推断"],
+ ["实验","气体收集与净化 · 物质分离提纯 · 配制溶液 · 化学检验 · 安全操作"],
+ ["计算","摩尔质量 · 物质的量浓度 · 化学方程式计算 · 守恒法 · 极值法"],
+];
+document.getElementById("knowGrid").innerHTML=K.map(s=>`<div class="card"><h3>${s[0]}</h3><ul>${s[1].split(" · ").map(x=>`<li>${x}</li>`).join("")}</ul></div>`).join("");
+
+function checkEq(){
+ const a=parseFloat(document.getElementById("a1").value)||0;
+ const b=parseFloat(document.getElementById("a2").value)||0;
+ const c=parseFloat(document.getElementById("a3").value)||0;
+ const d=parseFloat(document.getElementById("a4").value)||0;
+ const C=a*3-c*1,H=a*8-d*2,O=b*2-c*2-d*1;
+ const ok=(C===0&&H===0&&O===0);
+ document.getElementById("eqOut").textContent=ok?"✔ 配平正确! (C:"+C+" H:"+H+" O:"+O+")":"✘ 未配平: C差"+C+" H差"+H+" O差"+O;
+}
+
+const NA=6.02e23,Vm=22.4;
+function calcMole(){
+ const t=document.getElementById("mType").value;
+ const v=parseFloat(document.getElementById("mV").value)||0;
+ const M=parseFloat(document.getElementById("mM").value)||0;
+ const want=document.getElementById("mWant").value;
+ let n=M||v;
+ if(t==="nM")n=v;
+ if(t==="M"&&v>0)n=v/M;
+ if(t==="N"&&v>0)n=v/NA;
+ let r;
+ switch(want){
+  case "M": r=`质量 m = n·M = ${n} mol × ${M} g/mol = ${(n*M).toFixed(2)} g`;break;
+  case "N": r=`微粒数 N = n·Nₐ = ${n} × 6.02×10²³ ≈ ${(n*NA).toExponential(2)}`;break;
+  case "V": r=`标准状况体积 V = n·22.4 = ${(n*22.4).toFixed(2)} L`;break;
+  case "n": r=`物质的量 n = ${n} mol`;break;
+ }
+ document.getElementById("mOut").textContent=r;
+}
+
+const EX=[
+ ["气体验证","H₂点燃爆鸣 · CO₂使澄清石灰水变浑浊 · O₂带火星复燃 · NH₃使湿润红色石蕊试纸变蓝"],
+ ["物质分离","蒸馏 · 萃取 · 分液 · 过滤 · 结晶 · 升华 · 渗析"],
+ ["定量","配制一定物质的量浓度溶液 · 酸碱中和滴定 · 测定纯度"],
+ ["安全","浓硫酸稀释 · 气体收集防倒吸 · 可燃气体防爆炸 · 废液处理"],
+];
+document.getElementById("eGrid").innerHTML=EX.map(f=>`<div class="card"><h3>${f[0]}</h3><ul>${f[1].split(" · ").map(x=>`<li>${x}</li>`).join("")}</ul></div>`).join("");
+
+const EL=[
+ ["H","1 氢","1.008","非金属"],
+ ["C","6 碳","12.011","非金属"],
+ ["N","7 氮","14.007","非金属"],
+ ["O","8 氧","15.999","非金属"],
+ ["Na","11 钠","22.990","碱金属"],
+ ["Mg","12 镁","24.305","碱土"],
+ ["Al","13 铝","26.982","两性"],
+ ["Si","14 硅","28.086","类金属"],
+ ["P","15 磷","30.974","非金属"],
+ ["S","16 硫","32.065","非金属"],
+ ["Cl","17 氯","35.453","卤素"],
+ ["K","19 钾","39.098","碱金属"],
+ ["Ca","20 钙","40.078","碱土"],
+ ["Fe","26 铁","55.845","过渡"],
+ ["Cu","29 铜","63.546","过渡"],
+ ["Zn","30 锌","65.38","过渡"],
+];
+document.getElementById("tGrid").innerHTML="<table><tr><th>符号</th><th>原子序数</th><th>相对原子质量</th><th>族</th></tr>"+EL.map(e=>`<tr><td>${e[0]}</td><td>${e[1]}</td><td>${e[2]}</td><td>${e[3]}</td></tr>`).join("")+"</table>";
+
+// 本地题库(离线·零外链): 供 agent 面板关键词匹配; 条目=一行式可核查考点
+window.AGENT_KB=[
+ {q:"配平 4P+5O₂→2P₂O₅",a:"4P + 5O₂ =点燃= 2P₂O₅。P: 0→+5(4 个 P 共失 20e⁻); O: 0→-2(10 个 O 共得 20e⁻), 得失电子相等; 原子核对: P 4=4, O 10=10, 已配平。"},
+ {q:"CO₂ 通入过量 NaOH 的产物",a:"CO₂ 通入 NaOH: 若 NaOH 过量→CO₂+2NaOH=Na₂CO₃+H₂O(生成碳酸钠); 若 CO₂ 过量→CO₂+NaOH=NaHCO₃(生成碳酸氢钠)。量定反应: 先判断哪一方过量再写方程式。"},
+ {q:"一道实验探究题设计",a:"实验探究三步: ①提出问题与假设(如'过氧化钠与CO₂反应的产物是什么'); ②设计对照(明确探究变量、控制变量、可观察现象与产物检验); ③结论与延伸(现象→产物→改进)。示例: 验证 Na₂O₂+CO₂→O₂, 用干燥管通 CO₂, 出口放带火星木条复燃, 再用澄清石灰水检验 CO₂ 是否耗尽。"},
+ {q:"如何鉴别 CO₂、O₂、H₂ 三种气体",a:"O₂: 带火星木条复燃; H₂: 点燃呈淡蓝色火焰, 干冷小烧杯内壁有水珠, 石灰水不浑; CO₂: 澄清石灰水变浑浊。也可用燃着木条同时验: 烧得更旺=O₂, 气体被点燃=H₂, 火焰熄灭=CO₂。"},
+ {q:"稀释浓硫酸为什么酸入水",a:"浓硫酸密度(约1.84g/mL)大于水且遇水放出大量热; 水入酸: 水浮在酸面局部沸腾, 酸液飞溅伤人。正确操作: 沿玻璃棒缓慢把浓硫酸倒入水中, 边倒边搅拌散热, 口诀'酸入水、沿器壁、慢慢倒、不断搅'。"},
+ {q:"如何检验溶液中的 Cl⁻ 和 SO₄²⁻",a:"Cl⁻: 加 AgNO₃ 与稀 HNO₃, 白色沉淀(AgCl, 不溶于稀 HNO₃); SO₄²⁻: 加 BaCl₂ 与稀 HNO₃, 白色沉淀(BaSO₄)。两者共存: 先加过量 Ba(NO₃)₂ 除 SO₄²⁻(生成 BaSO₄), 过滤后滤液再加 AgNO₃+稀 HNO₃ 检 Cl⁻。"},
+ {q:"金属活动性顺序表及推论",a:"K Ca Na Mg Al Zn Fe Sn Pb (H) Cu Hg Ag Pt Au。推论: 排 H 前金属能置换稀酸中 H₂; 排前置换后(盐溶液); 但 K/Ca/Na 遇水先与水反应, 不能从盐溶液置换其他金属。"},
+ {q:"NaHCO₃ 与 Na₂CO₃ 的鉴别",a:"加稀盐酸: 均冒泡; 定量/热稳定性: NaHCO₃ 受热分解(2NaHCO₃ =△= Na₂CO₃+H₂O+CO₂↑), Na₂CO₃ 不分解。加 CaCl₂ 溶液: 白色沉淀(CaCO₃)的是 Na₂CO₃, 无明显沉淀的是 NaHCO₃。"},
+ {q:"苯与溴水为什么分层褪色",a:"苯不与溴水反应, 但萃取溴: 振荡静置分层, 上层(苯层, 密度小于水)呈橙红色, 水层褪色。与烯烃的加成褪色(溶液整体变无色、不分层)区分开。"},
+ {q:"原电池负极电极反应(锌铜稀硫酸)",a:"Zn-Cu-稀H₂SO₄: 负极 Zn 失电子被氧化 Zn-2e⁻=Zn²⁺; 正极 Cu 上 2H⁺+2e⁻=H₂↑; 电子沿导线由负极(活泼金属)流向正极, 电流方向相反。负极金属溶解, 正极产生气泡。"},
+ {q:"乙醇乙醛乙酸互化",a:"乙醇—催化氧化→乙醛—氧化→乙酸; 乙酸+乙醇 ⇌(浓H₂SO₄, 加热) 乙酸乙酯+水(酯化可逆, 加过量乙醇或边反应边移走酯可提高转化率)。区别乙烯与乙醇: 使 Br₂ 水/酸性 KMnO₄ 褪色的是乙烯(加成/氧化), 乙醇不能。"},
+ {q:"乙烯乙炔苯性质对比",a:"乙烯: 加成(聚合制聚乙烯)、使 Br₂ 水褪色; 乙炔: 使 Br₂ 水/酸性 KMnO₄ 褪色, 燃烧黑烟(碳含量约92%); 苯: 不使酸性 KMnO₄ 褪色, 与 H₂ 催化加成生成环己烷, 能发生取代(硝化/磺化/卤代), 与溴水混合是萃取褪色不是反应。"},
+ {q:"纤维灼烧鉴别蛋白质",a:"蛋白质纤维(毛、蚕丝)灼烧有羽毛焦臭; 合成纤维(涤纶、锦纶)灼烧有硬块; 纤维素(棉、麻)灼烧像烧纸。天然橡胶主要成分是聚异戊二烯, 聚乙烯/涤纶属有机合成材料。"},
+ {q:"淀粉纤维素葡萄糖水解",a:"淀粉/纤维素分子式 (C₆H₁₀O₅)ₙ(高中阶段按同分异构处理), 酸或酶催化水解终产物均为葡萄糖; 碘变蓝只针对淀粉; 纤维素硝酸酯即无烟火药。"},
+ {q:"物质的量摩尔质量粒子数互换",a:"n = m/M = N/Nₐ = V(标况)/22.4; Nₐ≈6.02×10²³ mol⁻¹; Vm=22.4 L/mol 仅限 0℃、101 kPa; 摩尔质量数值上等于相对分子(原子)质量(单位 g/mol)。"},
+ {q:"质量分数与物质的量浓度互换",a:"w=m(溶质)/m(溶液); c=n/V(L); 换算 c=1000ρw/M(ρ 单位 g/mL); 稀释 c₁V₁=c₂V₂; 同一溶质混合 c=(n₁+n₂)/(V₁+V₂)(体积近似加和)。"},
+ {q:"同温同压气体体积比",a:"同温同压下气体体积比=物质的量比(阿伏加德罗定律)。计算: 0.1 mol C₂H₆ 完全燃烧需 O₂ 0.35 mol(2C₂H₆+7O₂=点燃=4CO₂+6H₂O), 标况 0.35×22.4=7.84 L。"},
+ {q:"混合气体平均摩尔质量",a:"M̄=Σm/Σn=(M₁n₁+M₂n₂)/(n₁+n₂); 例: O₂ 与 H₂ 按物质的量 1:1 混合, M̄=(32+2)/2=17 g/mol; 密度比=摩尔质量比(同温同压)。"},
+ {q:"氧化还原配平得失电子",a:"四步: 一标价(找变价元素) 二等电子(得失电子总数相等, 定氧化剂/还原剂系数) 三配其他原子 四检查(原子与电荷)。例: Fe+4HNO₃(稀)=Fe(NO₃)₃+NO↑+2H₂O(N +5→+2 得3e⁻, Fe 0→+3 失3e⁻)。"},
+ {q:"离子方程式书写",a:"强电解质拆(可溶强酸强碱盐), 弱电解质/气体/沉淀/氧化物保留式; 例 NaHCO₃+HCl: HCO₃⁻+H⁺=H₂O+CO₂↑; Ba(OH)₂+2NaHSO₄(恰好中和): Ba²⁺+2OH⁻+2H⁺+SO₄²⁻=BaSO₄↓+2H₂O。"},
+ {q:"离子大量共存判断",a:"不能大量共存: ①生成沉淀(Ag⁺+Cl⁻, Ba²⁺+SO₄²⁻, Ca²⁺+CO₃²⁻) ②生成气体(H⁺+CO₃²⁻/HCO₃⁻, OH⁻+NH₄⁺) ③生成弱电解质(H⁺+OH⁻) ④氧化还原(Fe³⁺+I⁻, 酸性 MnO₄⁻+Cl⁻) ⑤双水解(Al³⁺+HCO₃⁻/CO₃²⁻)。"},
+ {q:"官能团性质速查",a:"碳碳双键: 加成、被酸性 KMnO₄ 氧化; 羟基: 酯化、催化氧化、与 Na 置换; 醛基: 银镜反应/斐林试剂; 羧基: 酯化、与碱/碳酸盐反应; 酚羟基: 与 FeCl₃ 显紫色、易被氧化。"}
+];
+</script>
+
+<div id="agent-panel" style="margin:20px auto;max-width:720px;border:2px solid #4a90d9;border-radius:12px;padding:16px;background:#f7fbff;font-family:system-ui">
+  <h3 style="margin:0 0 8px;color:#2c5d8f">🤖 炼金士·化学专家团 · 智能体问答（本地题库模式）</h3>
+  <p style="font-size:13px;color:#555;margin:0 0 10px">本地题库模式（离线·零外链）：关键词匹配本站本地题库作答。在线 AI 问答待李老师定 key 策略后统一开通。</p>
+  <div style="display:flex;flex-wrap:wrap;gap:8px;margin-bottom:10px"><button style="padding:6px 10px;border-radius:8px;border:1px solid #888;background:#fff;color:#333;cursor:pointer;font-size:12px" onclick="agentAsk('配平 4P+5O₂→2P₂O₅')">配平 4P+5O₂→2P₂O₅</button><button style="padding:6px 10px;border-radius:8px;border:1px solid #888;background:#fff;color:#333;cursor:pointer;font-size:12px" onclick="agentAsk('CO₂ 通入过量 NaOH 产物')">CO₂ 通入过量 NaOH 产物</button><button style="padding:6px 10px;border-radius:8px;border:1px solid #888;background:#fff;color:#333;cursor:pointer;font-size:12px" onclick="agentAsk('一道实验探究题设计')">一道实验探究题设计</button>
+    <button style="padding:6px 12px;border-radius:8px;border:1px solid #4a90d9;background:#4a90d9;color:#fff;cursor:pointer" onclick="agentAsk('')">问 炼金士·化学专家团</button>
+  </div>
+  <textarea id="agent-q" placeholder="输入问题，匹配 炼金士·化学专家团 本地题库..." style="width:100%;height:60px;padding:8px;border:1px solid #ccc;border-radius:8px;font-size:14px;box-sizing:border-box"></textarea>
+  <button style="margin-top:8px;padding:8px 16px;border-radius:8px;border:none;background:#2c8a3d;color:#fff;cursor:pointer;font-size:14px" onclick="agentAsk(document.getElementById('agent-q').value)">匹配本地题库</button>
+  <div id="agent-a" style="margin-top:12px;padding:12px;background:#fff;border-left:4px solid #2c8a3d;border-radius:6px;font-size:14px;min-height:40px;white-space:pre-wrap;color:#333">（等待回答）</div>
+  <script>
+  // 本地题库模式: 离线·零外链·无 key。在线(key 注入)待李老师定 key 策略后统一切, 此处 AGENT_MODE 为切换点。
+  var AGENT_MODE="local";
+  var AGENT_KB=(typeof window.AGENT_KB==="object"&&window.AGENT_KB)?window.AGENT_KB:[];
+  var LOCAL_TIPS=["配平从变价最大元素入手; 氧化还原先配电子转移再配电荷原子。", "实验设计先明各试剂目的与对照; 性质检验按'现象→结论'成对。"];
+  function _kbTokens(q){
+    var t=[];
+    (q.toLowerCase().match(/[a-z0-9]+/g)||[]).forEach(function(x){t.push(x);});
+    q.replace(/[^\u4e00-\u9fff]/g,'').split('').forEach(function(c){t.push(c);});
+    return t;
+  }
+  function agentAsk(q){
+    if(!q)q=document.getElementById('agent-q').value;
+    if(!q){document.getElementById('agent-a').textContent='请输入问题';return;}
+    document.getElementById('agent-q').value=q;
+    var a=document.getElementById('agent-a');
+    var uniq=Array.from(new Set(_kbTokens(q)));
+    var hits=AGENT_KB.map(function(it){
+      var hay=((it.q||"")+" "+(it.a||"")).toLowerCase();
+      var n=uniq.filter(function(t){return hay.indexOf(t)>-1;}).length;
+      return {s:n,it:it};
+    }).filter(function(x){return x.s>=Math.min(uniq.length,2);}).sort(function(x,y){return y.s-x.s;}).slice(0,3);
+    if(hits.length){
+      a.textContent="\u{1F4D6} 本地题库 · 离线（炼金士·化学专家团 本地条目）\n\n"+hits.map(function(h){return "Q: "+h.it.q+"\nA: "+h.it.a;}).join("\n\n")+"\n\n（在线 AI 问答待李老师定 key 策略后开通）";
+    } else {
+      a.textContent="\u26A0\uFE0F 本地题库模式（离线）：未匹配到本地条目。在线 AI 问答待李老师定 key 策略后开通。\n学习提示：\n- "+LOCAL_TIPS.join("\n- ")+"\n并见站内【题库/知识】模块。";
+    }
+  }
+  </script>
+</div>
+</body></html>

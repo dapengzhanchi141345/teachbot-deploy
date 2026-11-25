@@ -1,0 +1,224 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>明辨君·道法专家团 — 全学段道德与法治系统</title>
+<style>
+:root{--bg:#f7f5f9;--card:#fff;--ink:#2a2438;--accent:#5b3a8a;--accent2:#8a5fc1;--soft:#ece4f5;--ok:#16a34a;--bad:#dc2626;--line:#e2d8f0}
+*{margin:0;box-sizing:border-box}
+body{font-family:"Segoe UI","Microsoft YaHei",sans-serif;background:var(--bg);color:var(--ink);line-height:1.75}
+header{background:linear-gradient(120deg,#3a2466,#8a5fc1);color:#fff;padding:26px 30px}
+header h1{font-size:26px}
+header p{opacity:.9;font-size:14px;margin-top:6px}
+nav{display:flex;gap:8px;flex-wrap:wrap;padding:12px 30px;background:var(--card);border-bottom:1px solid var(--line);position:sticky;top:0;z-index:5}
+nav button{border:1px solid var(--line);background:#fff;padding:8px 14px;border-radius:8px;cursor:pointer;font-size:14px}
+nav button.on{background:var(--accent);color:#fff;border-color:var(--accent)}
+section{display:none;padding:24px 30px;max-width:1000px;margin:0 auto}
+section.on{display:block}
+h2{color:var(--accent);margin:6px 0 14px;font-size:20px}
+.grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(220px,1fr));gap:12px}
+.card{background:var(--card);border:1px solid var(--line);border-radius:10px;padding:14px}
+.card h3{font-size:15px;color:var(--accent2);margin-bottom:6px}
+.card ul{padding-left:18px;font-size:14px}
+.btn{background:var(--accent);color:#fff;border:none;padding:8px 14px;border-radius:8px;cursor:pointer;font-size:14px;margin:4px}
+.out{margin-top:12px;padding:12px;background:var(--soft);border-radius:8px;min-height:40px;font-size:15px}
+.tag{display:inline-block;background:var(--soft);color:var(--accent);padding:2px 8px;border-radius:20px;font-size:12px;margin:2px}
+.note{background:#fff7e6;border:1px solid #ffd580;border-radius:8px;padding:12px;font-size:14px;margin:10px 0}
+.answer{display:none;background:#eaf3ea;border:1px solid #bcd4bc;border-radius:8px;padding:12px;margin-top:8px;font-size:14px}
+.answer.on{display:block}
+footer{text-align:center;padding:20px;color:#888;font-size:13px;margin-top:30px;border-top:1px solid var(--line)}
+</style>
+</head>
+<body>
+<header>
+<h1>明辨君 · 道法专家团</h1>
+<p>全学段道德与法治系统 · 初中→高中 · 道德修养/法治意识/价值辨析 · 案例辨析 · 价值判断 · 时事法治 · 双击即用(离线单文件)</p>
+</header>
+<nav>
+<button class="on" data-t="know">知识体系</button>
+<button data-t="case">案例辨析</button>
+<button data-t="value">价值判断</button>
+<button data-t="law">时事法治</button>
+</nav>
+
+<section id="know" class="on">
+<h2>全学段知识体系</h2>
+<div class="note">按模块点卡片看考点; 用「案例辨析」练情境判断, 道法主观题先看价值判断框架。</div>
+<div class="grid" id="knowGrid"></div>
+</section>
+
+<section id="case">
+<h2>案例辨析(点「显示判断」)</h2>
+<p>给情境判行为对错 + 讲道理(道德+法治双角度)。</p>
+<div id="cBox"></div>
+</section>
+
+<section id="value">
+<h2>价值判断框架(答题用)</h2>
+<div class="grid" id="vGrid"></div>
+</section>
+
+<section id="law">
+<h2>时事法治(高频)</h2>
+<div class="grid" id="lGrid"></div>
+</section>
+
+<footer>李彦明 15684394135 · 明辨君·道法专家团 · 离线单文件 · 每日升级
+<div style="background:#fffbe6;border-left:4px solid #f5a623;padding:10px;margin:12px 0;font-size:14px">📅 2026-10-05 升级 · 【案例+2026-10-05】权利与义务统一: 行使权利不得损害他人/社会/国家利益</div>
+
+<div style="background:#fffbe6;border-left:4px solid #f5a623;padding:10px;margin:12px 0;font-size:14px">📅 2026-10-09 升级 · 【法条+2026-10-09】知识产权分作品权(著作权)：公民作品保护期至作者终身+50年</div>
+
+<div style="background:#fffbe6;border-left:4px solid #f5a623;padding:10px;margin:12px 0;font-size:14px">📅 2026-10-09 升级 · 【法条+2026-10-09】《民法典》18周岁为成年；8周岁以上未成年为限制民事行为能力人</div>
+
+<div style="background:#fffbe6;border-left:4px solid #f5a623;padding:10px;margin:12px 0;font-size:14px">📅 2026-10-09 升级 · 【案例+2026-10-09】见义勇为受伤，受益人负适当补偿义务(公平原则体现)</div>
+
+<div style="background:#fffbe6;border-left:4px solid #f5a623;padding:10px;margin:12px 0;font-size:14px">📅 2026-10-10 升级 · 【法条+2026-10-10】正当防卫无限度(针对行凶/杀人等严重暴力)，防卫过当才担责</div>
+
+<div style="background:#fffbe6;border-left:4px solid #f5a623;padding:10px;margin:12px 0;font-size:14px">📅 2026-10-11 升级 · 【辨析+2026-10-11】权利与义务相统一：行使权利不得损害他人/社会/国家利益</div>
+
+<div style="background:#fffbe6;border-left:4px solid #f5a623;padding:10px;margin:12px 0;font-size:14px">📅 2026-10-12 升级 · 【法条+2026-10-12】民事行为能力三级：无(不满8) / 限制(8-18) / 完全(18+)</div>
+
+<div style="background:#fffbe6;border-left:4px solid #f5a623;padding:10px;margin:12px 0;font-size:14px">📅 2026-10-13 升级 · 【案例+2026-10-13】网络言论自由≠免责，造谣诽谤承担民事甚至刑事责任</div>
+
+<div style="background:#fffbe6;border-left:4px solid #f5a623;padding:10px;margin:12px 0;font-size:14px">📅 2026-10-14 升级 · 【法条+2026-10-14】消费者7天无理由退货：网购商品有约定/法定情形</div>
+
+<div style="background:#fffbe6;border-left:4px solid #f5a623;padding:10px;margin:12px 0;font-size:14px">📅 2026-10-15 升级 · 【辨析+2026-10-15】守法≠只是"不犯罪"，还包括履行法定义务(纳税/服兵役/受教育)</div>
+
+<div style="background:#fffbe6;border-left:4px solid #f5a623;padding:10px;margin:12px 0;font-size:14px">📅 2026-10-16 升级 · 【法条+2026-10-16】未成年人犯罪：已满16负刑责；14-16 限八类严重罪行</div>
+
+<div style="background:#fffbe6;border-left:4px solid #f5a623;padding:10px;margin:12px 0;font-size:14px">📅 2026-10-17 升级 · 【案例+2026-10-17】见义勇为可主张受益人适当补偿，弘扬社会主义核心价值观</div>
+
+<div style="background:#fffbe6;border-left:4px solid #f5a623;padding:10px;margin:12px 0;font-size:14px">📅 2026-10-19 升级 · 【法条+2026-10-19】12月4日国家宪法日；宪法是根本法，普通法律不得与宪法相抵触</div>
+
+<div style="background:#fffbe6;border-left:4px solid #f5a623;padding:10px;margin:12px 0;font-size:14px">📅 2026-10-20 升级 · 【法条+2026-10-20】《未成年人保护法》校园欺凌：学校须建防欺凌制度，受害方可依法主张民事赔偿</div>
+
+<div style="background:#fffbe6;border-left:4px solid #f5a623;padding:10px;margin:12px 0;font-size:14px">📅 2026-10-21 升级 · 【法条+2026-10-21】《个人信息保护法》不满14周岁未成年人个人信息属敏感信息，处理须征得父母/监护人同意</div>
+
+<div style="background:#fffbe6;border-left:4px solid #f5a623;padding:10px;margin:12px 0;font-size:14px">📅 2026-10-22 升级 · 【案例+2026-10-22】网购虚假宣传可按欺诈主张退一赔三(《消费者权益保护法》第55条)</div>
+
+<div style="background:#fffbe6;border-left:4px solid #f5a623;padding:10px;margin:12px 0;font-size:14px">📅 2026-10-23 升级 · 【辨析+2026-10-23】守法不等于只不犯法，还包括履行法定义务(纳税/受教育/服兵役)</div>
+
+<div style="background:#fffbe6;border-left:4px solid #f5a623;padding:10px;margin:12px 0;font-size:14px">📅 2026-10-24 升级 · 【案例+2026-10-24】校园伤害事故责任：无民事行为能力人(不满8周岁)在校期间受伤，学校承担无过错推定责任</div>
+
+<div style="background:#fffbe6;border-left:4px solid #f5a623;padding:10px;margin:12px 0;font-size:14px">📅 2026-10-25 升级 · 【法条+2026-10-25】《民法典》合同违约：违约金过高(超损失30%)法院可调减，过低可请求增加</div>
+
+<div style="background:#fffbe6;border-left:4px solid #f5a623;padding:10px;margin:12px 0;font-size:14px">📅 2026-10-26 升级 · 【辨析+2026-10-26】自由是法内的自由，权利有边界(不得损害他人合法权益)</div>
+
+<div style="background:#fffbe6;border-left:4px solid #f5a623;padding:10px;margin:12px 0;font-size:14px">📅 2026-10-27 升级 · 【案例+2026-10-27】高空抛物致损找不到具体侵权人时，可能加害的建筑物使用人给予补偿(《民法典》1254条)</div>
+
+<div style="background:#fffbe6;border-left:4px solid #f5a623;padding:10px;margin:12px 0;font-size:14px">📅 2026-11-06 升级 · 【法条+2026-11-06】《义务教育法》：九年义务教育既是权利也是义务，家庭不得令辍学</div>
+
+<div style="background:#fffbe6;border-left:4px solid #f5a623;padding:10px;margin:12px 0;font-size:14px">📅 2026-11-12 升级 · 【法条+2026-11-12】《老年人权益保障法》：孝是道德也是法律义务，探视不得"放弃继承"</div>
+
+<div style="background:#fffbe6;border-left:4px solid #f5a623;padding:10px;margin:12px 0;font-size:14px">📅 2026-11-12 升级 · 【案例+2026-11-12】网课退费："7 天无理由"适用于商品；课程按约定/行政法规</div>
+
+<div style="background:#fffbe6;border-left:4px solid #f5a623;padding:10px;margin:12px 0;font-size:14px">📅 2026-11-13 升级 · 【法条+2026-11-13】《个人信息保护法》：不满 14 岁信息属敏感信息，校方不得擅自给第三方</div>
+
+<div style="background:#fffbe6;border-left:4px solid #f5a623;padding:10px;margin:12px 0;font-size:14px">📅 2026-11-14 升级 · 【辨析+2026-11-14】法治≠人治：法律至上、无人凌于法上</div>
+
+<div style="background:#fffbe6;border-left:4px solid #f5a623;padding:10px;margin:12px 0;font-size:14px">📅 2026-11-15 升级 · 【案例+2026-11-15】网络欺凌(辱骂/人肉)构成侵权，可诉道歉+精神损害赔偿</div>
+
+<div style="background:#fffbe6;border-left:4px solid #f5a623;padding:10px;margin:12px 0;font-size:14px">📅 2026-11-16 升级 · 【法条+2026-11-16】《消费者权益保护法》：欺诈可"退一赔三"</div>
+
+<div style="background:#fffbe6;border-left:4px solid #f5a623;padding:10px;margin:12px 0;font-size:14px">📅 2026-11-17 升级 · 【辨析+2026-11-17】民主与法制统一：人民当家作主，少数违法者受惩</div>
+
+<div style="background:#fffbe6;border-left:4px solid #f5a623;padding:10px;margin:12px 0;font-size:14px">📅 2026-11-18 升级 · 【案例+2026-11-18】交通事故赔偿：交强险先赔，超部分按过错比例分担</div>
+
+<div style="background:#fffbe6;border-left:4px solid #f5a623;padding:10px;margin:12px 0;font-size:14px">📅 2026-11-19 升级 · 【法条+2026-11-19】《未成年人保护法》：家庭/学校/社会/网络/政府/司法六大保护</div>
+
+<div style="background:#fffbe6;border-left:4px solid #f5a623;padding:10px;margin:12px 0;font-size:14px">📅 2026-11-20 升级 · 【法条+2026-11-20】《民法典》继承：法定继承第一顺序为配偶、子女、父母；第二顺序为兄弟姐妹、祖父母、外祖父母</div>
+
+<div style="background:#fffbe6;border-left:4px solid #f5a623;padding:10px;margin:12px 0;font-size:14px">📅 2026-11-21 升级 · 【法条+2026-11-21】《道路交通安全法》第47条：机动车行经人行横道应当停车让行；遇行人横过应避让</div>
+
+<div style="background:#fffbe6;border-left:4px solid #f5a623;padding:10px;margin:12px 0;font-size:14px">📅 2026-11-22 升级 · 【法条+2026-11-22】《预防未成年人犯罪法》：不良行为(吸烟/酗酒/夜不归宿)分级干预；严重不良行为可送专门学校</div>
+
+<div style="background:#fffbe6;border-left:4px solid #f5a623;padding:10px;margin:12px 0;font-size:14px">📅 2026-11-23 升级 · 【法条+2026-11-23】《家庭教育促进法》：父母是家庭教育实施主体；国家/社会/学校提供指导与协同支持</div>
+
+<div style="background:#fffbe6;border-left:4px solid #f5a623;padding:10px;margin:12px 0;font-size:14px">📅 2026-11-24 升级 · 【法条+2026-11-24】《刑法》第20/21条：正当防卫、紧急避险属违法阻却事由，本身不负刑事责任</div>
+
+<div style="background:#fffbe6;border-left:4px solid #f5a623;padding:10px;margin:12px 0;font-size:14px">📅 2026-11-25 升级 · 【法条+2026-11-25】《食品安全法》第148条：食品不符合安全标准可主张价款十倍或损失三倍赔偿(最低1000元)</div>
+</footer>
+
+<script>
+document.querySelectorAll("nav button").forEach(b=>b.onclick=()=>{
+  document.querySelectorAll("nav button").forEach(x=>x.classList.remove("on"));
+  document.querySelectorAll("section").forEach(x=>x.classList.remove("on"));
+  b.classList.add("on");document.getElementById(b.dataset.t).classList.add("on");
+});
+const K=[
+ ["道德修养","自尊自信 · 诚信友善 · 孝敬 · 责任感 · 正义感 · 集体主义"],
+ ["法治意识","宪法至上 · 权利与义务 · 依法治国 · 程序正义 · 法律责任 · 未成年人保护"],
+ ["价值辨析","权利义务统一 · 个人与社会 · 德法结合 · 辩证看待 · 底线思维"],
+ ["时事法治","民法典 · 未成年人保护法 · 家庭教育促进法 · 网络安全法 · 环保法"],
+];
+document.getElementById("knowGrid").innerHTML=K.map(s=>`<div class="card"><h3>${s[0]}</h3><ul>${s[1].split(" · ").map(x=>`<li>${x}</li>`).join("")}</ul></div>`).join("");
+
+const CS=[
+ {q:"小A 在网吧看到别人打架, 报警了。对吗?",a:"对。公民有义务同违法行为作斗争, 报警是合法、正当的维权方式, 体现法治意识。"},
+ {q:"小B 觉得 '分数低丢人' 就撕同学试卷, 对吗?",a:"不对。撕试卷侵犯同学财产权, 也是冲动行为。应通过沟通、求助老师等正当方式, 而非破坏。"},
+ {q:"父母不让辍学打工, 孩子辍学, 谁对?",a:"孩子错。义务教育有法定的受教育权与义务, 父母有监护责任; 应依法上学, 维权走法律途径。"},
+ {q:"网络发帖造谣 '某商家卖假货', 证据不足, 对吗?",a:"不对。散布未经证实信息可能侵犯名誉权, 应承担侵权责任; 维权要有证据, 理性表达。"},
+];
+document.getElementById("cBox").innerHTML=CS.map(c=>`<div class="card"><span class="tag">案例</span><h3>${c.q}</h3>
+ <button class="btn" onclick="this.nextElementSibling.classList.toggle('on')">显示判断</button>
+ <div class="answer">判断与理由: ${c.a}</div></div>`).join("");
+
+const VS=[
+ ["权利义务","权利: 依法享有/行使 · 义务: 必须履行/不得侵犯他人 · 两者统一(无无义务的权利)"],
+ ["个人与社会","个人利益服从集体 · 社会保障个人 · 在奉献中实现个人价值"],
+ ["德法结合","道德是内心约束 · 法律是外部底线 · 德治与法治相辅相成"],
+ ["辩证看","两分法 · 看主流与支流 · 矛盾主次 · 不绝对化"],
+ ["底线思维","宪法法律底线 · 不越红线 · 先合法再讲效率"],
+];
+document.getElementById("vGrid").innerHTML=VS.map(f=>`<div class="card"><h3>${f[0]}</h3><p>${f[1]}</p></div>`).join("");
+
+const LW=[
+ ["民法典","人格权 · 物权 · 合同 · 婚姻家庭 · 继承 · 侵权责任"],
+ ["未成年人保护","家庭/学校/社会/网络/政府/司法 六大保护 · 专门学校 · 犯罪记录封存"],
+ ["网络安全法","个人信息保护 · 网络实名制 · 数据安全 · 关键信息基础设施"],
+ ["环保法","排污许可 · 环境影响评价 · 公众参与 · 公益诉讼"],
+];
+document.getElementById("lGrid").innerHTML=LW.map(f=>`<div class="card"><h3>${f[0]}</h3><ul>${f[1].split(" · ").map(x=>`<li>${x}</li>`).join("")}</ul></div>`).join("");
+</script>
+
+<div id="agent-panel" style="margin:20px auto;max-width:720px;border:2px solid #4a90d9;border-radius:12px;padding:16px;background:#f7fbff;font-family:system-ui">
+  <h3 style="margin:0 0 8px;color:#2c5d8f">🤖 明辨君·道法专家团 · 智能体问答（本地题库模式）</h3>
+  <p style="font-size:13px;color:#555;margin:0 0 10px">本地题库模式（离线·零外链）：关键词匹配本站本地题库作答。在线 AI 问答待李老师定 key 策略后统一开通。</p>
+  <div style="display:flex;flex-wrap:wrap;gap:8px;margin-bottom:10px"><button style="padding:6px 10px;border-radius:8px;border:1px solid #888;background:#fff;color:#333;cursor:pointer;font-size:12px" onclick="agentAsk('权利与义务统一案例分析')">权利与义务统一案例分析</button><button style="padding:6px 10px;border-radius:8px;border:1px solid #888;background:#fff;color:#333;cursor:pointer;font-size:12px" onclick="agentAsk('《民法典》民事行为能力年龄')">《民法典》民事行为能力年龄</button><button style="padding:6px 10px;border-radius:8px;border:1px solid #888;background:#fff;color:#333;cursor:pointer;font-size:12px" onclick="agentAsk('道法辨析题')">道法辨析题</button>
+    <button style="padding:6px 12px;border-radius:8px;border:1px solid #4a90d9;background:#4a90d9;color:#fff;cursor:pointer" onclick="agentAsk('')">问 明辨君·道法专家团</button>
+  </div>
+  <textarea id="agent-q" placeholder="输入问题，匹配 明辨君·道法专家团 本地题库..." style="width:100%;height:60px;padding:8px;border:1px solid #ccc;border-radius:8px;font-size:14px;box-sizing:border-box"></textarea>
+  <button style="margin-top:8px;padding:8px 16px;border-radius:8px;border:none;background:#2c8a3d;color:#fff;cursor:pointer;font-size:14px" onclick="agentAsk(document.getElementById('agent-q').value)">匹配本地题库</button>
+  <div id="agent-a" style="margin-top:12px;padding:12px;background:#fff;border-left:4px solid #2c8a3d;border-radius:6px;font-size:14px;min-height:40px;white-space:pre-wrap;color:#333">（等待回答）</div>
+  <script>
+  // 本地题库模式: 离线·零外链·无 key。在线(key 注入)待李老师定 key 策略后统一切, 此处 AGENT_MODE 为切换点。
+  var AGENT_MODE="local";
+  var AGENT_KB=(typeof window.AGENT_KB==="object"&&window.AGENT_KB)?window.AGENT_KB:[];
+  var LOCAL_TIPS=["价值辨析先明主体与利益, 正反两面论证再辩证收口。", "法律案例先定位条文, 再对'主体-行为-后果'。"];
+  function _kbTokens(q){
+    var t=[];
+    (q.toLowerCase().match(/[a-z0-9]+/g)||[]).forEach(function(x){t.push(x);});
+    q.replace(/[^\u4e00-\u9fff]/g,'').split('').forEach(function(c){t.push(c);});
+    return t;
+  }
+  function agentAsk(q){
+    if(!q)q=document.getElementById('agent-q').value;
+    if(!q){document.getElementById('agent-a').textContent='请输入问题';return;}
+    document.getElementById('agent-q').value=q;
+    var a=document.getElementById('agent-a');
+    var uniq=Array.from(new Set(_kbTokens(q)));
+    var hits=AGENT_KB.map(function(it){
+      var hay=((it.q||"")+" "+(it.a||"")).toLowerCase();
+      var n=uniq.filter(function(t){return hay.indexOf(t)>-1;}).length;
+      return {s:n,it:it};
+    }).filter(function(x){return x.s>=Math.min(uniq.length,2);}).sort(function(x,y){return y.s-x.s;}).slice(0,3);
+    if(hits.length){
+      a.textContent="\u{1F4D6} 本地题库 · 离线（明辨君·道法专家团 本地条目）\n\n"+hits.map(function(h){return "Q: "+h.it.q+"\nA: "+h.it.a;}).join("\n\n")+"\n\n（在线 AI 问答待李老师定 key 策略后开通）";
+    } else {
+      a.textContent="\u26A0\uFE0F 本地题库模式（离线）：未匹配到本地条目。在线 AI 问答待李老师定 key 策略后开通。\n学习提示：\n- "+LOCAL_TIPS.join("\n- ")+"\n并见站内【题库/知识】模块。";
+    }
+  }
+  </script>
+</div>
+</body></html>

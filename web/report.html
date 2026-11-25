@@ -1,0 +1,168 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>教师面板 · AI出题 + 学情</title>
+<style>
+:root{--bg:#05070f;--card:rgba(17,24,44,.66);--line:rgba(148,163,215,.28);--text:#e8eefc;--t2:#a7b3d1;
+--cy:#22d3ee;--vi:#818cf8;--gr:#34d399;--am:#fbbf24;--rd:#fb7185}
+*{margin:0;box-sizing:border-box}
+body{background:var(--bg);color:var(--text);font-family:"Microsoft YaHei",system-ui;min-height:100vh;
+background-image:linear-gradient(rgba(120,150,255,.045) 1px,transparent 1px),linear-gradient(90deg,rgba(120,150,255,.045) 1px,transparent 1px);background-size:34px 34px}
+.wrap{max-width:860px;margin:0 auto;padding:26px 16px 50px}
+h1{font-size:22px;background:linear-gradient(120deg,var(--cy),var(--vi));-webkit-background-clip:text;background-clip:text;color:transparent;margin-bottom:4px}
+.hint{color:var(--t2);font-size:13px;margin-bottom:16px}
+.panel{background:var(--card);border:1px solid var(--line);border-radius:16px;padding:16px 18px;margin-bottom:14px}
+.panel h2{font-size:16px;margin-bottom:10px;color:var(--vi)}
+.row{display:flex;gap:8px;flex-wrap:wrap}
+input[type=text],select{background:rgba(5,7,15,.6);border:1px solid var(--line);border-radius:9px;color:var(--text);padding:9px 11px;font-size:14px;outline:none;flex:1;min-width:90px}
+button{background:linear-gradient(120deg,#0891b2,#6d5ae0);border:none;border-radius:9px;color:#fff;padding:9px 16px;font-size:14px;cursor:pointer}
+button.ghost{background:transparent;border:1px solid var(--line);color:var(--t2)}
+button:disabled{opacity:.5}
+.msg{font-size:13px;margin-top:8px;color:var(--am);line-height:1.6}
+.msg.ok{color:var(--gr)}
+#qList{margin-top:10px;max-height:300px;overflow:auto}
+.qi{border:1px solid var(--line);border-radius:9px;padding:9px 11px;margin-bottom:7px;font-size:13px;line-height:1.6}
+.qi .o{color:var(--t2)} .qi .a{color:var(--gr);font-weight:700}
+.codeBox{font-family:Consolas,monospace;font-size:34px;letter-spacing:6px;color:var(--gr);text-align:center;padding:14px;background:rgba(5,7,15,.5);border-radius:12px;margin:10px 0;user-select:all}
+.bar{height:8px;background:rgba(5,7,15,.6);border-radius:99px;overflow:hidden;margin:4px 0}
+.bar i{display:block;height:100%;background:linear-gradient(90deg,var(--cy),var(--gr))}
+.prow{font-size:13px;line-height:1.6;margin-bottom:6px}
+.tbl{width:100%;border-collapse:collapse;font-size:13px}
+.tbl th,.tbl td{border-bottom:1px solid var(--line);padding:6px 8px;text-align:left}
+.tbl th{color:var(--t2);font-weight:400}
+.link{color:var(--cy);text-decoration:none}
+.foot{margin-top:30px;text-align:center;color:var(--t2);font-size:12px}
+</style>
+</head>
+<body>
+<div class="wrap">
+<h1>📊 教师面板</h1>
+<div class="hint">① AI 出题 → ② 发布拿代码 → ③ 把代码和入口网址发给学生 → ④ 这里实时看学情。学生入口：本机网址 + <code>/quiz/</code></div>
+
+<div class="panel">
+<h2>① AI 出题</h2>
+<div class="row">
+<select id="subj"><option>信息科技</option><option>数学</option><option>语文</option><option>英语</option><option>物理</option><option>化学</option><option>生物</option><option>地理</option><option>历史</option><option>道德与法治</option></select>
+<select id="grade"><option>七年级</option><option>八年级</option><option>九年级</option><option>小学</option><option>高中</option></select>
+<input type="text" id="topic" placeholder="知识点，例如：物联网 / 算法 / 二次函数">
+<input type="text" id="nq" value="10" style="max-width:70px">
+<button id="bGen" onclick="gen()">AI 出题</button>
+</div>
+<div class="msg" id="gmsg">出题后先检查一遍题（可删改），没问题再点「发布」。</div>
+<div id="qList"></div>
+<div class="row" style="margin-top:8px">
+<button id="bPub" onclick="pub()" disabled>② 发布题组</button>
+<span class="msg" style="margin:0;color:var(--t2);font-size:13px">题目存在下方编辑区，改完直接发布（保存 JSON 后自动生效）</span>
+</div>
+<textarea id="qJson" style="width:100%;height:110px;margin-top:8px;background:rgba(5,7,15,.6);border:1px solid var(--line);border-radius:9px;color:var(--t2);font-family:Consolas,monospace;font-size:12px;padding:8px" placeholder="（出题后这里出现题目 JSON，可手工增删改）"></textarea>
+</div>
+
+<div class="panel" id="pubPanel" style="display:none">
+<h2>③ 发给学生的题组代码</h2>
+<div class="codeBox" id="pubCode"></div>
+<div class="msg ok">学生打开 <b>http://本机IP:8377/quiz/</b>，输入代码 + 姓名即可作答。本机IP：见下方「服务器信息」。</div>
+</div>
+
+<div class="panel">
+<h2>④ 实时学情</h2>
+<div class="row">
+<input type="text" id="rCode" placeholder="输入题组代码（自动填充已发布的）" style="text-transform:uppercase">
+<button onclick="loadRep()">加载/刷新</button>
+<button class="ghost" onclick="exportCsv()" id="bCsv" disabled>导出 CSV</button>
+<button class="ghost" onclick="autoT()" id="bAuto">自动刷新(关)</button>
+</div>
+<div class="msg" id="rmsg"></div>
+<div id="repBody"></div>
+</div>
+
+<div class="panel">
+<h2>⑤ 历史题组</h2>
+<div class="msg" id="sess"></div>
+</div>
+<div class="panel">
+<h2>服务器信息</h2>
+<div class="msg ok" id="sinfo"></div>
+</div>
+<div class="foot">李彦明 15684394135 · 教师面板 · 学生侧链接：/quiz/ · /tutor/ · /sites/</div>
+</div>
+<script>
+const $=id=>document.getElementById(id);
+let DRAFT=null, LAST_SUBS=0, TIMER=null;
+function esc(s){return String(s||"").replace(/&/g,"&amp;").replace(/</g,"&lt;").replace(/>/g,"&gt;")}
+async function gen(){
+  const subject=$("subj").value,grade=$("grade").value,topic=$("topic").value.trim()||"通用",n=parseInt($("nq").value||"10");
+  $("bGen").disabled=true;$("gmsg").textContent="AI 出题中，约 10~30 秒…";
+  try{
+    const d=await (await fetch("/api/ai/gen",{method:"POST",headers:{"Content-Type":"application/json"},
+      body:JSON.stringify({subject,grade,topic,n})})).json();
+    if(d.error)throw new Error(d.error);
+    DRAFT=d.questions;
+    renderList();$("qJson").value=JSON.stringify(d.questions,null,1);
+    $("bPub").disabled=false;
+    $("gmsg").textContent="已出 "+d.questions.length+" 题，检查无误后点「发布题组」。";
+  }catch(e){$("gmsg").textContent="出题失败："+e+"（可重试）";}
+  $("bGen").disabled=false;
+}
+function renderList(){
+  $("qList").innerHTML=DRAFT.map((q,i)=>`<div class="qi"><b>${i+1}.</b> ${esc(q.q)}<br>${q.options.map((o,j)=>`<span class="${j===q.answer?'a':'o'}">${"ABCD"[j]}. ${esc(o)}${j===q.answer?" ✓":""}</span>`).join("　")}</div>`).join("");
+}
+async function pub(){
+  let qs;
+  try{qs=JSON.parse($("qJson").value);}catch(e){$("gmsg").textContent="JSON 解析失败："+e;return;}
+  if(!Array.isArray(qs)||!qs.length){$("gmsg").textContent="题目为空";return;}
+  const d=await (await fetch("/api/session",{method:"POST",headers:{"Content-Type":"application/json"},
+    body:JSON.stringify({subject:$("subj").value,grade:$("grade").value,topic:$("topic").value||"通用",questions:qs})})).json();
+  if(d.error)throw new Error(d.error);
+  $("pubPanel").style.display="block";$("pubCode").textContent=d.code;
+  $("rCode").value=d.code;loadRep();listSess();
+  $("pubPanel").scrollIntoView({behavior:"smooth"});
+}
+async function loadRep(){
+  const code=$("rCode").value.trim().toUpperCase();
+  if(!code){$("rmsg").textContent="先发布题组拿到代码";return;}
+  try{
+    const d=await (await fetch("/api/report/"+code)).json();
+    if(d.error)throw new Error(d.error);
+    LAST_SUBS=d.subs;
+    $("bCsv").disabled=!d.subs;
+    const nq=d.questions.length;
+    let h=`<div class="prow">题组 <b style="color:var(--cy)">${code}</b> · ${esc(d.meta.subject||"")} ${esc(d.meta.grade||"")} · 已提交 <b style="color:var(--gr)">${d.subs}</b> 人</div>`;
+    h+=`<table class="tbl"><tr><th>#</th><th>题目（前40字）</th><th>正确答案</th><th>答对</th><th>正确率</th></tr>`;
+    d.pq.forEach(p=>{h+=`<tr><td>${p.i+1}</td><td>${esc(p.q)}</td><td>${"ABCD"[p.answer]}</td><td>${p.n_sub?p.n_correct+"人":"—"}</td><td>${p.rate==null?"—":p.rate+"%"}</td></tr>`;});
+    h+=`</table>`;
+    if(d.ranking.length){
+      h+=`<div class="prow" style="margin-top:10px"><b>提交排名</b></div><table class="tbl"><tr><th>序</th><th>姓名</th><th>得分</th><th>时间</th></tr>`;
+      d.ranking.forEach((r,i)=>{h+=`<tr><td>${i+1}</td><td>${esc(r.name)}</td><td>${r.score}/${r.total}</td><td>${r.ts}</td></tr>`;});
+      h+=`</table>`;
+    }
+    $("repBody").innerHTML=h;
+    window.__REP=d;
+  }catch(e){$("rmsg").textContent="加载失败："+e;}
+}
+function exportCsv(){
+  const d=window.__REP;if(!d||!d.ranking.length)return;
+  const rows=[["姓名","得分","总题","提交时间",...d.questions.map((q,i)=>"第"+(i+1)+"题")]];
+  d.ranking.forEach(r=>{
+    rows.push([r.name,r.score,r.total,r.ts,
+      ...d.questions.map((q,i)=>{const a=(r.answers||[])[i];return (a==null||a<0)?"未答":"ABCD"[a];})]);
+  });
+  const csv=rows.map(row=>row.map(c=>'"'+String(c??"").replace(/"/g,'""')+'"').join(",")).join("\n");
+  const a=document.createElement("a");
+  a.href="data:text/csv;charset=utf-8,"+encodeURIComponent("\ufeff"+csv);
+  a.download="学情_"+d.code+".csv";a.click();
+}
+async function listSess(){
+  const d=await fetch("/api/sessions").then(r=>r.json()).catch(()=>[]);
+  $("sess").innerHTML=d.length?d.map(s=>`<a class="link" href="javascript:void(0)" onclick="document.getElementById('rCode').value='${s.code}';loadRep()">[${s.code}]</a> ${esc(s.subject)} ${esc(s.grade)} · ${esc(s.topic||"")} · ${s.n}题 · 已交 ${s.subs} · ${s.created}`).join("<br>"):"（还没有题组，先出题发布）";
+}
+function autoT(){
+  if(TIMER){clearInterval(TIMER);TIMER=null;$("bAuto").textContent="自动刷新(关)";return;}
+  TIMER=setInterval(()=>loadRep(),5000);$("bAuto").textContent="自动刷新(开)";
+}
+fetch("/api/health").then(r=>r.json()).then(d=>{$("sinfo").textContent="服务在线 · "+d.ts+" · 学生入口 = 本机局域网IP :8377 · 查IP：Windows 跑 ipconfig / Ubuntu 跑 hostname -I";}).catch(e=>$("sinfo").textContent="服务未连上："+e);
+listSess();
+</script>
+</body>
+</html>

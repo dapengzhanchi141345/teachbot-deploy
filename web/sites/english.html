@@ -1,0 +1,291 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>通语者·英语专家团 — 全学段英语系统</title>
+<style>
+:root{--bg:#f4f8f5;--card:#fff;--ink:#1f2d24;--accent:#0f7a4a;--accent2:#12a15f;--soft:#e3f2ea;--ok:#16a34a;--bad:#dc2626;--line:#d8e6dc}
+*{margin:0;box-sizing:border-box}
+body{font-family:"Segoe UI","Microsoft YaHei",sans-serif;background:var(--bg);color:var(--ink);line-height:1.7}
+header{background:linear-gradient(120deg,#0b5138,#12a15f);color:#fff;padding:26px 30px}
+header h1{font-size:26px}
+header p{opacity:.9;font-size:14px;margin-top:6px}
+nav{display:flex;gap:8px;flex-wrap:wrap;padding:12px 30px;background:var(--card);border-bottom:1px solid var(--line);position:sticky;top:0;z-index:5}
+nav button{border:1px solid var(--line);background:#fff;padding:8px 14px;border-radius:8px;cursor:pointer;font-size:14px}
+nav button.on{background:var(--accent);color:#fff;border-color:var(--accent)}
+section{display:none;padding:24px 30px;max-width:1000px;margin:0 auto}
+section.on{display:block}
+h2{color:var(--accent);margin:6px 0 14px;font-size:20px}
+.grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(220px,1fr));gap:12px}
+.card{background:var(--card);border:1px solid var(--line);border-radius:10px;padding:14px}
+.card h3{font-size:15px;color:var(--accent2);margin-bottom:6px}
+.card ul{padding-left:18px;font-size:14px}
+.btn{background:var(--accent);color:#fff;border:none;padding:8px 14px;border-radius:8px;cursor:pointer;font-size:14px;margin:4px}
+input,select{padding:8px;border:1px solid var(--line);border-radius:8px;font-size:14px}
+.out{margin-top:12px;padding:12px;background:var(--soft);border-radius:8px;min-height:40px;font-size:15px}
+.tag{display:inline-block;background:var(--soft);color:var(--accent);padding:2px 8px;border-radius:20px;font-size:12px;margin:2px}
+.note{background:#fff7e6;border:1px solid #ffd580;border-radius:8px;padding:12px;font-size:14px;margin:10px 0}
+footer{text-align:center;padding:20px;color:#888;font-size:13px;margin-top:30px;border-top:1px solid var(--line)}
+</style>
+</head>
+<body>
+<header>
+<h1>通语者 · 英语专家团</h1>
+<p>全学段英语系统 · 小学→初中→高中→四六级 · 词汇/语法/听说读写 · 单词默写 · 语法选择 · 阅读 · 听力转写 · 双击即用(离线单文件)</p>
+</header>
+<nav>
+<button class="on" data-t="know">知识体系</button>
+<button data-t="word">单词默写</button>
+<button data-t="gram">语法选择</button>
+<button data-t="read">阅读理解</button>
+<button data-t="listen">听力转写</button>
+</nav>
+
+<section id="know" class="on">
+<h2>全学段知识体系</h2>
+<div class="note">按学段点卡片看考点; 单词用「默写」自测, 语法用「选择」练手。</div>
+<div class="grid" id="knowGrid"></div>
+</section>
+
+<section id="word">
+<h2>单词默写(看中文写英文, 对答案)</h2>
+<p>当前: <b id="wScore">0</b>/<span id="wTotal">0</span></p>
+<div id="wBox"></div>
+</section>
+
+<section id="gram">
+<h2>语法选择(点击判分)</h2>
+<p>当前: <b id="gScore">0</b>/<span id="gTotal">0</span></p>
+<div id="gBox"></div>
+</section>
+
+<section id="read">
+<h2>阅读理解</h2>
+<div id="rBox"></div>
+</section>
+
+<section id="listen">
+<h2>听力转写练习(看文字猜词 + 听写口型)</h2>
+<p>离线无音频文件, 用「看词猜义 + 口型跟读」自测, 真实听力素材每日升级中。</p>
+<div id="lBox"></div>
+</section>
+
+<footer>李彦明 15684394135 · 通语者·英语专家团 · 离线单文件 · 每日升级
+<div style="background:#fffbe6;border-left:4px solid #f5a623;padding:10px;margin:12px 0;font-size:14px">📅 2026-10-05 升级 · 【词汇+2026-10-05】resilient 有韧性的 / 能很快复原的 (adv. resiliency)</div>
+
+<div style="background:#fffbe6;border-left:4px solid #f5a623;padding:10px;margin:12px 0;font-size:14px">📅 2026-10-09 升级 · 【情态+2026-10-09】must have done=一定做过(推测)；can't have done=不可能做过</div>
+
+<div style="background:#fffbe6;border-left:4px solid #f5a623;padding:10px;margin:12px 0;font-size:14px">📅 2026-10-09 升级 · 【介词+2026-10-09】be dependent on 依靠；in charge of 负责；in the charge of 被…负责</div>
+
+<div style="background:#fffbe6;border-left:4px solid #f5a623;padding:10px;margin:12px 0;font-size:14px">📅 2026-10-09 升级 · 【倒装+2026-10-09】scarcely...when / hardly...when 主句过去完成+从句一般过去</div>
+
+<div style="background:#fffbe6;border-left:4px solid #f5a623;padding:10px;margin:12px 0;font-size:14px">📅 2026-10-10 升级 · 【动介+2026-10-10】persuade sb into doing 说服某人做…，into 别漏</div>
+
+<div style="background:#fffbe6;border-left:4px solid #f5a623;padding:10px;margin:12px 0;font-size:14px">📅 2026-10-11 升级 · 【定语+2026-10-11】先行词 the way 后的关系词 that/in which 常可省略</div>
+
+<div style="background:#fffbe6;border-left:4px solid #f5a623;padding:10px;margin:12px 0;font-size:14px">📅 2026-10-12 升级 · 【易混+2026-10-12】affect(v.影响) vs effect(n.效果)；imply 暗示 vs involve 涉及</div>
+
+<div style="background:#fffbe6;border-left:4px solid #f5a623;padding:10px;margin:12px 0;font-size:14px">📅 2026-10-13 升级 · 【时态+2026-10-13】一般过去 vs 现在完成：有具体时间用过去时 (yesterday 不能用 done)</div>
+
+<div style="background:#fffbe6;border-left:4px solid #f5a623;padding:10px;margin:12px 0;font-size:14px">📅 2026-10-14 升级 · 【词汇+2026-10-14】ambiguous 含糊不清的；名词形式 ambiguity</div>
+
+<div style="background:#fffbe6;border-left:4px solid #f5a623;padding:10px;margin:12px 0;font-size:14px">📅 2026-10-15 升级 · 【时态+2026-10-15】现在完成 have done 表"已完成的过去"，常配 already/just/yet</div>
+
+<div style="background:#fffbe6;border-left:4px solid #f5a623;padding:10px;margin:12px 0;font-size:14px">📅 2026-10-16 升级 · 【非谓语+2026-10-16】独立主格：主句之外再用"名词+doing/done"描状态</div>
+
+<div style="background:#fffbe6;border-left:4px solid #f5a623;padding:10px;margin:12px 0;font-size:14px">📅 2026-10-17 升级 · 【虚拟+2026-10-17】If I were you, I would... (be 一律用 were 表假设)</div>
+
+<div style="background:#fffbe6;border-left:4px solid #f5a623;padding:10px;margin:12px 0;font-size:14px">📅 2026-10-18 升级 · 【搭配+2026-10-18】compensate for 弥补/补偿，介词 for 别漏</div>
+
+<div style="background:#fffbe6;border-left:4px solid #f5a623;padding:10px;margin:12px 0;font-size:14px">📅 2026-10-20 升级 · 【词汇+2026-10-20】feasible 可行的；feasibility 可行性(名词)，常考词性转换</div>
+
+<div style="background:#fffbe6;border-left:4px solid #f5a623;padding:10px;margin:12px 0;font-size:14px">📅 2026-10-21 升级 · 【从句+2026-10-21】主语从句中 what/that/whether 选择：完整句用 that，缺成分用 what</div>
+
+<div style="background:#fffbe6;border-left:4px solid #f5a623;padding:10px;margin:12px 0;font-size:14px">📅 2026-10-22 升级 · 【冠词+2026-10-22】a/an 表泛指 the 表特指；某些词加 the 变意 the matter 严重 vs matter 要紧</div>
+
+<div style="background:#fffbe6;border-left:4px solid #f5a623;padding:10px;margin:12px 0;font-size:14px">📅 2026-10-23 升级 · 【虚拟+2026-10-23】虚拟"建议/要求"后接从句 (should) do：I suggest (that) he (should) go</div>
+
+<div style="background:#fffbe6;border-left:4px solid #f5a623;padding:10px;margin:12px 0;font-size:14px">📅 2026-10-24 升级 · 【非谓语+2026-10-24】现在分词主动/进行、过去分词被动/完成；be used to doing(习惯) vs used to do(过去)</div>
+
+<div style="background:#fffbe6;border-left:4px solid #f5a623;padding:10px;margin:12px 0;font-size:14px">📅 2026-10-25 升级 · 【动词+2026-10-25】raise(及物,举高)/arise(不及物,出现)/rise(不及物,上升) 别混</div>
+
+<div style="background:#fffbe6;border-left:4px solid #f5a623;padding:10px;margin:12px 0;font-size:14px">📅 2026-10-26 升级 · 【情态+2026-10-26】shouldn't have done 本不该做却做了；could have done 本可以(未做)</div>
+
+<div style="background:#fffbe6;border-left:4px solid #f5a623;padding:10px;margin:12px 0;font-size:14px">📅 2026-10-27 升级 · 【被动+2026-10-27】be about to be done 即将被…；被动无"完成进行时"</div>
+
+<div style="background:#fffbe6;border-left:4px solid #f5a623;padding:10px;margin:12px 0;font-size:14px">📅 2026-11-02 升级 · 【代词+2026-11-02】it 可指代不定式/动名词：It is no use crying over spilt milk</div>
+
+<div style="background:#fffbe6;border-left:4px solid #f5a623;padding:10px;margin:12px 0;font-size:14px">📅 2026-11-03 升级 · 【易混+2026-11-03】luggage 不可数(用 a piece of)；goods 复数；furniture 不可数</div>
+
+<div style="background:#fffbe6;border-left:4px solid #f5a623;padding:10px;margin:12px 0;font-size:14px">📅 2026-11-06 升级 · 【词汇+2026-11-06】compel 强迫(及物)；compelling 引人注目的(形容词)，别混</div>
+
+<div style="background:#fffbe6;border-left:4px solid #f5a623;padding:10px;margin:12px 0;font-size:14px">📅 2026-11-12 升级 · 【介词+2026-11-12】depend on 依靠；independent 独立的(不接 on)，词性有别</div>
+
+<div style="background:#fffbe6;border-left:4px solid #f5a623;padding:10px;margin:12px 0;font-size:14px">📅 2026-11-12 升级 · 【虚拟+2026-11-12】as if 从句表现在未实用过去时：He looks as if he were ill</div>
+
+<div style="background:#fffbe6;border-left:4px solid #f5a623;padding:10px;margin:12px 0;font-size:14px">📅 2026-11-13 升级 · 【非谓语+2026-11-13】be worth doing 只有 doing 形式，无 "be worth to do"</div>
+
+<div style="background:#fffbe6;border-left:4px solid #f5a623;padding:10px;margin:12px 0;font-size:14px">📅 2026-11-14 升级 · 【词汇+2026-11-14】inquire 询问/调查(正式)；inquiry n.；question 疑问——场合有别</div>
+
+<div style="background:#fffbe6;border-left:4px solid #f5a623;padding:10px;margin:12px 0;font-size:14px">📅 2026-11-15 升级 · 【时态+2026-11-15】现在完成进行时 have been doing 强调"持续到现在"，配 for/since</div>
+
+<div style="background:#fffbe6;border-left:4px solid #f5a623;padding:10px;margin:12px 0;font-size:14px">📅 2026-11-16 升级 · 【固定+2026-11-16】it is no wonder(+)... ="难怪"；不说 no wondering</div>
+
+<div style="background:#fffbe6;border-left:4px solid #f5a623;padding:10px;margin:12px 0;font-size:14px">📅 2026-11-17 升级 · 【强调+2026-11-17】It is/was ... that/who 强调句：It was Tom who broke the window</div>
+
+<div style="background:#fffbe6;border-left:4px solid #f5a623;padding:10px;margin:12px 0;font-size:14px">📅 2026-11-18 升级 · 【词汇+2026-11-18】resign 辞职/勉强同意；resignation n.；residence 居所——别混</div>
+
+<div style="background:#fffbe6;border-left:4px solid #f5a623;padding:10px;margin:12px 0;font-size:14px">📅 2026-11-19 升级 · 【语法+2026-11-19】the+形容词表一类人：the poor 穷人；a+形容词表个体 a poor student</div>
+
+<div style="background:#fffbe6;border-left:4px solid #f5a623;padding:10px;margin:12px 0;font-size:14px">📅 2026-11-20 升级 · 【连词+2026-11-20】so...that 修饰形容词/副词；such...that 修饰名词短语</div>
+
+<div style="background:#fffbe6;border-left:4px solid #f5a623;padding:10px;margin:12px 0;font-size:14px">📅 2026-11-21 升级 · 【词汇+2026-11-21】assert 断言(及物)；insistence n.；assert oneself 坚持己见</div>
+
+<div style="background:#fffbe6;border-left:4px solid #f5a623;padding:10px;margin:12px 0;font-size:14px">📅 2026-11-22 升级 · 【从句+2026-11-22】wh-从句用陈述语序：I don't know which seat he sits in(不倒装)</div>
+
+<div style="background:#fffbe6;border-left:4px solid #f5a623;padding:10px;margin:12px 0;font-size:14px">📅 2026-11-23 升级 · 【固定+2026-11-23】take the place of=replace；in place of 介词短语"代替"</div>
+
+<div style="background:#fffbe6;border-left:4px solid #f5a623;padding:10px;margin:12px 0;font-size:14px">📅 2026-11-24 升级 · 【词汇+2026-11-24】handle 处理/应对(及物)，比 deal with 更书面；名词 handles 手柄</div>
+
+<div style="background:#fffbe6;border-left:4px solid #f5a623;padding:10px;margin:12px 0;font-size:14px">📅 2026-11-25 升级 · 【搭配+2026-11-25】spend time doing 花时间做；spend money on 花钱买——两个介词别混</div>
+</footer>
+
+<script>
+document.querySelectorAll("nav button").forEach(b=>b.onclick=()=>{
+  document.querySelectorAll("nav button").forEach(x=>x.classList.remove("on"));
+  document.querySelectorAll("section").forEach(x=>x.classList.remove("on"));
+  b.classList.add("on");document.getElementById(b.dataset.t).classList.add("on");
+});
+const K=[
+ ["小学英语","26 字母 · 自然拼读 · 高频 500 词 · 日常句型 · 简单对话"],
+ ["初中英语","1600 词 · 时态(一般现在/过去/进行/完成) · 定语从句 · 被动 · 名词性从句 · 完形"],
+ ["高中英语","3500 词 · 非谓语(分动名词) · 虚拟语气 · 强调/倒装 · 阅读七选五 · 语法填空"],
+ ["四六级/考研","核心 5000 词 · 阅读长难句 · 写作模板 · 听力场景 · 翻译"],
+];
+document.getElementById("knowGrid").innerHTML=K.map(s=>`<div class="card"><h3>${s[0]}</h3><ul>${s[1].split(" · ").map(x=>`<li>${x}</li>`).join("")}</ul></div>`).join("");
+
+const WS=[
+ ["apple","苹果","小学"],["beautiful","美丽的","小学"],["student","学生","小学"],
+ ["happy","高兴的","小学"],["family","家庭","小学"],["school","学校","小学"],
+ ["teacher","老师","小学"],["friend","朋友","小学"],["morning","早上","小学"],
+ ["achieve","实现","初中"],["beneficial","有益的","初中"],["challenge","挑战","初中"],
+ ["diligent","勤奋的","初中"],["emphasize","强调","初中"],["frequent","频繁的","初中"],
+ ["genuine","真诚的","初中"],["improve","改善/提高","初中"],["environment","环境","初中"],
+ ["celebrate","庆祝","初中"],["patient","耐心的(adj./n.病人)","初中"],["decision","决定","初中"],
+ ["experience","经历/经验","初中"],["habit","习惯","初中"],["encourage","鼓励","初中"],
+ ["justice","正义","初中"],["knock","敲","初中"],["luminous","发光的","初中"],
+ ["hypothesis","假设","高中"],["incentive","激励","高中"],
+ ["consequence","结果/后果","高中"],["significant","重要的/显著的","高中"],["phenomenon","现象","高中"],
+ ["attitude","态度","高中"],["approach","方法/途径","高中"],["appreciate","欣赏/感激","高中"],
+ ["available","可获得的","高中"],["concentrate","集中/专注","高中"],["determine","决定/确定","高中"],
+ ["evaluate","评估","高中"],["identity","身份","高中"],["influence","影响","高中"],
+ ["acquire","获得","四六级"],["analyze","分析","四六级"],["authentic","地道的/真实的","四六级"],
+ ["budget","预算","四六级"],["campaign","运动/活动","四六级"],["comprehensive","综合的","四六级"],
+ ["crucial","至关重要的","四六级"],["demonstrate","论证/演示","四六级"],["efficient","高效的","四六级"],
+ ["implement","实施/执行","四六级"],
+];
+let ws=0,wt=0,wi=0;
+function wNext(){
+  wt++;document.getElementById("wTotal").textContent=wt;
+  const it=WS[wi];wi=(wi+1)%WS.length;
+  document.getElementById("wBox").innerHTML=`<div class="card"><span class="tag">默写 · ${it[2]}</span><h3>${it[1]}</h3>
+  <input id="wIn" placeholder="写英文单词..." style="width:200px"> <button class="btn" onclick="wAns()">核对</button>
+  <div class="out" id="wFb"></div></div>`;
+  document.getElementById("wIn").onkeydown=e=>{if(e.key==="Enter")wAns()};
+}
+function wAns(){
+  const v=document.getElementById("wIn").value.trim().toLowerCase();
+  const fb=document.getElementById("wFb");
+  if(v===WS[wi-1][0]){ws++;fb.textContent="✔ 正确: "+WS[wi-1][0];fb.style.color="var(--ok)";}
+  else{fb.textContent="✘ 应为: "+WS[wi-1][0];fb.style.color="var(--bad)";}
+  document.getElementById("wScore").textContent=ws;
+  setTimeout(wNext,1500);
+}
+wNext();
+
+const GS=[
+ ["She ___ to school every day.","goes","go|going|gone","一般现在时: 频率副词 every day + 三单动词加 -s"],
+ ["I have lived here ___ 2010.","since","for|at|in","现在完成时 + since 表'自…以来'(时间点)"],
+ ["He is ___ than his brother.","taller","more tall|tallest|tall","单音节形容词比较级: 加 -er, 不能 more tall"],
+ ["___ you ever been to Beijing?","Have","Did|Has|Were","have/has been to = 去过; ever 常与完成时连用"],
+ ["The book ___ on the table is mine.","lying","lay|lain|laid","现在分词作后置定语; lie 的现在分词是 lying, 过去分词是 lain"],
+ ["He suggested ___ the meeting early.","starting","to start|start|started","suggest doing sth, 不接 to do"],
+ ["Would you mind ___ the window?","closing","to close|close|closed","mind + doing, 客套'介意…吗'"],
+ ["It is no use ___ over spilt milk.","crying","cry|cried|to cry","It is no use doing sth, 固定结构"],
+ ["The problem ___ at the meeting yesterday.","was discussed","discussed|has discussed|discuss","被动语态: 物作主语 + be done, 过去时间用 was"],
+ ["___ he was young, he traveled a lot.","Although","Because|If|Since","although 引导让步状语从句'虽然…'"],
+];
+let gs=0,gt=0,gi=0;
+function gNext(){
+  gt++;document.getElementById("gTotal").textContent=gt;
+  const it=GS[gi];gi=(gi+1)%GS.length;
+  const opts=[it[1],...it[2].split("|")].sort(()=>Math.random()-0.5);
+  document.getElementById("gBox").innerHTML=`<div class="card"><span class="tag">语法</span><h3>${it[0]}</h3>
+  ${opts.map((o,i)=>`<button class="btn" onclick="gans(${i},'${o}')">${o}</button>`).join("")}
+  <div class="out" id="gFb"></div></div>`;
+  window._gc=it[1];window._gx=it[3];
+}
+function gans(i,choice){
+  const fb=document.getElementById("gFb");
+  if(choice===window._gc){gs++;fb.textContent="✔ 正确: "+choice+"。"+window._gx;fb.style.color="var(--ok)";}
+  else{fb.textContent="✘ 答案: "+window._gc+"。"+window._gx;fb.style.color="var(--bad)";}
+  document.getElementById("gScore").textContent=gs;
+  setTimeout(gNext,2500);
+}
+gNext();
+
+const RS=[
+ {p:"The weather has been cold lately, and many people have started wearing thick coats in November, earlier than usual. Experts say this is linked to a shift in the jet stream.",
+  q:"Why do people wear thick coats earlier?",a:"Because of a shift in the jet stream that makes the weather colder."},
+];
+document.getElementById("rBox").innerHTML=RS.map(r=>`<div class="card"><p>${r.p}</p><h3>${r.q}</h3>
+ <button class="btn" onclick="this.nextElementSibling.classList.toggle('on')">显示答案</button>
+ <div class="answer" style="display:none;background:#eaf3ea;border-radius:8px;padding:12px;margin-top:8px">${r.a}</div></div>`).join("");
+
+const LS=[
+ ["thirsty","口渴的"],["adventure","冒险"],["curious","好奇的"],["desert","沙漠"],["energy","能量"],
+];
+document.getElementById("lBox").innerHTML=LS.map(l=>`<div class="card"><span class="tag">听力词</span><h3>${l[0]} /${l[0].length} 字母</h3><p>${l[1]}</p></div>`).join("");
+</script>
+
+<div id="agent-panel" style="margin:20px auto;max-width:720px;border:2px solid #4a90d9;border-radius:12px;padding:16px;background:#f7fbff;font-family:system-ui">
+  <h3 style="margin:0 0 8px;color:#2c5d8f">🤖 通语者·英语专家团 · 智能体问答（本地题库模式）</h3>
+  <p style="font-size:13px;color:#555;margin:0 0 10px">本地题库模式（离线·零外链）：关键词匹配本站本地题库作答。在线 AI 问答待李老师定 key 策略后统一开通。</p>
+  <div style="display:flex;flex-wrap:wrap;gap:8px;margin-bottom:10px"><button style="padding:6px 10px;border-radius:8px;border:1px solid #888;background:#fff;color:#333;cursor:pointer;font-size:12px" onclick="agentAsk('讲解 resilient 词义+造 3 句')">讲解 resilient 词义+造 </button><button style="padding:6px 10px;border-radius:8px;border:1px solid #888;background:#fff;color:#333;cursor:pointer;font-size:12px" onclick="agentAsk('It is I who am to blame 语法点')">It is I who am to </button><button style="padding:6px 10px;border-radius:8px;border:1px solid #888;background:#fff;color:#333;cursor:pointer;font-size:12px" onclick="agentAsk('一篇阅读理解逐句精读')">一篇阅读理解逐句精读</button>
+    <button style="padding:6px 12px;border-radius:8px;border:1px solid #4a90d9;background:#4a90d9;color:#fff;cursor:pointer" onclick="agentAsk('')">问 通语者·英语专家团</button>
+  </div>
+  <textarea id="agent-q" placeholder="输入问题，匹配 通语者·英语专家团 本地题库..." style="width:100%;height:60px;padding:8px;border:1px solid #ccc;border-radius:8px;font-size:14px;box-sizing:border-box"></textarea>
+  <button style="margin-top:8px;padding:8px 16px;border-radius:8px;border:none;background:#2c8a3d;color:#fff;cursor:pointer;font-size:14px" onclick="agentAsk(document.getElementById('agent-q').value)">匹配本地题库</button>
+  <div id="agent-a" style="margin-top:12px;padding:12px;background:#fff;border-left:4px solid #2c8a3d;border-radius:6px;font-size:14px;min-height:40px;white-space:pre-wrap;color:#333">（等待回答）</div>
+  <script>
+  // 本地题库模式: 离线·零外链·无 key。在线(key 注入)待李老师定 key 策略后统一切, 此处 AGENT_MODE 为切换点。
+  var AGENT_MODE="local";
+  var AGENT_KB=(typeof window.AGENT_KB==="object"&&window.AGENT_KB)?window.AGENT_KB:[];
+  var LOCAL_TIPS=["阅读先看题干关键词定位段落; 语法看句子成分(主谓一致/非谓语标志词)。", "写作先保句子结构(5要素)与时态一致, 再谈表达多样。"];
+  function _kbTokens(q){
+    var t=[];
+    (q.toLowerCase().match(/[a-z0-9]+/g)||[]).forEach(function(x){t.push(x);});
+    q.replace(/[^\u4e00-\u9fff]/g,'').split('').forEach(function(c){t.push(c);});
+    return t;
+  }
+  function agentAsk(q){
+    if(!q)q=document.getElementById('agent-q').value;
+    if(!q){document.getElementById('agent-a').textContent='请输入问题';return;}
+    document.getElementById('agent-q').value=q;
+    var a=document.getElementById('agent-a');
+    var uniq=Array.from(new Set(_kbTokens(q)));
+    var hits=AGENT_KB.map(function(it){
+      var hay=((it.q||"")+" "+(it.a||"")).toLowerCase();
+      var n=uniq.filter(function(t){return hay.indexOf(t)>-1;}).length;
+      return {s:n,it:it};
+    }).filter(function(x){return x.s>=Math.min(uniq.length,2);}).sort(function(x,y){return y.s-x.s;}).slice(0,3);
+    if(hits.length){
+      a.textContent="\u{1F4D6} 本地题库 · 离线（通语者·英语专家团 本地条目）\n\n"+hits.map(function(h){return "Q: "+h.it.q+"\nA: "+h.it.a;}).join("\n\n")+"\n\n（在线 AI 问答待李老师定 key 策略后开通）";
+    } else {
+      a.textContent="\u26A0\uFE0F 本地题库模式（离线）：未匹配到本地条目。在线 AI 问答待李老师定 key 策略后开通。\n学习提示：\n- "+LOCAL_TIPS.join("\n- ")+"\n并见站内【题库/知识】模块。";
+    }
+  }
+  </script>
+</div>
+</body></html>

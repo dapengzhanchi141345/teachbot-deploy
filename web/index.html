@@ -1,0 +1,65 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>李彦明 · 教学中枢</title>
+<style>
+:root{--bg:#05070f;--card:rgba(17,24,44,.66);--line:rgba(148,163,215,.28);--text:#e8eefc;--t2:#a7b3d1;
+--cy:#22d3ee;--vi:#818cf8;--gr:#34d399;--am:#fbbf24;--mg:#e879f9}
+*{margin:0;box-sizing:border-box}
+body{background:var(--bg);color:var(--text);font-family:"Microsoft YaHei",system-ui,sans-serif;min-height:100vh;
+background-image:linear-gradient(rgba(120,150,255,.045) 1px,transparent 1px),linear-gradient(90deg,rgba(120,150,255,.045) 1px,transparent 1px);background-size:34px 34px}
+.wrap{max-width:980px;margin:0 auto;padding:28px 18px 60px}
+h1{font-size:26px;background:linear-gradient(120deg,var(--cy),var(--vi),var(--mg));-webkit-background-clip:text;background-clip:text;color:transparent;margin-bottom:6px}
+.sub{color:var(--t2);font-size:14px;margin-bottom:22px}
+.grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(280px,1fr));gap:14px}
+.card{background:var(--card);border:1px solid var(--line);border-radius:18px;padding:18px;text-decoration:none;color:var(--text);display:block;transition:.2s}
+.card:hover{border-color:var(--cy);transform:translateY(-2px)}
+.card .ic{font-size:30px;margin-bottom:8px}
+.card b{font-size:17px;display:block;margin-bottom:6px}
+.card span{color:var(--t2);font-size:13px;line-height:1.6}
+.tag{display:inline-block;font-size:11px;border:1px solid var(--line);border-radius:99px;padding:2px 10px;margin-top:10px;color:var(--t2)}
+.tag.t1{color:var(--cy);border-color:rgba(34,211,238,.4)} .tag.t2{color:var(--vi);border-color:rgba(129,140,252,.4)}
+.tag.t3{color:var(--gr);border-color:rgba(52,211,153,.4)} .tag.t4{color:var(--am);border-color:rgba(251,191,36,.4)}
+.sec{margin-top:26px}
+.sec h2{font-size:16px;color:var(--t2);margin-bottom:10px}
+.mini{display:grid;grid-template-columns:repeat(auto-fill,minmax(150px,1fr));gap:8px}
+.mini a{background:var(--card);border:1px solid var(--line);border-radius:10px;padding:10px 12px;text-decoration:none;color:var(--text);font-size:14px}
+.mini a:hover{border-color:var(--vi)}
+.foot{margin-top:40px;text-align:center;color:var(--t2);font-size:12px;line-height:1.8}
+#ip{font-family:Consolas,monospace;color:var(--gr)}
+</style>
+</head>
+<body>
+<div class="wrap">
+<h1>李彦明 · 教学中枢</h1>
+<div class="sub">本机局域网入口 · 学生机请用下方链接 / 代码作答 · 当前入口：<span id="ip">检测中…</span></div>
+
+<div class="grid">
+<a class="card" href="/quiz/"><div class="ic">📝</div><b>课堂检测 · 学生作答</b><span>输入老师发的题组代码 + 姓名，答题后自动提交、即时出分、错题解析。</span><div class="tag t1">学生入口</div></a>
+<a class="card" href="/report/"><div class="ic">📊</div><b>教师面板 · AI 出题 + 学情</b><span>AI 一键出选择题、发布题组；实时看提交进度、每题正确率、班级排名，一键导出。</span><div class="tag t2">教师入口</div></a>
+<a class="card" href="/tutor/"><div class="ic">🤖</div><b>AI 助教</b><span>按学科+年级陪学：概念讲解、出题练手、批改答疑，课堂 40 秒响应。</span><div class="tag t3">学生可用</div></a>
+</div>
+
+<div class="sec"><h2>📚 12 学科网站（单文件离线可用）</h2>
+<div class="mini" id="sites"></div></div>
+
+<div class="sec"><h2>🗂 传统练习系统（全册 718 题 · 离线版）</h2>
+<div class="mini">
+<a href="/classic/信息科技七年级_课堂检测系统.html">七上 · 课堂检测</a>
+<a href="/classic/信息科技八年级_课堂检测系统.html">八上 · 课堂检测</a>
+<a href="/classic/信息科技七年级_全册练习系统V2.0.html">七上 · 全册练习 V2</a>
+<a href="/classic/信息科技八年级_全册练习系统V2.0.html">八上 · 全册练习 V2</a>
+</div></div>
+
+<div class="foot">李彦明 15684394135 · 教学中枢 v1 · 若页面打不开请确认：① 服务器已启动 ② 同一局域网 ③ IP 已变（重新问老师要 IP）</div>
+</div>
+<script>
+const SITES=[["math","数学"],["chinese","语文"],["english","英语"],["physics","物理"],["chem","化学"],["bio","生物"],
+["geo","地理"],["history","历史"],["morality","道德与法治"],["it","信息科技"],["music","音乐"],["pe","体育"]];
+document.getElementById("sites").innerHTML=SITES.map(([s,n])=>`<a href="/sites/${s}.html">${n}</a>`).join("");
+fetch("/api/health").then(r=>r.json()).then(()=>{document.getElementById("ip").textContent=location.host+"（在线）"}).catch(()=>{document.getElementById("ip").textContent=location.host+"（服务未连上）"});
+</script>
+</body>
+</html>

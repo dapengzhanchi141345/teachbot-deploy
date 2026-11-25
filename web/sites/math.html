@@ -1,0 +1,344 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>数算子·数学专家团 — 全学段数学系统</title>
+<style>
+:root{--bg:#f7f9fb;--card:#fff;--ink:#1a2433;--accent:#2563eb;--accent2:#0ea5e9;--soft:#e8f0fe;--ok:#16a34a;--bad:#dc2626;--line:#e5eaf1}
+*{margin:0;box-sizing:border-box}
+body{font-family:"Microsoft YaHei",sans-serif;background:var(--bg);color:var(--ink);line-height:1.7}
+header{background:linear-gradient(120deg,#1e3a8a,#0ea5e9);color:#fff;padding:26px 30px}
+header h1{font-size:26px}
+header p{opacity:.9;font-size:14px;margin-top:6px}
+nav{display:flex;gap:8px;flex-wrap:wrap;padding:12px 30px;background:var(--card);border-bottom:1px solid var(--line);position:sticky;top:0;z-index:5}
+nav button{border:1px solid var(--line);background:#fff;padding:8px 14px;border-radius:8px;cursor:pointer;font-size:14px}
+nav button.on{background:var(--accent);color:#fff;border-color:var(--accent)}
+section{display:none;padding:24px 30px;max-width:1000px;margin:0 auto}
+section.on{display:block}
+h2{color:var(--accent);margin:6px 0 14px;font-size:20px}
+.grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(220px,1fr));gap:12px}
+.card{background:var(--card);border:1px solid var(--line);border-radius:10px;padding:14px}
+.card h3{font-size:15px;color:var(--accent2);margin-bottom:6px}
+.card ul{padding-left:18px;font-size:14px}
+table{border-collapse:collapse;width:100%;background:#fff;font-size:14px;margin:10px 0}
+th,td{border:1px solid var(--line);padding:8px;text-align:left}
+th{background:var(--soft)}
+.btn{background:var(--accent);color:#fff;border:none;padding:8px 14px;border-radius:8px;cursor:pointer;font-size:14px;margin:4px}
+.btn.g{background:var(--ok)}.btn.b{background:var(--bad)}
+input,select{padding:8px;border:1px solid var(--line);border-radius:8px;font-size:14px}
+.out{margin-top:12px;padding:12px;background:var(--soft);border-radius:8px;min-height:40px;font-size:15px}
+.tag{display:inline-block;background:var(--soft);color:var(--accent);padding:2px 8px;border-radius:20px;font-size:12px;margin:2px}
+.note{background:#fff7e6;border:1px solid #ffd580;border-radius:8px;padding:12px;font-size:14px;margin:10px 0}
+footer{text-align:center;padding:20px;color:#888;font-size:13px;margin-top:30px;border-top:1px solid var(--line)}
+</style>
+</head>
+<body>
+<header>
+<h1>数算子 · 数学专家团</h1>
+<p>全学段数学系统 · 小学→初中→高中→竞赛 · 知识体系 + 交互练习 + 公式速查 + 导图 + 速算 · 双击即用(离线单文件)</p>
+</header>
+<nav>
+<button class="on" data-t="know">知识体系</button>
+<button data-t="quiz">出题练习</button>
+<button data-t="calc">公式速查</button>
+<button data-t="mind">思维导图</button>
+<button data-t="tool">速算工具</button>
+<button data-t="comp">竞赛专题</button>
+</nav>
+
+<section id="know" class="on">
+<h2>全学段知识体系</h2>
+<div class="note">使用: 按学段点卡片看核心知识点; 配合「出题练习」自测; 高中/竞赛用「速算工具」练手。</div>
+<div class="grid" id="knowGrid"></div>
+</section>
+
+<section id="quiz">
+<h2>出题练习(全学段混合, 点击判分, 自动跳下一题)</h2>
+<p>当前得分: <b id="qScore">0</b> / <span id="qTotal">0</span></p>
+<div id="qBox"></div>
+</section>
+
+<section id="calc">
+<h2>公式速查(分门别类)</h2>
+<div class="grid" id="calcGrid"></div>
+</section>
+
+<section id="mind">
+<h2>数学思维导图(四大分支)</h2>
+<div class="grid" id="mindBox"></div>
+</section>
+
+<section id="tool">
+<h2>速算工具</h2>
+<p><b>① 分数化简</b></p>
+<input id="fNum" placeholder="分子" style="width:80px"> / <input id="fDen" placeholder="分母" style="width:80px"> <button class="btn" onclick="frac()">化简</button>
+<p style="margin-top:14px"><b>② 等差 / 等比数列求和</b></p>
+<select id="seqType"><option value="arith">等差数列</option><option value="geo">等比数列</option></select>
+首项 <input id="a1" value="1" style="width:60px"> 公差/公比 <input id="d1" value="1" style="width:60px"> 项数 <input id="n1" value="10" style="width:60px">
+<button class="btn" onclick="seq()">求前 n 项和</button>
+<p style="margin-top:14px"><b>③ 一元二次方程求根</b></p>
+a <input id="qa" value="1" style="width:60px"> b <input id="qb" value="-5" style="width:60px"> c <input id="qc" value="6" style="width:60px">
+<button class="btn" onclick="quad()">求根</button>
+<div class="out" id="toolOut"></div>
+</section>
+
+<section id="comp">
+<h2>竞赛专题(高频考点)</h2>
+<div class="grid" id="compGrid"></div>
+</section>
+
+<footer>李彦明 15684394135 · 数算子·数学专家团 · 离线单文件 · 每日升级
+<div style="background:#fffbe6;border-left:4px solid #f5a623;padding:10px;margin:12px 0;font-size:14px">📅 2026-10-08 升级 · 数算子·数学专家团第一版：题库 +2 竞赛高频（x³+y³=61 / 阶乘和153），公式速查 +2（和的立方、裂项相消）</div>
+
+<div style="background:#fffbe6;border-left:4px solid #f5a623;padding:10px;margin:12px 0;font-size:14px">📅 2026-10-08 升级 · 【练习+2026-10-08】易错题: 已知 a+b=5, ab=6, 求 a³+b³ = ? (a³+b³=(a+b)³-3ab(a+b)=49)</div>
+
+<div style="background:#fffbe6;border-left:4px solid #f5a623;padding:10px;margin:12px 0;font-size:14px">📅 2026-10-09 升级 · 【方法+2026-10-09】导数定单调：f'(x)>0 增、f'(x)<0 减；极值点看导数变号</div>
+
+<div style="background:#fffbe6;border-left:4px solid #f5a623;padding:10px;margin:12px 0;font-size:14px">📅 2026-10-09 升级 · 【不等式+2026-10-09】|x|<a ⇔ -a<x<a；|x|>a ⇔ x>a 或 x<-a</div>
+
+<div style="background:#fffbe6;border-left:4px solid #f5a623;padding:10px;margin:12px 0;font-size:14px">📅 2026-10-09 升级 · 【计数+2026-10-09】组合 C(n,k)=n!/(k!(n-k)!)；排列=组合×k!，区别在要不要顺序</div>
+
+<div style="background:#fffbe6;border-left:4px solid #f5a623;padding:10px;margin:12px 0;font-size:14px">📅 2026-10-10 升级 · 【定理+2026-10-10】勾股逆定理：a²+b²=c² ⇔ 三角形是直角三角形</div>
+
+<div style="background:#fffbe6;border-left:4px solid #f5a623;padding:10px;margin:12px 0;font-size:14px">📅 2026-10-11 升级 · 【统计+2026-10-11】平均数受极端值影响大，中位数稳健；众数=出现最多的数</div>
+
+<div style="background:#fffbe6;border-left:4px solid #f5a623;padding:10px;margin:12px 0;font-size:14px">📅 2026-10-12 升级 · 【性质+2026-10-12】不等式乘负数反向：a>b 则 ac>bc (c>0)，ac<bc (c<0)</div>
+
+<div style="background:#fffbe6;border-left:4px solid #f5a623;padding:10px;margin:12px 0;font-size:14px">📅 2026-10-13 升级 · 【坐标+2026-10-13】两点距离 √((x1-x2)²+(y1-y2)²)；中点 ((x1+x2)/2, (y1+y2)/2)</div>
+
+<div style="background:#fffbe6;border-left:4px solid #f5a623;padding:10px;margin:12px 0;font-size:14px">📅 2026-10-14 升级 · 【练习+2026-10-14】二次方程判别式 Δ=b²-4ac：Δ>0 两不等实根，=0 两相等实根，<0 无实根</div>
+
+<div style="background:#fffbe6;border-left:4px solid #f5a623;padding:10px;margin:12px 0;font-size:14px">📅 2026-10-15 升级 · 【练习+2026-10-15】一元二次求根公式 x=(-b±√Δ)/2a，用前先写清 a/b/c</div>
+
+<div style="background:#fffbe6;border-left:4px solid #f5a623;padding:10px;margin:12px 0;font-size:14px">📅 2026-10-16 升级 · 【公式+2026-10-16】等差求和 S=n(a1+an)/2；等比(q≠1) S=a1(1-qⁿ)/(1-q)</div>
+
+<div style="background:#fffbe6;border-left:4px solid #f5a623;padding:10px;margin:12px 0;font-size:14px">📅 2026-10-17 升级 · 【概率+2026-10-17】互斥 P(A∪B)=P(A)+P(B)；独立 P(AB)=P(A)·P(B)，别混</div>
+
+<div style="background:#fffbe6;border-left:4px solid #f5a623;padding:10px;margin:12px 0;font-size:14px">📅 2026-10-18 升级 · 【公式+2026-10-18】三角形面积 S=½ab·sinC；海伦公式 S=√(p(p-a)(p-b)(p-c))</div>
+
+<div style="background:#fffbe6;border-left:4px solid #f5a623;padding:10px;margin:12px 0;font-size:14px">📅 2026-10-20 升级 · 【三角+2026-10-20】正弦定理 a/sinA=b/sinB=c/sinC=2R；余弦定理 c²=a²+b²-2ab·cosC</div>
+
+<div style="background:#fffbe6;border-left:4px solid #f5a623;padding:10px;margin:12px 0;font-size:14px">📅 2026-10-21 升级 · 【数列+2026-10-21】等差通项 an=a1+(n-1)d；等比通项 an=a1·q^(n-1)，q 的正负决定摆动</div>
+
+<div style="background:#fffbe6;border-left:4px solid #f5a623;padding:10px;margin:12px 0;font-size:14px">📅 2026-10-22 升级 · 【数列+2026-10-22】裂项相消 1/(n(n+1))=1/n-1/(n+1)，求和首尾相消</div>
+
+<div style="background:#fffbe6;border-left:4px solid #f5a623;padding:10px;margin:12px 0;font-size:14px">📅 2026-10-23 升级 · 【解析+2026-10-23】直线与圆位置关系：圆心到直线距离 d<R 相交、=R 相切、>R 相离</div>
+
+<div style="background:#fffbe6;border-left:4px solid #f5a623;padding:10px;margin:12px 0;font-size:14px">📅 2026-10-24 升级 · 【函数+2026-10-24】对数 log_a(bc)=log_a b+log_a c；log_a(1/x)=-log_a x，换底 log_a b=ln b/ln a</div>
+
+<div style="background:#fffbe6;border-left:4px solid #f5a623;padding:10px;margin:12px 0;font-size:14px">📅 2026-10-25 升级 · 【空间+2026-10-25】三视图还原：主视正立、俯视图在上、左视图在右，"长对正、高平齐、宽相等"</div>
+
+<div style="background:#fffbe6;border-left:4px solid #f5a623;padding:10px;margin:12px 0;font-size:14px">📅 2026-10-26 升级 · 【统计+2026-10-26】相关系数 r∈[-1,1]，|r| 越近 1 线性越强；r>0 正相关 r<0 负相关</div>
+
+<div style="background:#fffbe6;border-left:4px solid #f5a623;padding:10px;margin:12px 0;font-size:14px">📅 2026-10-27 升级 · 【计数+2026-10-27】二项式 (a+b)ⁿ 第 k+1 项 C(n,k)a^(n-k)b^k；系数和令 a=b=1</div>
+
+<div style="background:#fffbe6;border-left:4px solid #f5a623;padding:10px;margin:12px 0;font-size:14px">📅 2026-11-02 升级 · 【向量+2026-11-02】数量积 a·b=|a||b|cosθ；a·b=0 且 a,b 非零 ⇒ a⊥b</div>
+
+<div style="background:#fffbe6;border-left:4px solid #f5a623;padding:10px;margin:12px 0;font-size:14px">📅 2026-11-03 升级 · 【概率+2026-11-03】条件概率 P(B|A)=P(AB)/P(A)；独立时 P(B|A)=P(B)</div>
+
+<div style="background:#fffbe6;border-left:4px solid #f5a623;padding:10px;margin:12px 0;font-size:14px">📅 2026-11-06 升级 · 【函数+2026-11-06】对数 y=log_a x(a>1 增、a∈(0,1) 减)，恒过定点 (1,0)</div>
+
+<div style="background:#fffbe6;border-left:4px solid #f5a623;padding:10px;margin:12px 0;font-size:14px">📅 2026-11-12 升级 · 【几何+2026-11-12】相似图形：相似比 k，则面积比 k²、体积比 k³</div>
+
+<div style="background:#fffbe6;border-left:4px solid #f5a623;padding:10px;margin:12px 0;font-size:14px">📅 2026-11-12 升级 · 【数列+2026-11-12】差比数列(等差×等比)用错位相减法求和</div>
+
+<div style="background:#fffbe6;border-left:4px solid #f5a623;padding:10px;margin:12px 0;font-size:14px">📅 2026-11-13 升级 · 【计数+2026-11-13】相邻问题用"捆绑法"，不相邻问题用"插空法"</div>
+
+<div style="background:#fffbe6;border-left:4px solid #f5a623;padding:10px;margin:12px 0;font-size:14px">📅 2026-11-14 升级 · 【函数+2026-11-14】奇偶性：奇函数关于原点对称、偶函数关于 y 轴对称，定义域须对称</div>
+
+<div style="background:#fffbe6;border-left:4px solid #f5a623;padding:10px;margin:12px 0;font-size:14px">📅 2026-11-15 升级 · 【解析+2026-11-15】椭圆 x²/a²+y²/b²=1：c²=a²-b²，离心率 e=c/a∈(0,1)</div>
+
+<div style="background:#fffbe6;border-left:4px solid #f5a623;padding:10px;margin:12px 0;font-size:14px">📅 2026-11-16 升级 · 【不等式+2026-11-16】均值不等式 a+b≥2√(ab)(a,b>0)，取等需 a=b；一正二定三相等</div>
+
+<div style="background:#fffbe6;border-left:4px solid #f5a623;padding:10px;margin:12px 0;font-size:14px">📅 2026-11-17 升级 · 【统计+2026-11-17】样本方差 s²=Σ(xᵢ-x̄)²/n 衡量离散程度，标准差与数据同单位</div>
+
+<div style="background:#fffbe6;border-left:4px solid #f5a623;padding:10px;margin:12px 0;font-size:14px">📅 2026-11-18 升级 · 【计数+2026-11-18】抽屉原理：n+1 个物体放入 n 个盒子，必有一盒≥2 个</div>
+
+<div style="background:#fffbe6;border-left:4px solid #f5a623;padding:10px;margin:12px 0;font-size:14px">📅 2026-11-19 升级 · 【向量+2026-11-19】向量 a 在 b 上的投影=(a·b/|b|²)b；数量投影 a·b/|b|</div>
+
+<div style="background:#fffbe6;border-left:4px solid #f5a623;padding:10px;margin:12px 0;font-size:14px">📅 2026-11-20 升级 · 【导数+2026-11-20】切线 y=f'(x₀)(x-x₀)+f(x₀)；"在点处切线"≠"过点且相切"</div>
+
+<div style="background:#fffbe6;border-left:4px solid #f5a623;padding:10px;margin:12px 0;font-size:14px">📅 2026-11-21 升级 · 【复数+2026-11-21】除法 (a+bi)/(c+di) 分子分母同乘共轭 (c-di)；i²=-1</div>
+
+<div style="background:#fffbe6;border-left:4px solid #f5a623;padding:10px;margin:12px 0;font-size:14px">📅 2026-11-22 升级 · 【数列+2026-11-22】累加法：aₙ₊₁-aₙ=d 型求通项；aₙ₊₁=q·aₙ 型配等比</div>
+
+<div style="background:#fffbe6;border-left:4px solid #f5a623;padding:10px;margin:12px 0;font-size:14px">📅 2026-11-23 升级 · 【立体+2026-11-23】锥体 V=⅓Sh、柱体 V=Sh；圆锥轴截面是等腰三角形</div>
+
+<div style="background:#fffbe6;border-left:4px solid #f5a623;padding:10px;margin:12px 0;font-size:14px">📅 2026-11-24 升级 · 【立体+2026-11-24】正四面体(棱长a)：外接球半径R=a√6/4，内切球半径r=a√6/12，R=3r</div>
+
+<div style="background:#fffbe6;border-left:4px solid #f5a623;padding:10px;margin:12px 0;font-size:14px">📅 2026-11-25 升级 · 【三角+2026-11-25】cos2x=1−2sin²x=2cos²x−1；tan2x=2tanx/(1−tan²x)；sin(x/2)=±√((1−cosx)/2),cos(x/2)=±√((1+cosx)/2)(符号看象限)</div>
+</footer>
+
+<script>
+document.querySelectorAll("nav button").forEach(b=>b.onclick=()=>{
+  document.querySelectorAll("nav button").forEach(x=>x.classList.remove("on"));
+  document.querySelectorAll("section").forEach(x=>x.classList.remove("on"));
+  b.classList.add("on");document.getElementById(b.dataset.t).classList.add("on");
+});
+const K=[
+ ["小学数学","四则混合运算 · 分数小数百分数 · 几何初步(周长面积) · 方程初探 · 应用题 · 速算巧算 · 数论入门(质数合数)"],
+ ["初中数学","实数与根式 · 整式分式 · 一元二次方程 · 不等式 · 一次函数/反比例/二次函数 · 全等相似 · 圆 · 概率统计"],
+ ["高中数学","集合与逻辑 · 函数概念与性质 · 三角函数 · 数列 · 不等式 · 平面向量 · 立体几何 · 解析几何 · 导数 · 概率与统计"],
+ ["竞赛数学","数论(整除同余) · 组合(计数容斥) · 代数(恒等式均值不等式) · 几何(梅涅劳斯塞瓦) · 不等式(SOS)"],
+];
+document.getElementById("knowGrid").innerHTML=K.map(s=>`<div class="card"><h3>${s[0]}</h3><ul>${s[1].split(" · ").map(x=>`<li>${x}</li>`).join("")}</ul></div>`).join("");
+
+const QS=[
+ ["小学","7 × 8 = ?",["54","56","58","52"],1],
+ ["小学","1/2 + 1/3 = ?",["2/5","5/6","4/5","1/6"],1],
+ ["小学","一个长方形长 8 宽 5, 周长 = ?",["26","40","13","26"],0],
+ ["小学","一个数除以 7 余 3, 它可能是?",["10","17","24","31"],1],
+ ["初中","方程 2x + 5 = 13, x = ?",["4","5","6","7"],1],
+ ["初中","√2 × √8 = ?",["√10","4","√6","8"],1],
+ ["初中","函数 y = -x²+4 的最大值 = ?",["4","2","-4","0"],0],
+ ["初中","等腰三角形两角 40° 和 100° 不成立, 说明顶角不能是?",["40°","80°","100°","40°或100°"],3],
+ ["高中","等差 2,5,8,... 第 5 项 = ?",["14","15","16","17"],2],
+ ["高中","sin(π/6) = ?",["1/2","√3/2","√2/2","1"],0],
+ ["高中","等比 1,2,4,8,... 前 5 项和 = ?",["15","31","32","16"],1],
+ ["高中","导数 y=x³ 在 x=2 的导数值 = ?",["12","8","4","24"],0],
+ ["高中","sinA/sinB 在三角形中 = ?",["a/b","b/a","A/B","1"],0],
+ ["竞赛","1²+2²+...+10² = ?",["385","550","505","440"],0],
+ ["竞赛","x² - 5x + 6 = 0 的根是?",["2 和 3","1 和 6","-2 和 -3","3 和 3"],0],
+ ["竞赛","n! 末尾有几个 0 (n=25)?",["5","6","7","4"],1],
+ ["竞赛","C(6,2) = ?",["15","30","12","45"],0],
+ ["竞赛","x+y=5, x*y=6, x³+y³ = ?",["110","61","36","15"],0],
+ ["竞赛","1!+2!+3!+...+5! = ?",["153","131","143","123"],0],
+];
+let qs=0,qt=0,qi=0;
+function qNext(){
+  qt++;document.getElementById("qTotal").textContent=qt;
+  const it=QS[qi];qi=(qi+1)%QS.length;
+  document.getElementById("qBox").innerHTML=
+    `<div class="card"><span class="tag">${it[0]}</span><h3>${it[1]}</h3>
+    ${it[2].map((o,i)=>`<button class="btn" onclick="qans(${i})">${o}</button>`).join("")}
+    <div class="out" id="qFb"></div></div>`;
+}
+function qans(i){
+  const fb=document.getElementById("qFb");
+  if(i===QS[qi][3]){qs++;fb.textContent="✔ 正确";fb.style.color="var(--ok)";}
+  else{fb.textContent="✘ 答案: "+QS[qi][2][QS[qi][3]];fb.style.color="var(--bad)";}
+  document.getElementById("qScore").textContent=qs;
+  setTimeout(qNext,1500);
+}
+qNext();
+
+const FS=[
+ ["圆","S=πr²  C=2πr  扇形S=αr²/2"],
+ ["球","V=4/3πr³  S=4πr²"],
+ ["二次函数","顶点(-b/2a,(4ac-b²)/4a)"],
+ ["求根公式","x=(-b±√(b²-4ac))/2a"],
+ ["等差","an=a1+(n-1)d  Sn=n(a1+an)/2"],
+ ["等比","an=a1q^(n-1)  Sn=a1(1-qⁿ)/(1-q)"],
+ ["三角","sin²α+cos²α=1  sin(A±B)=sinAcosB±cosAsinB"],
+ ["二项式","(a+b)ⁿ = Σ C(n,k)aⁿ⁻ᵏbᵏ"],
+ ["向量","a·b=|a||b|cosθ  |a+b|²=|a|²+2a·b+|b|²"],
+ ["导数","(xⁿ)′=nxⁿ⁻¹  (sinx)′=cosx  (eˣ)′=eˣ"],
+ ["立体","柱V=Sh 锥V=Sh/3 台V=h/3(S₁+S₂+√(S₁S₂))"],
+ ["概率","P(A∪B)=P(A)+P(B)-P(AB)  P(A|B)=P(AB)/P(B)"],
+ ["复数","|a+bi|=√(a²+b²)  i⁴=1"],
+ ["对数","logₐ(xy)=logₐx+logₐy  logₐxᵝ=βlogₐx"],
+ ["和的立方","(x+y)³=x³+y³+3xy(x+y)  x³+y³=(x+y)(x²-xy+y²)"],
+ ["裂项相消","1/(n(n+1))=1/n-1/(n+1)  Σ= n/(n+1)"],
+];
+document.getElementById("calcGrid").innerHTML=FS.map(f=>`<div class="card"><h3>${f[0]}</h3><ul>${f[1].split("  ").map(x=>`<li>${x}</li>`).join("")}</ul></div>`).join("");
+
+const M=[
+ ["代数",["方程","不等式","函数","数列","数论"]],
+ ["几何",["平面","立体","解析几何","三角"]],
+ ["概率统计",["计数原理","概率","分布","回归","期望方差"]],
+ ["应用",["函数建模","最值","优化","导数应用","数学建模"]],
+];
+document.getElementById("mindBox").innerHTML=M.map(m=>
+ `<div class="card"><h3>▸ ${m[0]}</h3>${m[1].map(x=>`<span class="tag">${x}</span>`).join("")}</div>`).join("");
+
+const CP=[
+ ["数论","质数分解 · 欧几里得算法 · 同余方程 · 费马小定理 · 抽屉原理 · 进制转换"],
+ ["组合","排列组合 · 容斥原理 · 卡特兰数 · 二项式定理 · 组合恒等式 · 错排问题"],
+ ["代数","均值不等式 · 柯西不等式 · 配方 · 换元 · 多项式恒等 · 韦达定理"],
+ ["几何","梅涅劳斯 · 塞瓦 · 托勒密 · 面积法 · 坐标法 · 反演"],
+ ["不等式","SOS 配方法 · 切线放缩 · 权方和 · Jensen 凸性 · 排序不等式"],
+ ["构造与策略","极值原理 · 赋值法 · 对称破缺 · 染色法 · 递推构造"],
+];
+document.getElementById("compGrid").innerHTML=CP.map(f=>`<div class="card"><h3>${f[0]}</h3><ul>${f[1].split(" · ").map(x=>`<li>${x}</li>`).join("")}</ul></div>`).join("");
+
+/* 错题警示(高频易错点) */
+const ERR=[
+ ["二次方程","忘验根: 分式/根号方程增根; 判别式Δ<0 无实根别直接套求根公式"],
+ ["函数定义域","分母≠0 · 对数真数>0 · 偶次根号下≥0 · 三角 tan 定义域 kπ+π/2 不在"],
+ ["导数","极值点≠最值点(要端点比较); 拐点二阶=0 不一定; 单调区间写闭写开要规范"],
+ ["概率","古典概型要等可能; 条件概率 P(A|B)≠P(B|A); 互斥与独立混淆"],
+ ["立体几何","建系要垂直; 法向量求错; 二面角看锐钝; 线面角是线与投影夹角"],
+ ["数列","等比求和 q=1 时分母为 0 要单独讨论; 裂项相消首尾要清"],
+];
+document.getElementById("compGrid").insertAdjacentHTML("beforeend",
+ "<h2 style='margin-top:18px'>高频易错点(考前必看)</h2>"+
+ ERR.map(e=>`<div class="card" style="margin-top:10px"><h3 style="color:var(--bad)">⚠ ${e[0]}</h3><p>${e[1]}</p></div>`).join(""));
+
+function gcd(a,b){return b?gcd(b,a%b):a}
+function frac(){
+ const n=parseInt(document.getElementById("fNum").value),d=parseInt(document.getElementById("fDen").value);
+ if(!n||isNaN(n)||!d||d===0)return document.getElementById("toolOut").textContent="请输入非零分母";
+ const g=gcd(Math.abs(n),Math.abs(d));
+ document.getElementById("toolOut").textContent=`${n}/${d} 化简 = ${n/g}/${d/g}`;
+}
+function seq(){
+ const t=document.getElementById("seqType").value;
+ const a=parseFloat(document.getElementById("a1").value)||0;
+ const p=parseFloat(document.getElementById("d1").value)||0;
+ const n=parseInt(document.getElementById("n1").value)||0;
+ if(n<1)return document.getElementById("toolOut").textContent="项数需 ≥1";
+ const s=t==="arith"?n*(2*a+(n-1)*p)/2:(p===1?n*a:a*(Math.pow(p,n)-1)/(p-1));
+ document.getElementById("toolOut").textContent=`前 ${n} 项和 = ${s}`;
+}
+function quad(){
+ const a=parseFloat(document.getElementById("qa").value)||1;
+ const b=parseFloat(document.getElementById("qb").value);
+ const c=parseFloat(document.getElementById("qc").value);
+ const D=b*b-4*a*c;
+ if(D<0)return document.getElementById("toolOut").textContent=`Δ=${D} < 0, 无实根`;
+ const r1=(-b+Math.sqrt(D))/(2*a),r2=(-b-Math.sqrt(D))/(2*a);
+ document.getElementById("toolOut").textContent=`Δ=${D}, x₁=${r1}, x₂=${r2}`;
+}
+</script>
+
+<div id="agent-panel" style="margin:20px auto;max-width:720px;border:2px solid #4a90d9;border-radius:12px;padding:16px;background:#f7fbff;font-family:system-ui">
+  <h3 style="margin:0 0 8px;color:#2c5d8f">🤖 数算子·数学专家团 · 智能体问答（本地题库模式）</h3>
+  <p style="font-size:13px;color:#555;margin:0 0 10px">本地题库模式（离线·零外链）：关键词匹配本站本地题库作答。在线 AI 问答待李老师定 key 策略后统一开通。</p>
+  <div style="display:flex;flex-wrap:wrap;gap:8px;margin-bottom:10px"><button style="padding:6px 10px;border-radius:8px;border:1px solid #888;background:#fff;color:#333;cursor:pointer;font-size:12px" onclick="agentAsk('解这道题: 1/(1×2)+1/(2×3)+…+1/(n(n+1))=?')">解这道题: 1/(1×2)+1/(2</button><button style="padding:6px 10px;border-radius:8px;border:1px solid #888;background:#fff;color:#333;cursor:pointer;font-size:12px" onclick="agentAsk('已知 a+b=5, ab=6, 求 a³+b³')">已知 a+b=5, ab=6, 求 </button><button style="padding:6px 10px;border-radius:8px;border:1px solid #888;background:#fff;color:#333;cursor:pointer;font-size:12px" onclick="agentAsk('一道数论竞赛题')">一道数论竞赛题</button>
+    <button style="padding:6px 12px;border-radius:8px;border:1px solid #4a90d9;background:#4a90d9;color:#fff;cursor:pointer" onclick="agentAsk('')">问 数算子·数学专家团</button>
+  </div>
+  <textarea id="agent-q" placeholder="输入问题，匹配 数算子·数学专家团 本地题库..." style="width:100%;height:60px;padding:8px;border:1px solid #ccc;border-radius:8px;font-size:14px;box-sizing:border-box"></textarea>
+  <button style="margin-top:8px;padding:8px 16px;border-radius:8px;border:none;background:#2c8a3d;color:#fff;cursor:pointer;font-size:14px" onclick="agentAsk(document.getElementById('agent-q').value)">匹配本地题库</button>
+  <div id="agent-a" style="margin-top:12px;padding:12px;background:#fff;border-left:4px solid #2c8a3d;border-radius:6px;font-size:14px;min-height:40px;white-space:pre-wrap;color:#333">（等待回答）</div>
+  <script>
+  // 本地题库模式: 离线·零外链·无 key。在线(key 注入)待李老师定 key 策略后统一切, 此处 AGENT_MODE 为切换点。
+  var AGENT_MODE="local";
+  var AGENT_KB=(typeof window.AGENT_KB==="object"&&window.AGENT_KB)?window.AGENT_KB:[];
+  var LOCAL_TIPS=["卡住先写清已知与所求, 用特殊值验证一般结论; 再分类讨论避免遗漏。", "证明题先倒推要证什么, 想如何桥接; 别忘检验边界。"];
+  function _kbTokens(q){
+    var t=[];
+    (q.toLowerCase().match(/[a-z0-9]+/g)||[]).forEach(function(x){t.push(x);});
+    q.replace(/[^\u4e00-\u9fff]/g,'').split('').forEach(function(c){t.push(c);});
+    return t;
+  }
+  function agentAsk(q){
+    if(!q)q=document.getElementById('agent-q').value;
+    if(!q){document.getElementById('agent-a').textContent='请输入问题';return;}
+    document.getElementById('agent-q').value=q;
+    var a=document.getElementById('agent-a');
+    var uniq=Array.from(new Set(_kbTokens(q)));
+    var hits=AGENT_KB.map(function(it){
+      var hay=((it.q||"")+" "+(it.a||"")).toLowerCase();
+      var n=uniq.filter(function(t){return hay.indexOf(t)>-1;}).length;
+      return {s:n,it:it};
+    }).filter(function(x){return x.s>=Math.min(uniq.length,2);}).sort(function(x,y){return y.s-x.s;}).slice(0,3);
+    if(hits.length){
+      a.textContent="\u{1F4D6} 本地题库 · 离线（数算子·数学专家团 本地条目）\n\n"+hits.map(function(h){return "Q: "+h.it.q+"\nA: "+h.it.a;}).join("\n\n")+"\n\n（在线 AI 问答待李老师定 key 策略后开通）";
+    } else {
+      a.textContent="\u26A0\uFE0F 本地题库模式（离线）：未匹配到本地条目。在线 AI 问答待李老师定 key 策略后开通。\n学习提示：\n- "+LOCAL_TIPS.join("\n- ")+"\n并见站内【题库/知识】模块。";
+    }
+  }
+  </script>
+</div>
+</body></html>

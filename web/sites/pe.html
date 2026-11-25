@@ -1,0 +1,224 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>圣运君·体育专家团 — 全学段体育与健康系统</title>
+<style>
+:root{--bg:#f1f8f2;--card:#fff;--ink:#1f3a26;--accent:#1f7a3a;--accent2:#2e9b57;--soft:#dcefdd;--ok:#16a34a;--bad:#dc2626;--line:#c9e3cd}
+*{margin:0;box-sizing:border-box}
+body{font-family:"Segoe UI","Microsoft YaHei",sans-serif;background:var(--bg);color:var(--ink);line-height:1.7}
+header{background:linear-gradient(120deg,#0f4a2a,#2e9b57);color:#fff;padding:26px 30px}
+header h1{font-size:26px}
+header p{opacity:.9;font-size:14px;margin-top:6px}
+nav{display:flex;gap:8px;flex-wrap:wrap;padding:12px 30px;background:var(--card);border-bottom:1px solid var(--line);position:sticky;top:0;z-index:5}
+nav button{border:1px solid var(--line);background:#fff;padding:8px 14px;border-radius:8px;cursor:pointer;font-size:14px}
+nav button.on{background:var(--accent);color:#fff;border-color:var(--accent)}
+section{display:none;padding:24px 30px;max-width:1000px;margin:0 auto}
+section.on{display:block}
+h2{color:var(--accent);margin:6px 0 14px;font-size:20px}
+.grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(220px,1fr));gap:12px}
+.card{background:var(--card);border:1px solid var(--line);border-radius:10px;padding:14px}
+.card h3{font-size:15px;color:var(--accent2);margin-bottom:6px}
+.card ul{padding-left:18px;font-size:14px}
+.btn{background:var(--accent);color:#fff;border:none;padding:8px 14px;border-radius:8px;cursor:pointer;font-size:14px;margin:4px}
+input,select{padding:8px;border:1px solid var(--line);border-radius:8px;font-size:14px}
+.out{margin-top:12px;padding:12px;background:var(--soft);border-radius:8px;min-height:40px;font-size:15px}
+.tag{display:inline-block;background:var(--soft);color:var(--accent);padding:2px 8px;border-radius:20px;font-size:12px;margin:2px}
+.note{background:#fff7e6;border:1px solid #ffd580;border-radius:8px;padding:12px;font-size:14px;margin:10px 0}
+footer{text-align:center;padding:20px;color:#888;font-size:13px;margin-top:30px;border-top:1px solid var(--line)}
+</style>
+</head>
+<body>
+<header>
+<h1>圣运君 · 体育专家团</h1>
+<p>全学段体育与健康系统 · 小学→高中 · 动作技能/体能体测/球类/健康教育/运动心理/太极养生 · BMI 计算 · 体测达标 · 双击即用(离线单文件)</p>
+</header>
+<nav>
+<button class="on" data-t="know">知识体系</button>
+<button data-t="bmi">BMI / 体测</button>
+<button data-t="sport">球类与动作</button>
+<button data-t="health">健康教育</button>
+</nav>
+
+<section id="know" class="on">
+<h2>全学段知识体系</h2>
+<div class="note">按模块点卡片看考点; 体测用「BMI/体测」自测, 动作技能看「球类与动作」。</div>
+<div class="grid" id="knowGrid"></div>
+</section>
+
+<section id="bmi">
+<h2>BMI / 体测达标</h2>
+<p>身高 <input id="h" value="170" style="width:70px"> cm, 体重 <input id="w" value="60" style="width:70px"> kg</p>
+<button class="btn" onclick="bmi()">算 BMI</button>
+<div class="out" id="bmiOut"></div>
+</section>
+
+<section id="sport">
+<h2>球类与动作技能</h2>
+<div class="grid" id="sGrid"></div>
+</section>
+
+<section id="health">
+<h2>健康教育(运动科学)</h2>
+<div class="grid" id="hGrid"></div>
+</section>
+
+<footer>李彦明 15684394135 · 圣运君·体育专家团 · 离线单文件 · 每日升级
+<div style="background:#fffbe6;border-left:4px solid #f5a623;padding:10px;margin:12px 0;font-size:14px">📅 2026-10-05 升级 · 【体测+2026-10-05】引体向上: 初中满分标准参考体质健康标准 (非固定值, 查年级)</div>
+
+<div style="background:#fffbe6;border-left:4px solid #f5a623;padding:10px;margin:12px 0;font-size:14px">📅 2026-10-09 升级 · 【安全+2026-10-09】运动损伤 RICE：冰敷+加压+抬高，先冷敷后热敷别搞反</div>
+
+<div style="background:#fffbe6;border-left:4px solid #f5a623;padding:10px;margin:12px 0;font-size:14px">📅 2026-10-09 升级 · 【体测+2026-10-09】立定跳远评分按年级分档，查《国家学生体质健康标准》别记死数值</div>
+
+<div style="background:#fffbe6;border-left:4px solid #f5a623;padding:10px;margin:12px 0;font-size:14px">📅 2026-10-09 升级 · 【动作+2026-10-09】仰卧起坐：双手交叉抱头(非抱颈掐脖)，起身抬头见肘</div>
+
+<div style="background:#fffbe6;border-left:4px solid #f5a623;padding:10px;margin:12px 0;font-size:14px">📅 2026-10-10 升级 · 【球类+2026-10-10】足球点球：球放点球点，人放球后十米，踢出前对方不得移动</div>
+
+<div style="background:#fffbe6;border-left:4px solid #f5a623;padding:10px;margin:12px 0;font-size:14px">📅 2026-10-11 升级 · 【养生+2026-10-11】青少年跳绳：前脚掌落地缓冲，膝盖微屈，单次不贪多</div>
+
+<div style="background:#fffbe6;border-left:4px solid #f5a623;padding:10px;margin:12px 0;font-size:14px">📅 2026-10-12 升级 · 【运动+2026-10-12】篮球三步上篮：第一步接球、第二步跨、第三步起跳(单脚)</div>
+
+<div style="background:#fffbe6;border-left:4px solid #f5a623;padding:10px;margin:12px 0;font-size:14px">📅 2026-10-13 升级 · 【心理+2026-10-13】赛前紧张正常：4-7-8 呼吸(吸4憋7呼8)可快速降心率</div>
+
+<div style="background:#fffbe6;border-left:4px solid #f5a623;padding:10px;margin:12px 0;font-size:14px">📅 2026-10-14 升级 · 【动作+2026-10-14】游泳呼吸：转侧呼气、抬头吸气的节奏，别憋气游</div>
+
+<div style="background:#fffbe6;border-left:4px solid #f5a623;padding:10px;margin:12px 0;font-size:14px">📅 2026-10-15 升级 · 【锻炼+2026-10-15】晨跑前 3-5min 动态拉伸；跑步后重点拉小腿+股四头肌</div>
+
+<div style="background:#fffbe6;border-left:4px solid #f5a623;padding:10px;margin:12px 0;font-size:14px">📅 2026-10-16 升级 · 【规则+2026-10-16】排球发球：站本方场地后、脚不踩线，8s 内发完</div>
+
+<div style="background:#fffbe6;border-left:4px solid #f5a623;padding:10px;margin:12px 0;font-size:14px">📅 2026-10-18 升级 · 【体测+2026-10-18】800/1000米跑：匀速分配体力别抢前段，最后100米再顶</div>
+
+<div style="background:#fffbe6;border-left:4px solid #f5a623;padding:10px;margin:12px 0;font-size:14px">📅 2026-10-19 升级 · 【球类+2026-10-19】羽毛球正手高远球：引拍后从身后下方向前上方挥，发力在击球瞬间</div>
+
+<div style="background:#fffbe6;border-left:4px solid #f5a623;padding:10px;margin:12px 0;font-size:14px">📅 2026-10-20 升级 · 【动作+2026-10-20】高抬腿跑：膝抬到髋水平、落脚轻快，核心收紧别晃</div>
+
+<div style="background:#fffbe6;border-left:4px solid #f5a623;padding:10px;margin:12px 0;font-size:14px">📅 2026-10-21 升级 · 【养生+2026-10-21】青少年别硬扛疼痛训练，微酸正常、刺痛就停</div>
+
+<div style="background:#fffbe6;border-left:4px solid #f5a623;padding:10px;margin:12px 0;font-size:14px">📅 2026-10-22 升级 · 【锻炼+2026-10-22】热身5分钟再上大强度，冷肌肉直接冲刺易拉伤</div>
+
+<div style="background:#fffbe6;border-left:4px solid #f5a623;padding:10px;margin:12px 0;font-size:14px">📅 2026-10-23 升级 · 【规则+2026-10-23】乒乓球发球：抛球垂直不转，触球前不二次遮挡</div>
+
+<div style="background:#fffbe6;border-left:4px solid #f5a623;padding:10px;margin:12px 0;font-size:14px">📅 2026-10-24 升级 · 【生理+2026-10-24】长跑后心率别骤停，慢走排酸防头晕</div>
+
+<div style="background:#fffbe6;border-left:4px solid #f5a623;padding:10px;margin:12px 0;font-size:14px">📅 2026-10-25 升级 · 【技巧+2026-10-25】短跑起跑：两手撑线后、头别猛抬，前三步压低重心</div>
+
+<div style="background:#fffbe6;border-left:4px solid #f5a623;padding:10px;margin:12px 0;font-size:14px">📅 2026-10-26 升级 · 【心理+2026-10-26】失误后深呼吸3秒再进下一球，别连续懊恼拖节奏</div>
+
+<div style="background:#fffbe6;border-left:4px solid #f5a623;padding:10px;margin:12px 0;font-size:14px">📅 2026-11-06 升级 · 【球技+2026-11-06】足球任意球：人墙距球 10 码，助跑角度定身体转向与击球点</div>
+
+<div style="background:#fffbe6;border-left:4px solid #f5a623;padding:10px;margin:12px 0;font-size:14px">📅 2026-11-12 升级 · 【规则+2026-11-12】排球：每方最多 3 触、同一人不得连触(拦网除外)</div>
+
+<div style="background:#fffbe6;border-left:4px solid #f5a623;padding:10px;margin:12px 0;font-size:14px">📅 2026-11-12 升级 · 【动作+2026-11-12】跳远：助跑、单脚起跳、腾空"蹲"、两脚落；起跳板白线有效</div>
+
+<div style="background:#fffbe6;border-left:4px solid #f5a623;padding:10px;margin:12px 0;font-size:14px">📅 2026-11-13 升级 · 【健康+2026-11-13】BMI=体重kg/身高m²；中国成人正常 18.5-23.9</div>
+
+<div style="background:#fffbe6;border-left:4px solid #f5a623;padding:10px;margin:12px 0;font-size:14px">📅 2026-11-14 升级 · 【规则+2026-11-14】乒乓球：发球每 2 分换(11 分制平局后每 1 分)，球须双方各落 1 次</div>
+
+<div style="background:#fffbe6;border-left:4px solid #f5a623;padding:10px;margin:12px 0;font-size:14px">📅 2026-11-15 升级 · 【训练+2026-11-15】48 小时恢复法则：同肌群约 48h 休息；分组不同肌群可日练</div>
+
+<div style="background:#fffbe6;border-left:4px solid #f5a623;padding:10px;margin:12px 0;font-size:14px">📅 2026-11-16 升级 · 【生理+2026-11-16】最大摄氧量 VO₂max 是心肺耐力金标准；60-80% 最大心率持续 20min+</div>
+
+<div style="background:#fffbe6;border-left:4px solid #f5a623;padding:10px;margin:12px 0;font-size:14px">📅 2026-11-17 升级 · 【安全+2026-11-17】运动猝死：先热身升核心温；胸闷/心悸立即停</div>
+
+<div style="background:#fffbe6;border-left:4px solid #f5a623;padding:10px;margin:12px 0;font-size:14px">📅 2026-11-18 升级 · 【健康+2026-11-18】近视防控"20-20-20"：每 20 分钟看 20 英尺外 20 秒；每天户外 2h</div>
+
+<div style="background:#fffbe6;border-left:4px solid #f5a623;padding:10px;margin:12px 0;font-size:14px">📅 2026-11-19 升级 · 【动作+2026-11-19】跳绳：手腕主发力(非全臂)、前脚掌落地、膝微屈</div>
+
+<div style="background:#fffbe6;border-left:4px solid #f5a623;padding:10px;margin:12px 0;font-size:14px">📅 2026-11-20 升级 · 【体测+2026-11-20】50米跑：起跑听"跑"信号即动，计时到躯干过终点线(非头/手)，评分按年级查标准</div>
+
+<div style="background:#fffbe6;border-left:4px solid #f5a623;padding:10px;margin:12px 0;font-size:14px">📅 2026-11-21 升级 · 【体测+2026-11-21】坐位体前屈：膝盖伸直脚跟贴盒，双手中指相叠前滑，读指尖距刻度线厘米数</div>
+
+<div style="background:#fffbe6;border-left:4px solid #f5a623;padding:10px;margin:12px 0;font-size:14px">📅 2026-11-22 升级 · 【体测+2026-11-22】肺活量：用嘴一口气吹到最大记录峰值；一般测3次取最好一次</div>
+
+<div style="background:#fffbe6;border-left:4px solid #f5a623;padding:10px;margin:12px 0;font-size:14px">📅 2026-11-23 升级 · 【动作+2026-11-23】乒乓球正手攻球：击球点在身前侧方，随挥过肩，靠前臂挥转而非大臂抡</div>
+
+<div style="background:#fffbe6;border-left:4px solid #f5a623;padding:10px;margin:12px 0;font-size:14px">📅 2026-11-24 升级 · 【动作+2026-11-24】排球垫球(下手)：夹臂伸肘两臂并拢，三角区接球，击球点在前臂中上部</div>
+
+<div style="background:#fffbe6;border-left:4px solid #f5a623;padding:10px;margin:12px 0;font-size:14px">📅 2026-11-25 升级 · 【球技+2026-11-25】篮球抢篮板：先卡住对手再出手，双手高举过头抓球；近筐短投回弹点离篮近</div>
+</footer>
+
+<script>
+document.querySelectorAll("nav button").forEach(b=>b.onclick=()=>{
+  document.querySelectorAll("nav button").forEach(x=>x.classList.remove("on"));
+  document.querySelectorAll("section").forEach(x=>x.classList.remove("on"));
+  b.classList.add("on");document.getElementById(b.dataset.t).classList.add("on");
+});
+const K=[
+ ["动作技能","基本动作(跑跳投) · 球类技术 · 体操 · 武术/太极 · 舞蹈"],
+ ["体能体测","跑(50m/耐力) · 力量(引体/仰卧起坐) · 柔韧(坐位体前屈) · 体质健康标准"],
+ ["球类","篮球(运球投篮) · 足球(传射) · 排球(垫扣) · 乒乓球/羽毛球"],
+ ["健康教育","运动生理(心率/有氧) · 运动营养 · 运动心理 · 急救 · 中医太极养生 × 青少年"],
+];
+document.getElementById("knowGrid").innerHTML=K.map(s=>`<div class="card"><h3>${s[0]}</h3><ul>${s[1].split(" · ").map(x=>`<li>${x}</li>`).join("")}</ul></div>`).join("");
+
+function bmi(){
+ const h=parseFloat(document.getElementById("h").value)/100;
+ const w=parseFloat(document.getElementById("w").value);
+ if(!h||!w)return;
+ const b=w/(h*h);
+ let lv;
+ if(b<18.5)lv="偏瘦(青少年注意营养)";
+ else if(b<24)lv="正常";
+ else if(b<28)lv="超重(建议运动干预)";
+ else lv="肥胖(建议就医+运动)";
+ document.getElementById("bmiOut").textContent=`BMI = ${b.toFixed(1)} (${lv}) · 中国成人标准, 青少年参考体质健康评分`;
+}
+
+const SP=[
+ ["篮球","运球(低重心) · 急停跳投 · 突破上篮 · 卡位抢板 · 人盯人/区域联防"],
+ ["足球","停球 · 传中 · 任意球 · 越位规则 · 射门角度"],
+ ["排球","垫球(夹臂) · 二传组织 · 扣球(起跳) · 自由人 · 发球(正/侧)"],
+ ["乒乓球","直拍/横拍 · 弧圈 · 摆速 · 正手攻球 · 台内短球"],
+];
+document.getElementById("sGrid").innerHTML=SP.map(f=>`<div class="card"><h3>${f[0]}</h3><ul>${f[1].split(" · ").map(x=>`<li>${x}</li>`).join("")}</ul></div>`).join("");
+
+const HT=[
+ ["运动生理","有氧阈值 · 靶心率(最大心率=220-年龄) · 超量恢复 · 运动后拉伸"],
+ ["运动营养","三大产能营养素 · 运动前(碳水) · 运动中(补水) · 运动后(蛋白+糖)"],
+ ["运动心理","赛前焦虑(积极化) · 注意力 · 自我效能 · 心理表象训练"],
+ ["急救与安全","热射病(高温) · 扭伤(冰敷加压) · 骨折固定 · 运动前后热身"],
+];
+document.getElementById("hGrid").innerHTML=HT.map(f=>`<div class="card"><h3>${f[0]}</h3><ul>${f[1].split(" · ").map(x=>`<li>${x}</li>`).join("")}</ul></div>`).join("");
+</script>
+
+<div id="agent-panel" style="margin:20px auto;max-width:720px;border:2px solid #4a90d9;border-radius:12px;padding:16px;background:#f7fbff;font-family:system-ui">
+  <h3 style="margin:0 0 8px;color:#2c5d8f">🤖 圣运君·体育专家团 · 智能体问答（本地题库模式）</h3>
+  <p style="font-size:13px;color:#555;margin:0 0 10px">本地题库模式（离线·零外链）：关键词匹配本站本地题库作答。在线 AI 问答待李老师定 key 策略后统一开通。</p>
+  <div style="display:flex;flex-wrap:wrap;gap:8px;margin-bottom:10px"><button style="padding:6px 10px;border-radius:8px;border:1px solid #888;background:#fff;color:#333;cursor:pointer;font-size:12px" onclick="agentAsk('引体向上满分标准')">引体向上满分标准</button><button style="padding:6px 10px;border-radius:8px;border:1px solid #888;background:#fff;color:#333;cursor:pointer;font-size:12px" onclick="agentAsk('太极青少年训练要点')">太极青少年训练要点</button><button style="padding:6px 10px;border-radius:8px;border:1px solid #888;background:#fff;color:#333;cursor:pointer;font-size:12px" onclick="agentAsk('体测项目评分')">体测项目评分</button>
+    <button style="padding:6px 12px;border-radius:8px;border:1px solid #4a90d9;background:#4a90d9;color:#fff;cursor:pointer" onclick="agentAsk('')">问 圣运君·体育专家团</button>
+  </div>
+  <textarea id="agent-q" placeholder="输入问题，匹配 圣运君·体育专家团 本地题库..." style="width:100%;height:60px;padding:8px;border:1px solid #ccc;border-radius:8px;font-size:14px;box-sizing:border-box"></textarea>
+  <button style="margin-top:8px;padding:8px 16px;border-radius:8px;border:none;background:#2c8a3d;color:#fff;cursor:pointer;font-size:14px" onclick="agentAsk(document.getElementById('agent-q').value)">匹配本地题库</button>
+  <div id="agent-a" style="margin-top:12px;padding:12px;background:#fff;border-left:4px solid #2c8a3d;border-radius:6px;font-size:14px;min-height:40px;white-space:pre-wrap;color:#333">（等待回答）</div>
+  <script>
+  // 本地题库模式: 离线·零外链·无 key。在线(key 注入)待李老师定 key 策略后统一切, 此处 AGENT_MODE 为切换点。
+  var AGENT_MODE="local";
+  var AGENT_KB=(typeof window.AGENT_KB==="object"&&window.AGENT_KB)?window.AGENT_KB:[];
+  var LOCAL_TIPS=["体测先背评分表关键档, 目标定当前档上一档。", "动作要领先抓发力链(姿势-顺序-节奏)再练稳定。"];
+  function _kbTokens(q){
+    var t=[];
+    (q.toLowerCase().match(/[a-z0-9]+/g)||[]).forEach(function(x){t.push(x);});
+    q.replace(/[^\u4e00-\u9fff]/g,'').split('').forEach(function(c){t.push(c);});
+    return t;
+  }
+  function agentAsk(q){
+    if(!q)q=document.getElementById('agent-q').value;
+    if(!q){document.getElementById('agent-a').textContent='请输入问题';return;}
+    document.getElementById('agent-q').value=q;
+    var a=document.getElementById('agent-a');
+    var uniq=Array.from(new Set(_kbTokens(q)));
+    var hits=AGENT_KB.map(function(it){
+      var hay=((it.q||"")+" "+(it.a||"")).toLowerCase();
+      var n=uniq.filter(function(t){return hay.indexOf(t)>-1;}).length;
+      return {s:n,it:it};
+    }).filter(function(x){return x.s>=Math.min(uniq.length,2);}).sort(function(x,y){return y.s-x.s;}).slice(0,3);
+    if(hits.length){
+      a.textContent="\u{1F4D6} 本地题库 · 离线（圣运君·体育专家团 本地条目）\n\n"+hits.map(function(h){return "Q: "+h.it.q+"\nA: "+h.it.a;}).join("\n\n")+"\n\n（在线 AI 问答待李老师定 key 策略后开通）";
+    } else {
+      a.textContent="\u26A0\uFE0F 本地题库模式（离线）：未匹配到本地条目。在线 AI 问答待李老师定 key 策略后开通。\n学习提示：\n- "+LOCAL_TIPS.join("\n- ")+"\n并见站内【题库/知识】模块。";
+    }
+  }
+  </script>
+</div>
+</body></html>

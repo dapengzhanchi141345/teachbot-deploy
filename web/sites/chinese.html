@@ -1,0 +1,281 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>锦心子·语文专家团 — 全学段语文系统</title>
+<style>
+:root{--bg:#fbf7f0;--card:#fffdf8;--ink:#3a2f28;--accent:#8b5a2b;--accent2:#c17a3c;--soft:#f3e8d8;--ok:#3d7a3d;--bad:#b23a3a;--line:#e8dcc8}
+*{margin:0;box-sizing:border-box}
+body{font-family:"KaiTi","STKaiti","Microsoft YaHei",serif;background:var(--bg);color:var(--ink);line-height:1.85}
+header{background:linear-gradient(120deg,#4a3520,#8b5a2b);color:#f5ecdd;padding:26px 30px}
+header h1{font-size:26px}
+header p{opacity:.9;font-size:14px;margin-top:6px}
+nav{display:flex;gap:8px;flex-wrap:wrap;padding:12px 30px;background:var(--card);border-bottom:1px solid var(--line);position:sticky;top:0;z-index:5}
+nav button{border:1px solid var(--line);background:#fff;padding:8px 14px;border-radius:8px;cursor:pointer;font-size:14px;font-family:inherit}
+nav button.on{background:var(--accent);color:#fff;border-color:var(--accent)}
+section{display:none;padding:24px 30px;max-width:1000px;margin:0 auto}
+section.on{display:block}
+h2{color:var(--accent);margin:6px 0 14px;font-size:20px}
+.grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(220px,1fr));gap:12px}
+.card{background:var(--card);border:1px solid var(--line);border-radius:10px;padding:14px}
+.card h3{font-size:15px;color:var(--accent2);margin-bottom:6px}
+.card ul{padding-left:18px;font-size:14px}
+.btn{background:var(--accent);color:#fff;border:none;padding:8px 14px;border-radius:8px;cursor:pointer;font-size:14px;margin:4px;font-family:inherit}
+input{padding:8px;border:1px solid var(--line);border-radius:8px;font-size:14px;font-family:inherit}
+.out{margin-top:12px;padding:12px;background:var(--soft);border-radius:8px;min-height:40px;font-size:15px}
+.tag{display:inline-block;background:var(--soft);color:var(--accent);padding:2px 8px;border-radius:20px;font-size:12px;margin:2px}
+.poem{background:var(--card);border-left:4px solid var(--accent);padding:14px;margin:10px 0;border-radius:6px;font-size:16px}
+.poem .blank{color:#999;border-bottom:1px dashed #999;cursor:pointer;padding:0 4px;transition:.2s}
+.poem .blank:hover{color:var(--accent)}
+.poem .blank.show{color:var(--ok);border-color:var(--ok)}
+.note{background:#f3e8d8;border-radius:8px;padding:12px;font-size:14px;margin:10px 0}
+.answer{display:none;background:#eaf3ea;border:1px solid #bcd4bc;border-radius:8px;padding:12px;margin-top:8px;font-size:14px}
+.answer.on{display:block}
+footer{text-align:center;padding:20px;color:#888;font-size:13px;margin-top:30px;border-top:1px solid var(--line)}
+</style>
+</head>
+<body>
+<header>
+<h1>锦心子 · 语文专家团</h1>
+<p>全学段语文系统 · 小学→初中→高中 · 字词/阅读/古诗文/写作 · 默写点字 · 阅读题 · 病句修改 · 作文素材 · 双击即用(离线单文件)</p>
+</header>
+<nav>
+<button class="on" data-t="know">知识体系</button>
+<button data-t="poem">古诗文默写</button>
+<button data-t="read">阅读理解</button>
+<button data-t="disease">病句修改</button>
+<button data-t="essay">作文素材</button>
+<button data-t="word">字词积累</button>
+</nav>
+
+<section id="know" class="on">
+<h2>全学段知识体系</h2>
+<div class="note">按学段点卡片看核心考点; 古诗文用「默写点字」自测, 阅读用「阅读理解」练手。</div>
+<div class="grid" id="knowGrid"></div>
+</section>
+
+<section id="poem">
+<h2>古诗文默写(点空白字显示)</h2>
+<p>读诗后点 <span style="border-bottom:1px dashed #999">空白</span> 自测, 点一下显示原字, 全对再读下一首。</p>
+<div id="poemBox"></div>
+</section>
+
+<section id="read">
+<h2>阅读理解(点「显示答案」对照)</h2>
+<div id="readBox"></div>
+</section>
+
+<section id="disease">
+<h2>病句修改(找错 + 改对)</h2>
+<p>每句找病因, 点「显示答案」看正确改法。</p>
+<div id="dBox"></div>
+</section>
+
+<section id="essay">
+<h2>作文素材库(分类)</h2>
+<div class="grid" id="eGrid"></div>
+</section>
+
+<section id="word">
+<h2>字词积累(常考易错)</h2>
+<div class="grid" id="wGrid"></div>
+</section>
+
+<footer>李彦明 15684394135 · 锦心子·语文专家团 · 离线单文件 · 每日升级
+<div style="background:#fffbe6;border-left:4px solid #f5a623;padding:10px;margin:12px 0;font-size:14px">📅 2026-10-05 升级 · 【默写+2026-10-05】《观书有感》朱熹: 问渠那得清如许? 为有源头活水来。</div>
+
+<div style="background:#fffbe6;border-left:4px solid #f5a623;padding:10px;margin:12px 0;font-size:14px">📅 2026-10-09 升级 · 【文言+2026-10-09】"之"三字功能：的/主谓间取消独立性/宾语前置标记，看语境定译</div>
+
+<div style="background:#fffbe6;border-left:4px solid #f5a623;padding:10px;margin:12px 0;font-size:14px">📅 2026-10-09 升级 · 【标点+2026-10-09】选择句"是……还是……"全句末只用一个问号，不用每分句都问</div>
+
+<div style="background:#fffbe6;border-left:4px solid #f5a623;padding:10px;margin:12px 0;font-size:14px">📅 2026-10-09 升级 · 【鉴赏+2026-10-09】古诗鉴赏先写景再点情(意境=景+情)，忌只答"景很美"</div>
+
+<div style="background:#fffbe6;border-left:4px solid #f5a623;padding:10px;margin:12px 0;font-size:14px">📅 2026-10-10 升级 · 【病句+2026-10-10】"通过……使……"连用=滥用介词致主语缺失，删"通过"或"使"</div>
+
+<div style="background:#fffbe6;border-left:4px solid #f5a623;padding:10px;margin:12px 0;font-size:14px">📅 2026-10-11 升级 · 【默写+2026-10-11】《己亥杂诗》龚自珍：落红不是无情物，化作春泥更护花</div>
+
+<div style="background:#fffbe6;border-left:4px solid #f5a623;padding:10px;margin:12px 0;font-size:14px">📅 2026-10-12 升级 · 【名著+2026-10-12】《骆驼祥子》老舍；《海底两万里》凡尔纳(科幻名著)</div>
+
+<div style="background:#fffbe6;border-left:4px solid #f5a623;padding:10px;margin:12px 0;font-size:14px">📅 2026-10-13 升级 · 【语用+2026-10-13】敬谦辞别用反：称己用谦辞(敝人)，称彼用敬辞(高足)</div>
+
+<div style="background:#fffbe6;border-left:4px solid #f5a623;padding:10px;margin:12px 0;font-size:14px">📅 2026-10-14 升级 · 【默写+2026-10-14】《使至塞上》王维：大漠孤烟直，长河落日圆 (对仗工整)</div>
+
+<div style="background:#fffbe6;border-left:4px solid #f5a623;padding:10px;margin:12px 0;font-size:14px">📅 2026-10-15 升级 · 【默写+2026-10-15】《泊秦淮》杜牧：商女不知亡国恨，隔江犹唱后庭花</div>
+
+<div style="background:#fffbe6;border-left:4px solid #f5a623;padding:10px;margin:12px 0;font-size:14px">📅 2026-10-16 升级 · 【易错+2026-10-16】首当其冲=首先受到攻击/冲击，不是"首先去做"的意思</div>
+
+<div style="background:#fffbe6;border-left:4px solid #f5a623;padding:10px;margin:12px 0;font-size:14px">📅 2026-10-17 升级 · 【常识+2026-10-17】《史记》司马迁(纪传体通史)；《资治通鉴》司马光(编年体)</div>
+
+<div style="background:#fffbe6;border-left:4px solid #f5a623;padding:10px;margin:12px 0;font-size:14px">📅 2026-10-18 升级 · 【修辞+2026-10-18】比拟=把物当人写(拟人)；比喻要有本体+喻体，两者不混</div>
+
+<div style="background:#fffbe6;border-left:4px solid #f5a623;padding:10px;margin:12px 0;font-size:14px">📅 2026-10-20 升级 · 【默写+2026-10-20】《行路难》李白：长风破浪会有时，直挂云帆济沧海</div>
+
+<div style="background:#fffbe6;border-left:4px solid #f5a623;padding:10px;margin:12px 0;font-size:14px">📅 2026-10-21 升级 · 【默写+2026-10-21】《己亥杂诗》龚自珍：我劝天公重抖擞，不拘一格降人才</div>
+
+<div style="background:#fffbe6;border-left:4px solid #f5a623;padding:10px;margin:12px 0;font-size:14px">📅 2026-10-22 升级 · 【成语+2026-10-22】豆蔻年华=十三四岁少女；而立=30 ；不惑=40 ；花甲=60 ；期颐=100</div>
+
+<div style="background:#fffbe6;border-left:4px solid #f5a623;padding:10px;margin:12px 0;font-size:14px">📅 2026-10-23 升级 · 【常识+2026-10-23】"唐宋八大家"：韩愈柳宗元欧阳修苏洵苏轼苏辙王安石曾巩</div>
+
+<div style="background:#fffbe6;border-left:4px solid #f5a623;padding:10px;margin:12px 0;font-size:14px">📅 2026-10-24 升级 · 【语病+2026-10-24】搭配不当：主谓/动宾要一对一，"提高水平"不说"增加水平"</div>
+
+<div style="background:#fffbe6;border-left:4px solid #f5a623;padding:10px;margin:12px 0;font-size:14px">📅 2026-10-25 升级 · 【文体+2026-10-25】议论文三要素：论点/论据/论证；论据分事实论据与道理论据</div>
+
+<div style="background:#fffbe6;border-left:4px solid #f5a623;padding:10px;margin:12px 0;font-size:14px">📅 2026-10-26 升级 · 【词义+2026-10-26】望文生义=按字面瞎猜(贬义)；断章取义=脱离上下文截取，两者都错</div>
+
+<div style="background:#fffbe6;border-left:4px solid #f5a623;padding:10px;margin:12px 0;font-size:14px">📅 2026-10-27 升级 · 【默写+2026-10-27】《望岳》杜甫：会当凌绝顶，一览众山小</div>
+
+<div style="background:#fffbe6;border-left:4px solid #f5a623;padding:10px;margin:12px 0;font-size:14px">📅 2026-11-02 升级 · 【常识+2026-11-02》鲁迅《呐喊》收《狂人日记》《孔乙己》《药》；《彷徨》收《祝福》《伤逝》</div>
+
+<div style="background:#fffbe6;border-left:4px solid #f5a623;padding:10px;margin:12px 0;font-size:14px">📅 2026-11-03 升级 · 【常识+2026-11-03》鲁迅《呐喊》收《狂人日记》《孔乙己》《药》；《彷徨》收《祝福》《伤逝》</div>
+
+<div style="background:#fffbe6;border-left:4px solid #f5a623;padding:10px;margin:12px 0;font-size:14px">📅 2026-11-04 升级 · 【常识+2026-11-04》鲁迅《呐喊》收《狂人日记》《孔乙己》《药》；《彷徨》收《祝福》《伤逝》</div>
+
+<div style="background:#fffbe6;border-left:4px solid #f5a623;padding:10px;margin:12px 0;font-size:14px">📅 2026-11-05 升级 · 【常识+2026-11-05》鲁迅《呐喊》收《狂人日记》《孔乙己》《药》；《彷徨》收《祝福》《伤逝》</div>
+
+<div style="background:#fffbe6;border-left:4px solid #f5a623;padding:10px;margin:12px 0;font-size:14px">📅 2026-11-06 升级 · 【常识+2026-11-06》鲁迅《呐喊》收《狂人日记》《孔乙己》《药》；《彷徨》收《祝福》《伤逝》</div>
+
+<div style="background:#fffbe6;border-left:4px solid #f5a623;padding:10px;margin:12px 0;font-size:14px">📅 2026-11-12 升级 · 【文学+2026-11-12】《骆驼祥子》老舍：祥子三起三落，理想幻灭(旧社会底层悲剧)</div>
+
+<div style="background:#fffbe6;border-left:4px solid #f5a623;padding:10px;margin:12px 0;font-size:14px">📅 2026-11-12 升级 · 【语用+2026-11-12】敬辞谦辞：「拙作/高见/请教」自谦/敬人别用反</div>
+
+<div style="background:#fffbe6;border-left:4px solid #f5a623;padding:10px;margin:12px 0;font-size:14px">📅 2026-11-13 升级 · 【古诗+2026-11-13】「春风又绿江南岸」(王安石)：绿=形容词动用，炼字典范</div>
+
+<div style="background:#fffbe6;border-left:4px solid #f5a623;padding:10px;margin:12px 0;font-size:14px">📅 2026-11-14 升级 · 【文学+2026-11-14】《朝花夕拾》鲁迅：唯一回忆性散文集(10篇)；《呐喊》《彷徨》《故事新编》为小说集</div>
+
+<div style="background:#fffbe6;border-left:4px solid #f5a623;padding:10px;margin:12px 0;font-size:14px">📅 2026-11-15 升级 · 【文言+2026-11-15】通假字：「已」通「耶」(表疑问)；「不」通「否」</div>
+
+<div style="background:#fffbe6;border-left:4px solid #f5a623;padding:10px;margin:12px 0;font-size:14px">📅 2026-11-16 升级 · 【语用+2026-11-16】病句七类：成分残缺/搭配不当/语序不当/歧义/重复/否定失当/结构混乱</div>
+
+<div style="background:#fffbe6;border-left:4px solid #f5a623;padding:10px;margin:12px 0;font-size:14px">📅 2026-11-17 升级 · 【文学+2026-11-17】《红楼梦》前80回曹雪芹、后40回高鹗续；「满纸荒唐言」</div>
+
+<div style="background:#fffbe6;border-left:4px solid #f5a623;padding:10px;margin:12px 0;font-size:14px">📅 2026-11-18 升级 · 【古诗+2026-11-18】「落霞与孤鹜齐飞，秋水共长天一色」(王勃《滕王阁序》骈文)</div>
+
+<div style="background:#fffbe6;border-left:4px solid #f5a623;padding:10px;margin:12px 0;font-size:14px">📅 2026-11-19 升级 · 【文言+2026-11-19】虚词「以」：介词(用/因)/连词(而/来)/动词(认为)多义</div>
+
+<div style="background:#fffbe6;border-left:4px solid #f5a623;padding:10px;margin:12px 0;font-size:14px">📅 2026-11-20 升级 · 【文学+2026-11-20】四大名著：《西游记》吴承恩/《水浒》施耐庵/《三国》罗贯中/《红楼》曹雪芹</div>
+
+<div style="background:#fffbe6;border-left:4px solid #f5a623;padding:10px;margin:12px 0;font-size:14px">📅 2026-11-21 升级 · 【语用+2026-11-21】句式变换：肯定/否定/反问互改语义不变；双重否定=强调肯定</div>
+
+<div style="background:#fffbe6;border-left:4px solid #f5a623;padding:10px;margin:12px 0;font-size:14px">📅 2026-11-22 升级 · 【古诗+2026-11-22】「先天下之忧而忧，后天下之乐而乐」(范仲淹《岳阳楼记》)</div>
+
+<div style="background:#fffbe6;border-left:4px solid #f5a623;padding:10px;margin:12px 0;font-size:14px">📅 2026-11-23 升级 · 【常识+2026-11-23》鲁迅《呐喊》收《狂人日记》《孔乙己》《药》；《彷徨》收《祝福》《伤逝》</div>
+
+<div style="background:#fffbe6;border-left:4px solid #f5a623;padding:10px;margin:12px 0;font-size:14px">📅 2026-11-24 升级 · 【常识+2026-11-24》鲁迅《呐喊》收《狂人日记》《孔乙己》《药》；《彷徨》收《祝福》《伤逝》</div>
+
+<div style="background:#fffbe6;border-left:4px solid #f5a623;padding:10px;margin:12px 0;font-size:14px">📅 2026-11-25 升级 · 【常识+2026-11-25》鲁迅《呐喊》收《狂人日记》《孔乙己》《药》；《彷徨》收《祝福》《伤逝》</div>
+</footer>
+
+<script>
+document.querySelectorAll("nav button").forEach(b=>b.onclick=()=>{
+  document.querySelectorAll("nav button").forEach(x=>x.classList.remove("on"));
+  document.querySelectorAll("section").forEach(x=>x.classList.remove("on"));
+  b.classList.add("on");document.getElementById(b.dataset.t).classList.add("on");
+});
+const K=[
+ ["小学语文","拼音与易错字 · 近义词反义词 · 成语积累 · 句子仿写 · 阅读理解 · 看图写话 · 背诵默写"],
+ ["初中语文","字词读音 · 语病辨析 · 标点用法 · 文言文实词虚词 · 古诗鉴赏 · 现代文阅读 · 名著阅读 · 作文(记叙文)"],
+ ["高中语文","现代文阅读(论述/实用/文学) · 文言文翻译与断句 · 古诗鉴赏(手法+情感) · 语用衔接 · 写作(议论文/任务驱动) · 整本书阅读"],
+ ["高频考点","字音字形 · 成语 · 病句 · 标点 · 句式变换 · 语句连贯 · 图文转换 · 压缩语段"],
+];
+document.getElementById("knowGrid").innerHTML=K.map(s=>`<div class="card"><h3>${s[0]}</h3><ul>${s[1].split(" · ").map(x=>`<li>${x}</li>`).join("")}</ul></div>`).join("");
+
+/* 古诗默写: 空白点显字 */
+const POEMS=[
+ {t:"《静夜思》李白",l:["床前明__光, 疑是地上霜。", "__头望明月, 低头思故乡。"],a:["月","举"]},
+ {t:"《春晓》孟浩然",l:["春眠不觉晓, 处处闻__歌。", "夜来风雨声, 花落知多__。"],a:["鸟","少"]},
+ {t:"《望岳》杜甫",l:["会当凌绝顶, 一__众山小。","","__当临绝顶, 一览众山小。"]},
+ {t:"《水调歌头》苏轼",l:["但愿人长久, 千里共清__。"],a:["风"]},
+ {t:"《岳阳楼记》范仲淹",l:["先天下之忧而__, 后天下之乐而__。"],a:["忧","乐"]},
+];
+document.getElementById("poemBox").innerHTML=POEMS.map((p,i)=>`
+ <div class="poem"><h3>${p.t}</h3>
+ ${p.l.filter(x=>x).map((line,j)=>line.replace(/_/g,`<span class="blank" onclick="showB(this,'${p.a?(p.a[j]||p.a[p.a.length-1]):'?'}')\">__</span>`)).join("<br>")}
+ </div>`).join("");
+function showB(el,ch){el.textContent=ch;el.classList.add("show")}
+
+/* 阅读理解 */
+const READ=[
+ {t:"《背影》节选",q:"父亲 '慢慢探身下去' 的 '探' 字好在哪里?",
+  ans:"'探' 写出父亲年老体胖、行动不便, 仍努力买橘子的艰难, 体现深沉父爱与 '我' 的感动, 用词精确传神。"},
+ {t:"《荷塘月色》",q:"'月光如流水一般, 静静地泻在这一片叶子和花上' 的 '泻' 能否改为 '照'?",
+  ans:"不能。'泻' 把月光比作流水, 突出其流动、倾洒的动态美与通感手法; '照' 是静态, 失去月色如水的生动意象。"},
+ {t:"文言文《桃花源记》",q:"'阡陌交通, 鸡犬相闻' 中的 '交通' 古义是什么?",
+  ans:"古义: 交错相通(田间小路纵横)。今义: 指运输事业/出行方式。这是古今异义词, 答题要点明古今义之别。"},
+];
+document.getElementById("readBox").innerHTML=READ.map(r=>`
+ <div class="card"><h3>${r.t}</h3><p>${r.q}</p>
+ <button class="btn" onclick="this.nextElementSibling.classList.toggle('on')">显示答案</button>
+ <div class="answer">参考答案: ${r.ans}</div></div>`).join("");
+
+/* 病句 */
+const DIS=[
+ {s:"通过这次活动, 使我受到了深刻的教育。",a:"成分残缺(缺主语): '使' 字句吞掉主语。改: 这次活动使我受到了深刻的教育。 / 通过这次活动, 我受到了深刻的教育。"},
+ {s:"他虽然很聪明, 所以学习很努力。",a:"关联词搭配错: '虽然' 应与 '但是' 搭配。改: 他虽然很聪明, 但是学习很努力。"},
+ {s:"避免今后不再犯类似错误。",a:"否定失当: '避免…不再' 双重否定=要犯, 逻辑反了。改: 避免今后再犯类似错误。"},
+ {s:"我们要学会用正确的态度去面对困难。",a:"搭配不当: '学会…面对' 不搭。改: 我们要以正确的态度去面对困难。"},
+];
+document.getElementById("dBox").innerHTML=DIS.map(d=>`
+ <div class="card"><p>⚠ ${d.s}</p>
+ <button class="btn" onclick="this.nextElementSibling.classList.toggle('on')">显示答案</button>
+ <div class="answer">病因与改法: ${d.a}</div></div>`).join("");
+
+/* 作文素材 */
+const ES=[
+ ["人物","钱学森(归国奉献) · 张桂梅(坚守山区教育) · 苏轼(豁达) · 史铁生(与命运和解)"],
+ ["品质","坚韧 · 诚信 · 责任 · 担当 · 奉献 · 创新 · 自律 · 家国情怀"],
+ ["哲理","塞翁失马(祸福相依) · 水滴石穿(坚持) · 和而不同(包容) · 千里之行始于足下"],
+ ["时事","科技自立自强 · 文化自信(国潮/非遗) · 乡村振兴 · 绿水青山 · 志愿服务"],
+ ["名句","路漫漫其修远兮 · 功成不必在我 · 凡心所向素履以往 · 苔花如米小, 也学牡丹开"],
+];
+document.getElementById("eGrid").innerHTML=ES.map(f=>`<div class="card"><h3>${f[0]}</h3><ul>${f[1].split(" · ").map(x=>`<li>${x}</li>`).join("")}</ul></div>`).join("");
+
+/* 字词 */
+const W=[
+ ["字音","炽热chì · 炽zhi? 应chì · 粗糙cāo · 纤纤qiān · 锲而不舍qiè · 慰藉jiè · 缱绻qiǎn"],
+ ["字形","松弛(非'松驰') · 呕心沥血(非'沤') · 金榜题名(非'命题') · 一如继往? 应'一如既往'"],
+ ["成语","差强人意(大体满意, 非不好) · 首当其冲(最先, 非首先做) · 美轮美奂(建筑, 非物品) · 望其项背(接近, 多用于否定)"],
+];
+document.getElementById("wGrid").innerHTML=W.map(f=>`<div class="card"><h3>${f[0]}</h3><ul>${f[1].split(" · ").map(x=>`<li>${x}</li>`).join("")}</ul></div>`).join("");
+</script>
+
+<div id="agent-panel" style="margin:20px auto;max-width:720px;border:2px solid #4a90d9;border-radius:12px;padding:16px;background:#f7fbff;font-family:system-ui">
+  <h3 style="margin:0 0 8px;color:#2c5d8f">🤖 锦心子·语文专家团 · 智能体问答（本地题库模式）</h3>
+  <p style="font-size:13px;color:#555;margin:0 0 10px">本地题库模式（离线·零外链）：关键词匹配本站本地题库作答。在线 AI 问答待李老师定 key 策略后统一开通。</p>
+  <div style="display:flex;flex-wrap:wrap;gap:8px;margin-bottom:10px"><button style="padding:6px 10px;border-radius:8px;border:1px solid #888;background:#fff;color:#333;cursor:pointer;font-size:12px" onclick="agentAsk('分析《观书有感》\'问渠那得清如许\'的哲理')">分析《观书有感》'问渠那得清如许'的</button><button style="padding:6px 10px;border-radius:8px;border:1px solid #888;background:#fff;color:#333;cursor:pointer;font-size:12px" onclick="agentAsk('给一段文字做病句修改')">给一段文字做病句修改</button><button style="padding:6px 10px;border-radius:8px;border:1px solid #888;background:#fff;color:#333;cursor:pointer;font-size:12px" onclick="agentAsk('文言文《岳阳楼记》翻译+细读')">文言文《岳阳楼记》翻译+细读</button>
+    <button style="padding:6px 12px;border-radius:8px;border:1px solid #4a90d9;background:#4a90d9;color:#fff;cursor:pointer" onclick="agentAsk('')">问 锦心子·语文专家团</button>
+  </div>
+  <textarea id="agent-q" placeholder="输入问题，匹配 锦心子·语文专家团 本地题库..." style="width:100%;height:60px;padding:8px;border:1px solid #ccc;border-radius:8px;font-size:14px;box-sizing:border-box"></textarea>
+  <button style="margin-top:8px;padding:8px 16px;border-radius:8px;border:none;background:#2c8a3d;color:#fff;cursor:pointer;font-size:14px" onclick="agentAsk(document.getElementById('agent-q').value)">匹配本地题库</button>
+  <div id="agent-a" style="margin-top:12px;padding:12px;background:#fff;border-left:4px solid #2c8a3d;border-radius:6px;font-size:14px;min-height:40px;white-space:pre-wrap;color:#333">（等待回答）</div>
+  <script>
+  // 本地题库模式: 离线·零外链·无 key。在线(key 注入)待李老师定 key 策略后统一切, 此处 AGENT_MODE 为切换点。
+  var AGENT_MODE="local";
+  var AGENT_KB=(typeof window.AGENT_KB==="object"&&window.AGENT_KB)?window.AGENT_KB:[];
+  var LOCAL_TIPS=["答题先给文本关键词划主线, 每项结论找文中依据; 判断以文内证据优先。", "文言文先定虚词(其/之/而/以/于)义项, 再借对偶句式互证。"];
+  function _kbTokens(q){
+    var t=[];
+    (q.toLowerCase().match(/[a-z0-9]+/g)||[]).forEach(function(x){t.push(x);});
+    q.replace(/[^\u4e00-\u9fff]/g,'').split('').forEach(function(c){t.push(c);});
+    return t;
+  }
+  function agentAsk(q){
+    if(!q)q=document.getElementById('agent-q').value;
+    if(!q){document.getElementById('agent-a').textContent='请输入问题';return;}
+    document.getElementById('agent-q').value=q;
+    var a=document.getElementById('agent-a');
+    var uniq=Array.from(new Set(_kbTokens(q)));
+    var hits=AGENT_KB.map(function(it){
+      var hay=((it.q||"")+" "+(it.a||"")).toLowerCase();
+      var n=uniq.filter(function(t){return hay.indexOf(t)>-1;}).length;
+      return {s:n,it:it};
+    }).filter(function(x){return x.s>=Math.min(uniq.length,2);}).sort(function(x,y){return y.s-x.s;}).slice(0,3);
+    if(hits.length){
+      a.textContent="\u{1F4D6} 本地题库 · 离线（锦心子·语文专家团 本地条目）\n\n"+hits.map(function(h){return "Q: "+h.it.q+"\nA: "+h.it.a;}).join("\n\n")+"\n\n（在线 AI 问答待李老师定 key 策略后开通）";
+    } else {
+      a.textContent="\u26A0\uFE0F 本地题库模式（离线）：未匹配到本地条目。在线 AI 问答待李老师定 key 策略后开通。\n学习提示：\n- "+LOCAL_TIPS.join("\n- ")+"\n并见站内【题库/知识】模块。";
+    }
+  }
+  </script>
+</div>
+</body></html>

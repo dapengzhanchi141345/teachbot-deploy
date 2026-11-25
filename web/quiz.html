@@ -1,0 +1,97 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>课堂检测 · 作答</title>
+<style>
+:root{--bg:#05070f;--card:rgba(17,24,44,.66);--line:rgba(148,163,215,.28);--text:#e8eefc;--t2:#a7b3d1;
+--cy:#22d3ee;--vi:#818cf8;--gr:#34d399;--am:#fbbf24;--rd:#fb7185}
+*{margin:0;box-sizing:border-box}
+body{background:var(--bg);color:var(--text);font-family:"Microsoft YaHei",system-ui;min-height:100vh;
+background-image:linear-gradient(rgba(120,150,255,.045) 1px,transparent 1px),linear-gradient(90deg,rgba(120,150,255,.045) 1px,transparent 1px);background-size:34px 34px}
+.wrap{max-width:760px;margin:0 auto;padding:26px 16px 50px}
+h1{font-size:22px;background:linear-gradient(120deg,var(--cy),var(--vi));-webkit-background-clip:text;background-clip:text;color:transparent;margin-bottom:14px}
+.panel{background:var(--card);border:1px solid var(--line);border-radius:16px;padding:18px;margin-bottom:14px}
+label{font-size:13px;color:var(--t2);display:block;margin:8px 0 4px}
+input[type=text]{width:100%;background:rgba(5,7,15,.6);border:1px solid var(--line);border-radius:9px;color:var(--text);padding:10px 12px;font-size:15px;outline:none}
+input[type=text]:focus{border-color:var(--cy)}
+button{background:linear-gradient(120deg,#0891b2,#6d5ae0);border:none;border-radius:9px;color:#fff;padding:11px 20px;font-size:15px;cursor:pointer;margin-top:12px}
+button:disabled{opacity:.5;cursor:not-allowed}
+.q{margin-bottom:12px}
+.q .qt{font-size:15px;margin-bottom:8px}
+.opt{display:flex;gap:8px;align-items:flex-start;background:rgba(5,7,15,.45);border:1px solid var(--line);border-radius:9px;padding:9px 11px;margin-bottom:7px;cursor:pointer;font-size:14px}
+.opt.sel{border-color:var(--cy);background:rgba(34,211,238,.08)}
+.opt .lb{color:var(--cy);font-weight:700}
+.meta{color:var(--t2);font-size:13px;line-height:1.7}
+.big{font-size:40px;font-weight:800;text-align:center;margin:10px 0}
+.ok{color:var(--gr)} .bad{color:var(--rd)}
+.dline{border:1px solid var(--line);border-radius:10px;padding:10px 12px;margin-bottom:8px;font-size:13px;line-height:1.7}
+.dline .tag{font-weight:700;margin-right:6px}
+.msg{font-size:13px;margin-top:8px;color:var(--am)}
+.foot{margin-top:30px;text-align:center;color:var(--t2);font-size:12px}
+.hidden{display:none}
+</style>
+</head>
+<body>
+<div class="wrap">
+<h1>📝 课堂检测 · 学生作答</h1>
+<div class="panel" id="pStart">
+<label>题组代码（老师发的 6~8 位字母数字）</label>
+<input type="text" id="code" placeholder="例如 A3F9K2" style="text-transform:uppercase">
+<label>姓名</label>
+<input type="text" id="name" placeholder="输入你的姓名" maxlength="20">
+<button id="bGo" onclick="start()">进入答题 →</button>
+<div class="msg" id="m1"></div>
+</div>
+
+<div class="panel hidden" id="pQuiz">
+<div class="meta" id="meta"></div>
+<div id="qbox" style="margin-top:12px"></div>
+<button id="bSub" onclick="submitAll()">提交答卷</button>
+<div class="msg" id="m2"></div>
+</div>
+
+<div class="panel hidden" id="pDone">
+<div class="big" id="scoreBig"></div>
+<div class="meta" id="subInfo" style="text-align:center"></div>
+<div style="margin-top:14px" id="detail"></div>
+</div>
+<div class="foot">李彦明 15684394135 · 提交后不可更改，答完点「提交答卷」</div>
+</div>
+<script>
+let Q=[], META={}, CODE="", myAnswers=[];
+const $=id=>document.getElementById(id);
+function start(){
+  CODE=$("code").value.trim().toUpperCase();
+  const name=$("name").value.trim();
+  if(CODE.length<4||name.length<1){$("m1").textContent="请填全：题组代码（老师发的）+ 你的姓名";return;}
+  $("m1").textContent="正在加载题组…";
+  fetch("/api/session/"+CODE).then(r=>r.ok?r.json():Promise.reject(new Error(r.status)))
+  .then(d=>{Q=d.questions;META=d.meta;CODE=d.code;
+    $("pStart").classList.add("hidden");$("pQuiz").classList.remove("hidden");
+    $("meta").innerHTML=`题组 <b style="color:var(--cy)">${CODE}</b> · ${META.subject||""} ${META.grade||""} · ${META.topic||""} · 共 ${Q.length} 题`;
+    $("qbox").innerHTML=Q.map((q,i)=>`<div class="q"><div class="qt">${i+1}. ${esc(q.q)}</div>${q.options.map((o,j)=>`<div class="opt" data-i="${i}" data-j="${j}" onclick="pick(${i},${j})"><span class="lb">${"ABCD"[j]}</span><span>${esc(o)}</span></div>`).join("")}</div>`).join("");
+    myAnswers=Q.map(()=>-1);
+  }).catch(e=>{$("m1").textContent="加载失败：题组不存在或服务器未启动（错误 "+e+"），请找老师确认代码";});
+}
+function esc(s){return String(s||"").replace(/&/g,"&amp;").replace(/</g,"&lt;").replace(/>/g,"&gt;")}
+function pick(i,j){myAnswers[i]=j;
+  document.querySelectorAll(`.opt[data-i="${i}"]`).forEach(el=>el.classList.toggle("sel",+el.dataset.j===j));}
+function submitAll(){
+  if(myAnswers.some(a=>a<0)){$("m2").textContent="还有 "+myAnswers.filter(a=>a<0).length+" 题没选，请答完再提交";return;}
+  $("bSub").disabled=true;$("m2").textContent="提交中…";
+  fetch("/api/submit",{method:"POST",headers:{"Content-Type":"application/json"},
+    body:JSON.stringify({code:CODE,name:$("name").value.trim(),answers:myAnswers})})
+  .then(r=>r.json()).then(d=>{
+    $("pQuiz").classList.add("hidden");$("pDone").classList.remove("hidden");
+    const pct=Math.round(d.score/d.total*100);
+    $("scoreBig").innerHTML=`<span class="${d.score/d.total>=.6?"ok":"bad"}">${d.score} / ${d.total}</span>`;
+    $("subInfo").textContent=`答对 ${pct}% · 你是第 ${d.rank} 个提交的`;
+    $("detail").innerHTML=d.details.map(x=>`<div class="dline"><span class="tag ${x.ok?'ok':'bad'}">${x.ok?'✔':'✘'} 第${x.i+1}题</span>${esc(x.q.slice(0,50))}<br>你的答案：${x.your>=0?"ABCD"[x.your]:"未答"} · 正确答案：${"ABCD"[x.correct]}${x.explain?"<br>解析："+esc(x.explain):""}</div>`).join("");
+  }).catch(e=>{$("m2").textContent="提交失败："+e+"，请刷新重试（已选答案会丢失，重新选择）";$("bSub").disabled=false;});
+}
+document.addEventListener("keydown",e=>{if(e.key==="Enter"&&$("pStart")&&!$("pStart").classList.contains("hidden"))start();});
+</script>
+</body>
+</html>

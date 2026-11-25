@@ -1,0 +1,1000 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>史鉴君·历史专家团 | 全学段历史知识体系导航</title>
+<style>
+:root {
+  --zheshi: #8b3a2f;        /* 赭石 */
+  --zheshi-deep: #5e241c;   /* 深赭石 */
+  --zheshi-light: #b5655c;
+  --paper: #f5efe2;         /* 宣纸 */
+  --paper-deep: #ebe3d0;
+  --paper-line: #d8c9a8;
+  --ink: #2e2620;
+  --ink-light: #6b5d50;
+  --gold: #a97c2e;
+  --shadow: rgba(94,36,28,0.12);
+}
+* { margin: 0; padding: 0; box-sizing: border-box; }
+body {
+  font-family: "STKaiti", "KaiTi", "SimSun", "Microsoft YaHei", serif;
+  background: var(--paper);
+  background-image:
+    radial-gradient(circle at 20% 30%, rgba(169,124,46,0.06) 0%, transparent 40%),
+    radial-gradient(circle at 80% 70%, rgba(139,58,47,0.06) 0%, transparent 40%);
+  color: var(--ink);
+  line-height: 1.7;
+}
+/* 宣纸纹理 */
+body::before {
+  content: "";
+  position: fixed; inset: 0;
+  background-image: repeating-linear-gradient(0deg, transparent, transparent 3px, rgba(139,58,47,0.02) 3px, rgba(139,58,47,0.02) 4px);
+  pointer-events: none;
+  z-index: 0;
+}
+header {
+  background: linear-gradient(135deg, var(--zheshi-deep) 0%, var(--zheshi) 60%, var(--zheshi-light) 100%);
+  color: #f5efe2;
+  padding: 34px 24px 26px;
+  text-align: center;
+  position: relative;
+  border-bottom: 4px double var(--gold);
+}
+header::after {
+  content: "史";
+  position: absolute;
+  right: 24px; top: 50%;
+  transform: translateY(-50%);
+  font-size: 4.6em;
+  opacity: 0.14;
+  border: 3px solid rgba(245,239,226,0.4);
+  border-radius: 8px;
+  padding: 4px 14px;
+  font-family: "STKaiti","KaiTi",serif;
+}
+header h1 {
+  font-size: 2.3em;
+  letter-spacing: 4px;
+  text-shadow: 0 2px 6px rgba(0,0,0,0.35);
+}
+header p { margin-top: 8px; font-size: 1.02em; opacity: 0.92; letter-spacing: 2px; }
+header .seal {
+  display: inline-block;
+  margin-top: 12px;
+  border: 2px solid var(--gold);
+  color: var(--gold);
+  padding: 3px 12px;
+  font-size: 0.85em;
+  letter-spacing: 3px;
+  border-radius: 4px;
+}
+nav {
+  background: var(--paper-deep);
+  border-bottom: 2px solid var(--zheshi);
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: center;
+  position: sticky;
+  top: 0;
+  z-index: 100;
+}
+nav button {
+  background: none;
+  border: none;
+  padding: 13px 22px;
+  font-size: 1em;
+  cursor: pointer;
+  color: var(--ink-light);
+  font-family: inherit;
+  border-bottom: 3px solid transparent;
+  letter-spacing: 2px;
+  transition: all 0.2s;
+}
+nav button:hover { color: var(--zheshi); background: rgba(139,58,47,0.08); }
+nav button.active {
+  color: var(--zheshi-deep);
+  font-weight: 700;
+  border-bottom: 3px solid var(--zheshi);
+  background: rgba(139,58,47,0.1);
+}
+main { max-width: 1080px; margin: 0 auto; padding: 26px 16px 40px; position: relative; z-index: 1; }
+.section { display: none; }
+.section.active { display: block; }
+h2.sec-title {
+  color: var(--zheshi-deep);
+  font-size: 1.5em;
+  margin-bottom: 6px;
+  letter-spacing: 2px;
+  border-left: 6px solid var(--zheshi);
+  padding-left: 12px;
+}
+p.sec-sub { color: var(--ink-light); margin-bottom: 18px; font-size: 0.98em; }
+/* 卡片 */
+.panel {
+  background: rgba(255,255,255,0.55);
+  border: 1px solid var(--paper-line);
+  border-radius: 10px;
+  box-shadow: 0 2px 10px var(--shadow);
+  padding: 20px;
+  margin-bottom: 20px;
+}
+/* ===== 知识体系 ===== */
+.kmap { display: grid; grid-template-columns: repeat(auto-fill, minmax(245px, 1fr)); gap: 16px; }
+.kmap-card {
+  background: #fffdf7;
+  border-radius: 10px;
+  padding: 18px;
+  border-top: 5px solid var(--zheshi);
+  box-shadow: 0 2px 10px var(--shadow);
+  cursor: pointer;
+  transition: transform 0.18s, box-shadow 0.18s;
+}
+.kmap-card:hover { transform: translateY(-3px); box-shadow: 0 8px 20px var(--shadow); }
+.kmap-card h3 { color: var(--zheshi-deep); font-size: 1.12em; margin-bottom: 6px; }
+.kmap-card .stage { font-size: 0.83em; color: var(--ink-light); margin-bottom: 10px; }
+.kmap-card ul { list-style: none; font-size: 0.92em; }
+.kmap-card ul li { padding: 2px 0; }
+.kmap-card ul li::before { content: "◈"; color: var(--gold); margin-right: 6px; font-size: 0.8em; }
+.kmap-card .more { margin-top: 10px; font-size: 0.83em; color: var(--zheshi); }
+.detail-panel {
+  background: #fffdf7;
+  border: 1px solid var(--paper-line);
+  border-radius: 10px;
+  padding: 22px;
+  margin-top: 18px;
+  box-shadow: 0 2px 10px var(--shadow);
+  display: none;
+}
+.detail-panel.show { display: block; }
+.detail-panel h3 { color: var(--zheshi-deep); margin-bottom: 10px; }
+.detail-panel ul { margin: 10px 0 0 18px; }
+.detail-panel ul li { margin-bottom: 6px; }
+.detail-panel .tip {
+  margin-top: 14px; padding: 12px;
+  background: var(--paper-deep);
+  border-left: 4px solid var(--gold);
+  border-radius: 6px;
+  font-size: 0.9em;
+}
+/* ===== 时间轴 ===== */
+.timeline-filter { display: flex; gap: 8px; flex-wrap: wrap; margin-bottom: 18px; }
+.timeline-filter button {
+  border: 2px solid var(--paper-line);
+  background: #fffdf7;
+  padding: 6px 16px;
+  border-radius: 20px;
+  cursor: pointer;
+  font-family: inherit;
+  font-size: 0.95em;
+  color: var(--ink-light);
+}
+.timeline-filter button.on {
+  border-color: var(--zheshi);
+  background: var(--zheshi);
+  color: #fffdf7;
+  font-weight: 700;
+}
+.timeline { position: relative; margin-left: 10px; padding-left: 26px; border-left: 3px solid var(--zheshi); }
+.tl-item { position: relative; margin-bottom: 18px; }
+.tl-item::before {
+  content: "";
+  position: absolute;
+  left: -35px; top: 6px;
+  width: 13px; height: 13px;
+  background: var(--zheshi);
+  border: 3px solid var(--paper);
+  border-radius: 50%;
+  box-shadow: 0 0 0 2px var(--zheshi);
+}
+.tl-item .era { font-size: 0.8em; color: var(--gold); font-weight: 700; letter-spacing: 1px; }
+.tl-item h4 { color: var(--zheshi-deep); font-size: 1.05em; }
+.tl-item p { font-size: 0.92em; color: var(--ink-light); margin-top: 3px; }
+/* ===== 朝代环 ===== */
+.dyn-box { max-width: 660px; }
+.dyn-flow {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 4px;
+  margin-bottom: 18px;
+}
+.dyn-chip {
+  background: #fffdf7;
+  border: 2px solid var(--paper-line);
+  border-radius: 8px;
+  padding: 8px 12px;
+  cursor: pointer;
+  text-align: center;
+  min-width: 72px;
+  transition: all 0.15s;
+  user-select: none;
+}
+.dyn-chip:hover { border-color: var(--zheshi); }
+.dyn-chip.sel { background: var(--zheshi); color: #fffdf7; border-color: var(--zheshi-deep); transform: scale(1.06); }
+.dyn-chip .d-name { font-weight: 700; font-size: 0.95em; }
+.dyn-chip .d-year { font-size: 0.72em; opacity: 0.85; }
+.dyn-arrow { color: var(--gold); font-size: 1.2em; font-weight: 700; }
+.dyn-detail {
+  background: #fffdf7;
+  border: 1px solid var(--paper-line);
+  border-radius: 10px;
+  padding: 18px;
+  box-shadow: 0 2px 8px var(--shadow);
+  min-height: 130px;
+}
+.dyn-detail h3 { color: var(--zheshi-deep); font-size: 1.2em; margin-bottom: 8px; }
+.dyn-detail .row { font-size: 0.94em; margin-bottom: 5px; }
+.dyn-detail .row b { color: var(--gold); }
+/* ===== 史料实证选择 ===== */
+.st-box { background: #fffdf7; border: 1px solid var(--paper-line); border-radius: 10px; padding: 20px; box-shadow: 0 2px 10px var(--shadow); }
+.st-material {
+  background: var(--paper-deep);
+  border-left: 4px solid var(--zheshi);
+  padding: 14px;
+  margin-bottom: 14px;
+  font-size: 0.98em;
+  border-radius: 0 8px 8px 0;
+}
+.st-material .src { display: block; margin-top: 8px; font-size: 0.82em; color: var(--ink-light); }
+.st-q { font-weight: 700; color: var(--zheshi-deep); margin-bottom: 12px; font-size: 1.05em; }
+.st-opts { display: flex; flex-wrap: wrap; gap: 10px; margin-bottom: 12px; }
+.st-opts button {
+  border: 2px solid var(--paper-line);
+  background: var(--paper);
+  border-radius: 8px;
+  padding: 8px 18px;
+  cursor: pointer;
+  font-family: inherit;
+  font-size: 0.98em;
+  color: var(--ink);
+}
+.st-opts button:hover { border-color: var(--zheshi); }
+.st-opts button.ok { border-color: #2e7d32; background: #e8f5e9; font-weight: 700; }
+.st-opts button.no { border-color: #c62828; background: #ffebee; }
+.st-fb { display: none; padding: 12px; border-radius: 8px; font-size: 0.93em; background: var(--paper-deep); }
+.st-fb.show { display: block; }
+.st-actions { margin-top: 14px; display: flex; align-items: center; gap: 14px; }
+.st-actions button {
+  background: var(--zheshi);
+  color: #fffdf7;
+  border: none;
+  padding: 9px 20px;
+  border-radius: 8px;
+  cursor: pointer;
+  font-family: inherit;
+  font-size: 0.98em;
+  letter-spacing: 1px;
+}
+.st-score { font-weight: 700; color: var(--zheshi-deep); }
+/* ===== 人物卡片 ===== */
+.fig-filter { display: flex; gap: 8px; flex-wrap: wrap; margin-bottom: 16px; }
+.fig-filter button {
+  border: 2px solid var(--paper-line);
+  background: #fffdf7;
+  padding: 5px 14px;
+  border-radius: 18px;
+  cursor: pointer;
+  font-family: inherit;
+  font-size: 0.9em;
+  color: var(--ink-light);
+}
+.fig-filter button.on { border-color: var(--zheshi); background: var(--zheshi); color: #fffdf7; font-weight: 700; }
+.fig-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(230px, 1fr)); gap: 16px; }
+.fig-card {
+  background: #fffdf7;
+  border: 1px solid var(--paper-line);
+  border-top: 5px solid var(--gold);
+  border-radius: 10px;
+  padding: 18px;
+  box-shadow: 0 2px 10px var(--shadow);
+  cursor: pointer;
+  transition: transform 0.18s;
+}
+.fig-card:hover { transform: translateY(-3px); }
+.fig-card h4 { color: var(--zheshi-deep); font-size: 1.15em; display: flex; align-items: center; gap: 8px; }
+.fig-card .avatar {
+  width: 44px; height: 44px;
+  border-radius: 50%;
+  background: var(--zheshi);
+  color: #fffdf7;
+  display: flex; align-items: center; justify-content: center;
+  font-size: 1.3em;
+  font-family: "STKaiti","KaiTi",serif;
+  flex-shrink: 0;
+}
+.fig-card .era-tag { font-size: 0.8em; color: var(--gold); font-weight: 700; margin-top: 4px; }
+.fig-card .tagline { font-size: 0.9em; color: var(--ink-light); margin-top: 6px; }
+.fig-flip {
+  background: var(--zheshi-deep);
+  color: #fffdf7;
+  padding: 18px;
+  border-radius: 10px;
+  box-shadow: 0 4px 14px var(--shadow);
+  margin-top: 4px;
+  display: none;
+}
+.fig-flip.show { display: block; }
+.fig-flip h4 { font-size: 1.2em; margin-bottom: 8px; }
+.fig-flip .f-row { font-size: 0.92em; margin-bottom: 8px; }
+.fig-flip .f-row b { color: var(--gold); }
+.fig-flip button {
+  margin-top: 10px;
+  background: var(--gold);
+  color: #fffdf7;
+  border: none;
+  padding: 6px 14px;
+  border-radius: 6px;
+  cursor: pointer;
+  font-family: inherit;
+}
+footer {
+  background: var(--zheshi-deep);
+  color: #f5efe2;
+  text-align: center;
+  padding: 22px 16px;
+  border-top: 4px double var(--gold);
+  position: relative;
+  z-index: 1;
+}
+footer .fw {
+  font-size: 1.15em;
+  font-weight: 700;
+  letter-spacing: 2px;
+  margin-top: 10px;
+  opacity: 0.95;
+}
+footer small { display: block; opacity: 0.75; margin-top: 6px; }
+@media (max-width: 600px) {
+  header h1 { font-size: 1.7em; }
+  header::after { display: none; }
+  nav button { padding: 10px 14px; font-size: 0.9em; }
+  .kmap, .fig-grid { grid-template-columns: 1fr; }
+  .timeline { padding-left: 20px; }
+  .tl-item::before { left: -29px; }
+}
+</style>
+</head>
+<body>
+<header>
+  <h1>史鉴君 · 历史专家团</h1>
+  <p>以史为鉴 · 可以知兴替 —— 全学段历史知识体系导航（初中 → 高中）</p>
+  <div class="seal">观今·鉴古·通史</div>
+</header>
+
+<nav>
+  <button class="active" data-target="sec-kmap">知识体系</button>
+  <button data-target="sec-timeline">大事年表</button>
+  <button data-target="sec-dynasty">朝代更替</button>
+  <button data-target="sec-source">史料实证</button>
+  <button data-target="sec-figures">历史人物</button>
+</nav>
+
+<main>
+<!-- 1. 知识体系导航 -->
+<div id="sec-kmap" class="section active">
+  <h2 class="sec-title">📚 历史知识体系导航（初中 → 高中）</h2>
+  <p class="sec-sub">四大板块 · 八张卡片。点击卡片展开核心考点，覆盖中国古代史、近代史、现代史与世界史全学段主线。</p>
+  <div class="kmap" id="kmap-grid"></div>
+  <div class="detail-panel" id="detail-panel">
+    <h3 id="detail-title"></h3>
+    <ul id="detail-points"></ul>
+    <div class="tip" id="detail-tip"></div>
+  </div>
+</div>
+
+<!-- 2. 大事年表 -->
+<div id="sec-timeline" class="section">
+  <h2 class="sec-title">⏳ 历史大事年表（互动时间轴）</h2>
+  <p class="sec-sub">按板块筛选大事记。上滑看主线，每个节点标注年代 + 事件 + 一句话意义。</p>
+  <div class="timeline-filter" id="tl-filter"></div>
+  <div class="timeline" id="timeline-list"></div>
+</div>
+
+<!-- 3. 朝代更替 -->
+<div id="sec-dynasty" class="section">
+  <h2 class="sec-title">🏯 朝代更替图（中国王朝速记）</h2>
+  <p class="sec-sub">点击朝代节点，查看起止年代、建立者与历史考点。顺序链帮助建立"王朝接力"的时间框架。</p>
+  <div class="panel dyn-box">
+    <div class="dyn-flow" id="dyn-flow"></div>
+    <div class="dyn-detail" id="dyn-detail">
+      <h3>请选择左侧朝代</h3>
+      <p style="color:var(--ink-light);font-size:0.92em;">◈ 提示：按"夏商周 → 秦汉 → 隋唐 → 宋元 → 明清"顺序记忆，配合「大事年表」交叉巩固。</p>
+    </div>
+  </div>
+</div>
+
+<!-- 4. 史料实证选择题 -->
+<div id="sec-source" class="section">
+  <h2 class="sec-title">📜 史料实证 · 选择题实战</h2>
+  <p class="sec-sub">高考核心素养「史料实证」训练：读材料、辨出处、下判断。点击选项即时判分并附解析。</p>
+  <div class="st-box">
+    <div class="st-material" id="st-material"></div>
+    <div class="st-q" id="st-question"></div>
+    <div class="st-opts" id="st-opts"></div>
+    <div class="st-fb" id="st-fb"></div>
+    <div class="st-actions">
+      <button onclick="loadNextSource()">下一题 →</button>
+      <span class="st-score" id="st-score">正确：0 / 0</span>
+    </div>
+  </div>
+</div>
+
+<!-- 5. 历史人物卡片 -->
+<div id="sec-figures" class="section">
+  <h2 class="sec-title">👤 历史人物卡片（翻转卡）</h2>
+  <p class="sec-sub">点击卡片翻面，查看人物生平、主要事迹与考试考点。按时代筛选。</p>
+  <div class="fig-filter" id="fig-filter"></div>
+  <div class="fig-grid" id="fig-grid"></div>
+</div>
+</main>
+
+<footer>
+  <div>史鉴君 · 历史专家团 — 全学段历史学习导航（初中 → 高中）</div>
+  <div class="fw">李彦明 15684394135</div>
+  <small>单文件离线可用 · 双击即可打开 · 微课室局域网版</small>
+
+<div style="background:#fffbe6;border-left:4px solid #f5a623;padding:10px;margin:12px 0;font-size:14px">📅 2026-10-05 升级 · 【史料+2026-10-05】'贞观'是唐太宗年号; '开元'是唐玄宗年号 (别混)</div>
+
+<div style="background:#fffbe6;border-left:4px solid #f5a623;padding:10px;margin:12px 0;font-size:14px">📅 2026-10-09 升级 · 【人物+2026-10-09】"文景之治"汉文帝+汉景帝；"光武中兴"刘秀</div>
+
+<div style="background:#fffbe6;border-left:4px solid #f5a623;padding:10px;margin:12px 0;font-size:14px">📅 2026-10-09 升级 · 【思想+2026-10-09】朱熹集理学之大成(存天理灭人欲)；王阳明心学(致良知)</div>
+
+<div style="background:#fffbe6;border-left:4px solid #f5a623;padding:10px;margin:12px 0;font-size:14px">📅 2026-10-09 升级 · 【时间+2026-10-09】洋务运动(19世纪60-90年代,中体西用)；戊戌变法(1898,103天)</div>
+
+<div style="background:#fffbe6;border-left:4px solid #f5a623;padding:10px;margin:12px 0;font-size:14px">📅 2026-10-10 升级 · 【史料+2026-10-10】《史记》纪传体开山；"究天人之际"是其宗旨</div>
+
+<div style="background:#fffbe6;border-left:4px solid #f5a623;padding:10px;margin:12px 0;font-size:14px">📅 2026-10-11 升级 · 【制度+2026-10-11】科举：隋创立、唐完善、明清八股取士(僵化)</div>
+
+<div style="background:#fffbe6;border-left:4px solid #f5a623;padding:10px;margin:12px 0;font-size:14px">📅 2026-10-12 升级 · 【时间+2026-10-12】1840 鸦片战争(中国近代史开端)；1919 五四运动</div>
+
+<div style="background:#fffbe6;border-left:4px solid #f5a623;padding:10px;margin:12px 0;font-size:14px">📅 2026-10-13 升级 · 【经济+2026-10-13】一条鞭法(明张居正,赋役合并折银)；摊丁入亩(清,废人头税)</div>
+
+<div style="background:#fffbe6;border-left:4px solid #f5a623;padding:10px;margin:12px 0;font-size:14px">📅 2026-10-14 升级 · 【史料+2026-10-14】"贞观之治"唐太宗；"开元盛世"唐玄宗(年号别混)</div>
+
+<div style="background:#fffbe6;border-left:4px solid #f5a623;padding:10px;margin:12px 0;font-size:14px">📅 2026-10-15 升级 · 【时间+2026-10-15】汉武帝张骞通西域(前138起)；郑和下西洋(明,1405-1433)</div>
+
+<div style="background:#fffbe6;border-left:4px solid #f5a623;padding:10px;margin:12px 0;font-size:14px">📅 2026-10-16 升级 · 【制度+2026-10-16】郡县制(秦)vs 行省制(元,省级建制源头)</div>
+
+<div style="background:#fffbe6;border-left:4px solid #f5a623;padding:10px;margin:12px 0;font-size:14px">📅 2026-10-17 升级 · 【经济+2026-10-17】商帮：徽商(盐商+典当)vs 晋商(票号/汇兑)</div>
+
+<div style="background:#fffbe6;border-left:4px solid #f5a623;padding:10px;margin:12px 0;font-size:14px">📅 2026-10-18 升级 · 【史料+2026-10-18】《天工开物》宋应星(手工业)；《农政全书》徐光启</div>
+
+<div style="background:#fffbe6;border-left:4px solid #f5a623;padding:10px;margin:12px 0;font-size:14px">📅 2026-10-20 升级 · 【时间+2026-10-20】1851-1864 太平天国运动；1911 武昌起义(辛亥)推翻清</div>
+
+<div style="background:#fffbe6;border-left:4px solid #f5a623;padding:10px;margin:12px 0;font-size:14px">📅 2026-10-21 升级 · 【思想+2026-10-21】严复译《天演论》(物竞天择，适者生存)，启迪维新</div>
+
+<div style="background:#fffbe6;border-left:4px solid #f5a623;padding:10px;margin:12px 0;font-size:14px">📅 2026-10-22 升级 · 【经济+2026-10-22】1949-1952 恢复国民经济；1953 一五计划优先发展重工业</div>
+
+<div style="background:#fffbe6;border-left:4px solid #f5a623;padding:10px;margin:12px 0;font-size:14px">📅 2026-10-23 升级 · 【人物+2026-10-23】孙中山提出三民主义(民族民权民生)，是辛亥革命的指导思想</div>
+
+<div style="background:#fffbe6;border-left:4px solid #f5a623;padding:10px;margin:12px 0;font-size:14px">📅 2026-10-24 升级 · 【时间+2026-10-24】1921 中共一大(上海→嘉兴南湖)；1927 南昌起义打第一枪</div>
+
+<div style="background:#fffbe6;border-left:4px solid #f5a623;padding:10px;margin:12px 0;font-size:14px">📅 2026-10-25 升级 · 【制度+2026-10-25】1954 第一届全国人大通过第一部《宪法》(社会主义类型根本法)</div>
+
+<div style="background:#fffbe6;border-left:4px solid #f5a623;padding:10px;margin:12px 0;font-size:14px">📅 2026-10-26 升级 · 【思想+2026-10-26】1978 十一届三中全会：思想路线=实事求是，工作重心转经济建设</div>
+
+<div style="background:#fffbe6;border-left:4px solid #f5a623;padding:10px;margin:12px 0;font-size:14px">📅 2026-10-27 升级 · 【经济+2026-10-27】1980 开深圳/珠海/汕头/厦门经济特区；1992 浦东开放</div>
+
+<div style="background:#fffbe6;border-left:4px solid #f5a623;padding:10px;margin:12px 0;font-size:14px">📅 2026-11-02 升级 · 【时间+2026-11-02】1978 农村改革：安徽凤阳小岗村"大包干"率先实行家庭联产承包</div>
+
+<div style="background:#fffbe6;border-left:4px solid #f5a623;padding:10px;margin:12px 0;font-size:14px">📅 2026-11-03 升级 · 【史料+2026-11-03】《共产党宣言》1848 马克思恩格斯；三大法宝=统一战线/武装斗争/党的建设</div>
+
+<div style="background:#fffbe6;border-left:4px solid #f5a623;padding:10px;margin:12px 0;font-size:14px">📅 2026-11-06 升级 · 【制度+2026-11-06】汉初"郡国并行"：封国与郡县并存，后经推恩令削藩</div>
+
+<div style="background:#fffbe6;border-left:4px solid #f5a623;padding:10px;margin:12px 0;font-size:14px">📅 2026-11-12 升级 · 【思想+2026-11-12】明清"早期启蒙思想"：李贽反权威、黄宗羲"天下为主"</div>
+
+<div style="background:#fffbe6;border-left:4px solid #f5a623;padding:10px;margin:12px 0;font-size:14px">📅 2026-11-12 升级 · 【外交+2026-11-12】1842《南京条约》：割香港、赔 2000 万两、开五口(首不等约)</div>
+
+<div style="background:#fffbe6;border-left:4px solid #f5a623;padding:10px;margin:12px 0;font-size:14px">📅 2026-11-13 升级 · 【军事+2026-11-13】1894 甲午：北洋水师覆没、旅顺基地被毁(转折)</div>
+
+<div style="background:#fffbe6;border-left:4px solid #f5a623;padding:10px;margin:12px 0;font-size:14px">📅 2026-11-14 升级 · 【文化+2026-11-14】元杂剧：关汉卿《窦娥冤》，四大悲剧之一</div>
+
+<div style="background:#fffbe6;border-left:4px solid #f5a623;padding:10px;margin:12px 0;font-size:14px">📅 2026-11-15 升级 · 【经济+2026-11-15】明中后期白银成为主货币；出现"银荒"</div>
+
+<div style="background:#fffbe6;border-left:4px solid #f5a623;padding:10px;margin:12px 0;font-size:14px">📅 2026-11-16 升级 · 【近代+2026-11-16】1898 戊戌变法：康梁主张变法图强，新学与守旧之争</div>
+
+<div style="background:#fffbe6;border-left:4px solid #f5a623;padding:10px;margin:12px 0;font-size:14px">📅 2026-11-17 升级 · 【近代+2026-11-17】1935 遵义会议：纠正"左"倾军事错误，确立毛泽东领导(转折)</div>
+
+<div style="background:#fffbe6;border-left:4px solid #f5a623;padding:10px;margin:12px 0;font-size:14px">📅 2026-11-18 升级 · 【制度+2026-11-18】宋"二府三司"：中书门下/枢密院分掌政军，分化相权</div>
+
+<div style="background:#fffbe6;border-left:4px solid #f5a623;padding:10px;margin:12px 0;font-size:14px">📅 2026-11-19 升级 · 【文化+2026-11-19】汉"太学"：官方教育教儒家经典，国家办学源头</div>
+
+<div style="background:#fffbe6;border-left:4px solid #f5a623;padding:10px;margin:12px 0;font-size:14px">📅 2026-11-20 升级 · 【近代+2026-11-20】1949《共同纲领》：建国纲领(临时代宪法)，定人民民主专政</div>
+
+<div style="background:#fffbe6;border-left:4px solid #f5a623;padding:10px;margin:12px 0;font-size:14px">📅 2026-11-21 升级 · 【经济+2026-11-21】洋务"官督商办"民用企业(轮船招商局)，近代工业开端</div>
+
+<div style="background:#fffbe6;border-left:4px solid #f5a623;padding:10px;margin:12px 0;font-size:14px">📅 2026-11-22 升级 · 【近代+2026-11-22】1912《中华民国临时约法》：主权在民、三权分立</div>
+
+<div style="background:#fffbe6;border-left:4px solid #f5a623;padding:10px;margin:12px 0;font-size:14px">📅 2026-11-23 升级 · 【经济+2026-11-23】唐"均田制+租庸调制"：国家授田、纳粮服役</div>
+</footer>
+
+<script>
+/* ============ 导航切换 ============ */
+document.querySelectorAll('nav button').forEach(function(btn){
+  btn.addEventListener('click', function(){
+    document.querySelectorAll('nav button').forEach(function(b){ b.classList.remove('active'); });
+    btn.classList.add('active');
+    var t = document.getElementById(btn.dataset.target);
+    document.querySelectorAll('.section').forEach(function(s){ s.classList.remove('active'); });
+    t.classList.add('active');
+  });
+});
+
+/* ============ 1. 知识体系数据 ============ */
+var kmapData = [
+  {
+    id:'ancient-junior', title:'🏛 中国古代史（初中）', stage:'七至九年级 · 通史基础',
+    points:['中华文明的起源：河姆渡、半坡、炎黄',
+      '青铜文明与早期国家：夏商周',
+      '秦统一与中央集权制度的确立',
+      '汉武帝与大一统：独尊儒术、盐铁官营',
+      '三国两晋南北朝：分裂与民族交融',
+      '隋唐繁荣：科举制、贞观之治、开元盛世',
+      '宋元革新：经济重心南移、元朝大一统'],
+    tip:'初中重在"通史脉络"：按时间轴记住每个朝代的"制度创新 + 经济表现 + 对外交流"三件套。'
+  },
+  {
+    id:'ancient-senior', title:'🏛 中国古代史（高中）', stage:'选择性必修 · 制度史视角',
+    points:['政治制度演变：从禅让到郡县、从宰相到内阁军机',
+      '选官制度：察举→九品中正→科举',
+      '赋税制度：从编户齐民到一条鞭法、摊丁入亩',
+      '经济：农耕经济、重农抑商、明清商品经济',
+      '文化：儒学演变（先秦→宋明理学→明清心学）',
+      '对外：丝绸之路、郑和下西洋、朝贡体系',
+      '历史解释方法：如何评价古代改革的功过'],
+    tip:'高中古代史是"线索 + 论证"：每个考点要能说出"背景—措施—影响—评价"四步完整史论。'
+  },
+  {
+    id:'modern-junior', title:'⚔ 中国近代史（初中）', stage:'八至九年级 · 屈辱与觉醒',
+    points:['鸦片战争与五口通商（1840—1842）',
+      '洋务运动：自强求富的近代化尝试',
+      '甲午战争与《马关条约》',
+      '戊戌变法、义和团与辛亥革命（1911）',
+      '新文化运动与五四运动（1919）',
+      '中共成立（1921）与国共合作',
+      '抗日战争（1931—1945）：民族统一战线'],
+    tip:'近代史主线 = "双重任务"：反帝反封建。每个事件都要落到"民族危机 + 救亡探索"两个维度。'
+  },
+  {
+    id:'modern-senior', title:'⚔ 中国近代史（高中）', stage:'选择性必修 · 革命与现代化',
+    points:['晚清危机：条约体系与中国主权流失',
+      '洋务运动的历史定位：近代工业化的起点与局限',
+      '政治民主化：从君主立宪（改良）到共和革命',
+      '思想解放：西学东渐与五四新文化运动',
+      '国共关系演变：合作—内战—合作',
+      '抗日战争的全民抗战路线与持久战',
+      '解放战争与国民党政权的失败'],
+    tip:'高中近代史要"两条线索"并行：现代化线索 + 革命线索，避免只记事件不记结构。'
+  },
+  {
+    id:'contemp-junior', title:'🇨🇳 中国现代史（初中）', stage:'九年级 · 建国与建设',
+    points:['新民主主义革命胜利与开国大典（1949）',
+      '抗美援朝与土地改革',
+      '一五计划与社会主义三大改造',
+      '人民代表大会制度与政协制度',
+      '改革开放：家庭联产承包与特区',
+      '科技：两弹一星、杂交水稻',
+      '外交：恢复联合国席位、中美建交、加入 WTO'],
+    tip:'现代史关键词："站起来、富起来、强起来"。把 1949 / 1978 / 2001 / 2012 四个节点记牢。'
+  },
+  {
+    id:'contemp-senior', title:'🇨🇳 中国现代史（高中）', stage:'选择性必修 · 改革开放与新时代',
+    points:['社会主义建设的探索与曲折（大跃进、文革教训）',
+      '改革开放的进程：从农村到城市、从沿海到内地',
+      '社会主义市场经济体制的确立（十四大）',
+      '民主与法制建设：1982 年宪法',
+      '科技成就与创新驱动（嫦娥、蛟龙、北斗）',
+      '外交布局：和平共处五项原则、新型国际关系',
+      '历史学科素养：如何评价改革开放（史观方法）'],
+    tip:'高中现代史要求"史论结合"：每个成就答"背景（内+外）—过程—意义—评价"四段式。'
+  },
+  {
+    id:'world-junior', title:'🌍 世界历史（初中）', stage:'七至九年级 · 文明交流史',
+    points:['古代文明：四大河流域与古代希腊罗马',
+      '中世纪：封建制度与阿拉伯帝国',
+      '文艺复兴与宗教改革：思想解放',
+      '新航路开辟与早期殖民扩张',
+      '英国资产阶级革命与工业革命',
+      '法国大革命与美国独立',
+      '第一次世界大战与十月革命（1917）'],
+    tip:'世界史抓"文明交流"主线：东西方两大体系如何碰撞、传播、互鉴。'
+  },
+  {
+    id:'world-senior', title:'🌍 世界历史（高中）', stage:'选择性必修 · 资本主义与社会主义',
+    points:['资本主义世界市场的形成（三个时期）',
+      '两次工业革命与社会结构变化',
+      '马克思主义的诞生与国际工人运动',
+      '两次世界大战与雅尔塔体系',
+      '冷战格局：两极→多极化趋势',
+      '经济全球化与区域集团化（欧盟、APEC）',
+      '当代中国与世界：人类命运共同体'],
+    tip:'高中世界史要"体系化"：用"经济—政治—思想"三条线串联每个时期，避免碎片化。'
+  }
+];
+var kmapGrid = document.getElementById('kmap-grid');
+kmapData.forEach(function(item){
+  var card = document.createElement('div');
+  card.className = 'kmap-card';
+  card.onclick = function(){ showKmapDetail(item); };
+  card.innerHTML = '<h3>' + item.title + '</h3>' +
+    '<div class="stage">' + item.stage + '</div><ul>' +
+    item.points.slice(0,3).map(function(p){ return '<li>' + p + '</li>'; }).join('') +
+    '</ul><div class="more">点击查看 ' + item.points.length + ' 条核心考点 →</div>';
+  kmapGrid.appendChild(card);
+});
+function showKmapDetail(item){
+  var panel = document.getElementById('detail-panel');
+  document.getElementById('detail-title').textContent = item.title + ' · ' + item.stage;
+  var ul = document.getElementById('detail-points');
+  ul.innerHTML = '';
+  item.points.forEach(function(p){
+    var li = document.createElement('li'); li.textContent = p; ul.appendChild(li);
+  });
+  document.getElementById('detail-tip').textContent = '💡 ' + item.tip;
+  panel.classList.add('show');
+  panel.scrollIntoView({ behavior:'smooth', block:'nearest' });
+}
+
+/* ============ 2. 大事年表 ============ */
+var timelineData = [
+  {era:'古代', name:'商朝甲骨文', when:'约前1600', text:'中国已发现最早的成熟文字，标志信史时代开始。'},
+  {era:'古代', name:'秦统一六国', when:'前221', text:'秦王嬴政灭六国，建立皇帝制度与郡县制，奠定"大一统"框架。'},
+  {era:'古代', name:'丝绸之路开通', when:'前138', text:'张骞出使西域，陆上丝路成为东西方文明交流的动脉。'},
+  {era:'古代', name:'汉武帝大一统', when:'前140—前87', text:'推恩令、独尊儒术、设盐铁官营，西汉进入全盛。'},
+  {era:'古代', name:'造纸术改进', when:'105', text:'蔡伦改进造纸术，改变世界书写传播方式。'},
+  {era:'古代', name:'科举制创立', when:'605', text:'隋炀帝设进士科，打破门阀垄断，开创选官新制。'},
+  {era:'古代', name:'郑和下西洋', when:'1405—1433', text:'七下西洋，最远到东非，展现古代中国海上实力。'},
+  {era:'近代', name:'鸦片战争', when:'1840—1842', text:'中国近代史开端，五口通商，中国开始沦为半殖民地。'},
+  {era:'近代', name:'洋务运动', when:'1860s—1890s', text:'"自强求富"，中国近代工业化的起点。'},
+  {era:'近代', name:'甲午战争', when:'1894—1895', text:'《马关条约》割地赔款，民族危机加深，催生维新变法。'},
+  {era:'近代', name:'辛亥革命', when:'1911', text:'推翻清王朝，建立中华民国，终结两千多年帝制。'},
+  {era:'近代', name:'五四运动', when:'1919', text:'反帝反封建的爱国运动，新民主主义革命的起点。'},
+  {era:'近代', name:'中共一大', when:'1921', text:'上海/嘉兴南湖，中国共产党诞生，开天辟地的大事变。'},
+  {era:'近代', name:'七七事变', when:'1937', text:'全面抗战爆发，全民族抗日民族统一战线形成。'},
+  {era:'现代', name:'开国大典', when:'1949', text:'中华人民共和国成立，开辟中国历史新纪元。'},
+  {era:'现代', name:'一五计划', when:'1953—1957', text:'优先发展重工业，奠定工业化基础。'},
+  {era:'现代', name:'十一届三中全会', when:'1978', text:'改革开放的历史性决策，工作重心转向经济建设。'},
+  {era:'现代', name:'恢复联合国合法席位', when:'1971', text:'第26届联大，中国外交重大胜利。'},
+  {era:'现代', name:'加入世界贸易组织', when:'2001', text:'中国经济深度融入全球化，"入世"红利释放。'},
+  {era:'世界', name:'文艺复兴', when:'14—17世纪', text:'人文主义兴起，欧洲从中世纪走向近代。'},
+  {era:'世界', name:'哥伦布发现美洲', when:'1492', text:'新航路开辟，世界开始连成一个整体。'},
+  {era:'世界', name:'英国工业革命', when:'18世纪60年代', text:'蒸汽时代来临，生产力飞跃，全球市场雏形形成。'},
+  {era:'世界', name:'美国独立战争', when:'1775—1783', text:'摆脱英国殖民，建立联邦共和，世界格局震动。'},
+  {era:'世界', name:'十月革命', when:'1917', text:'人类历史上第一个社会主义国家诞生，改变世界史走向。'},
+  {era:'世界', name:'第二次世界大战', when:'1939—1945', text:'反法西斯战争胜利，冷战格局（两极）形成。'},
+  {era:'世界', name:'柏林墙倒塌', when:'1989', text:'冷战终结前夜，多极化与全球化加速。'}
+];
+var tlFilter = document.getElementById('tl-filter');
+var tlFilters = ['全部','古代','近代','现代','世界'];
+tlFilters.forEach(function(f){
+  var b = document.createElement('button');
+  b.textContent = f;
+  if (f === '全部') b.classList.add('on');
+  b.onclick = function(){
+    tlFilter.querySelectorAll('button').forEach(function(x){ x.classList.remove('on'); });
+    b.classList.add('on');
+    renderTimeline(f);
+  };
+  tlFilter.appendChild(b);
+});
+function renderTimeline(filter){
+  var list = document.getElementById('timeline-list');
+  list.innerHTML = '';
+  timelineData.forEach(function(item){
+    if (filter !== '全部' && item.era !== filter) return;
+    var div = document.createElement('div');
+    div.className = 'tl-item';
+    div.innerHTML = '<div class="era">' + item.era + ' · ' + item.when + '</div>' +
+      '<h4>' + item.name + '</h4><p>' + item.text + '</p>';
+    list.appendChild(div);
+  });
+}
+renderTimeline('全部');
+
+/* ============ 3. 朝代更替 ============ */
+var dynastyData = [
+  {name:'夏', years:'约前2070—前1600', founder:'禹', focus:'中国第一个王朝；"禅让制→世袭制"（启），奠定"家天下"。'},
+  {name:'商', years:'约前1600—前1046', founder:'汤', focus:'甲骨文、青铜器（司母戊鼎）；"盘庚迁殷"。'},
+  {name:'西周', years:'前1046—前771', founder:'周武王', focus:'分封制 + 宗法制 + 礼乐制；"礼崩乐坏"是春秋背景。'},
+  {name:'春秋', years:'前770—前476', founder:'（周平王东迁）', focus:'诸侯争霸，"尊王攘夷"（齐桓公），铁犁牛耕出现。'},
+  {name:'战国', years:'前475—前221', founder:'（周敬王迁都）', focus:'变法（商鞅），百家争鸣，秦统一前夜。'},
+  {name:'秦', years:'前221—前207', founder:'嬴政（始皇帝）', focus:'统一文字/度量衡，郡县制，焚书坑儒；"二世而亡"。'},
+  {name:'西汉', years:'前202—8', founder:'刘邦', focus:'汉武帝大一统，罢黜百家、独尊儒术，设盐铁官。'},
+  {name:'东汉', years:'25—220', founder:'刘秀（光武）', focus:'光武中兴；黄巾起义，三国开启。'},
+  {name:'三国', years:'220—280', founder:'魏·曹丕', focus:'魏蜀吴鼎立，"三分归晋"。'},
+  {name:'西晋', years:'266—316', founder:'司马炎', focus:'短期统一；八王之乱 + 永嘉之乱，永嘉衣冠南渡。'},
+  {name:'东晋', years:'317—420', founder:'司马睿', focus:'南方开发，"王与马共天下"。'},
+  {name:'隋', years:'581—618', founder:'杨坚', focus:'开皇之治，创立科举制（进士科），大运河。'},
+  {name:'唐', years:'618—907', founder:'李渊', focus:'贞观之治、开元盛世；长安国际都会；安史之乱是分水岭。'},
+  {name:'北宋', years:'960—1127', founder:'赵匡胤', focus:'杯酒释兵权重文轻武；经济重心南移完成；靖康之变亡国。'},
+  {name:'南宋', years:'1127—1279', founder:'赵构', focus:'偏安江南，岳飞抗金；经济文化继续南迁。'},
+  {name:'元', years:'1271—1368', founder:'忽必烈（世祖）', focus:'行省制（地方制度创新）；陆路商队再通，民族融合。'},
+  {name:'明', years:'1368—1644', founder:'朱元璋', focus:'废丞相、设厂（锦衣卫→东厂）；郑和下西洋；"土木堡之变"。'},
+  {name:'清', years:'1636—1912', founder:'皇太极（入关前）', focus:'康雍乾盛世；设立军机处；近代五口通商（1840）开启屈辱史。'}
+];
+var dynFlow = document.getElementById('dyn-flow');
+dynastyData.forEach(function(d, i){
+  if (i > 0) {
+    var a = document.createElement('span');
+    a.className = 'dyn-arrow';
+    a.textContent = '→';
+    dynFlow.appendChild(a);
+  }
+  var chip = document.createElement('div');
+  chip.className = 'dyn-chip';
+  chip.dataset.idx = i;
+  chip.innerHTML = '<div class="d-name">' + d.name + '</div><div class="d-year">' + d.years + '</div>';
+  chip.onclick = function(){ selectDynasty(i, chip); };
+  dynFlow.appendChild(chip);
+});
+function selectDynasty(i, chip){
+  dynFlow.querySelectorAll('.dyn-chip').forEach(function(c){ c.classList.remove('sel'); });
+  chip.classList.add('sel');
+  var d = dynastyData[i];
+  var det = document.getElementById('dyn-detail');
+  det.innerHTML =
+    '<h3>' + d.name + '（' + d.years + '）</h3>' +
+    '<div class="row"><b>建立者：</b>' + d.founder + '</div>' +
+    '<div class="row"><b>历史考点：</b>' + d.focus + '</div>' +
+    '<div class="row" style="margin-top:10px;font-size:0.85em;color:var(--ink-light);">◈ 序号 ' + (i+1) + ' / ' + dynastyData.length + ' · 按"先夏商周、再秦汉、再隋唐、再宋元、再明清"顺序背诵效果最佳。</div>';
+}
+
+/* ============ 4. 史料实证选择题 ============ */
+var sourceData = [
+  {
+    material:'「秦王扫六合，虎视何雄哉！挥剑决浮云，诸侯尽西来。」（李白《古风·其三》）',
+    src:'出自李白《古风》，唐代诗人借古讽今',
+    question:'从史料类型判断，上述诗句属于哪类史料？',
+    opts:['原始史料（一手）','非原始史料（二手）','实物史料','口述史料'],
+    correct:1,
+    fb:'诗句是唐代人对秦代历史的"再描述"，非当时原始记录，属二手/非原始史料。李白并非秦代人，无法作为研究秦代的原始证据。'
+  },
+  {
+    material:'《史记·秦始皇本纪》："天下初定，又送攻于外……事皆决于上。"',
+    src:'司马迁《史记》·西汉',
+    question:'该史料最直接反映的历史现象是？',
+    opts:['秦朝实行中央集权制度','秦朝实行分封制','秦朝皇帝制度','秦朝郡县制推广'],
+    correct:0,
+    fb:'"事皆决于上"体现"集权于一人"，是中央集权（皇帝总揽大权）的史料证据，而非分封或郡县的具体条文。'
+  },
+  {
+    material:'《南京条约》（1842）第一条：开放广州、厦门、福州、宁波、上海五处为通商口岸。',
+    src:'中英《南京条约》原文',
+    question:'该条约对中国社会性质的直接影响是？',
+    opts:['中国完全沦为殖民地','中国开始沦为半殖民地半封建社会','中国完全成为半殖民地','中国进入社会主义革命时期'],
+    correct:1,
+    fb:'《南京条约》是中国近代史上第一个不平等条约，"开始"沦为半殖民地半封建社会（非"完全"，"完全"是《辛丑条约》）。'
+  },
+  {
+    material:'"外之因，无乎不御；内之治，无乎不溃……（清廷）自甘屈辱，已失国体。"——陈寅恪',
+    src:'陈寅恪·近代史评论',
+    question:'该史料出自哪一历史阶段的观察？',
+    opts:['鸦片战争前','洋务运动时期','甲午战争后','辛亥革命后'],
+    correct:2,
+    fb:'"自甘屈辱，已失国体"反映民族危机深重，符合甲午战争后（1895 后）知识分子的忧患意识；辛亥革命尚未发生。'
+  },
+  {
+    material:'"我们共产党人从来不隐瞒自己的政治主张。我们的纲领，是彻底地消灭帝国主义、封建主义，实现社会主义、共产主义。"',
+    src:'毛泽东《论联合政府》',
+    src2:'',
+    question:'从该史料判断，这段话最可能发表于哪个历史阶段？',
+    opts:['国民革命时期（1924—1927）','抗日战争时期','解放战争时期','新中国成立初期'],
+    correct:1,
+    fb:'《论联合政府》发表于 1945 年中共七大，处于抗日战争即将胜利阶段；"消灭帝国主义、封建主义"符合当时纲领。'
+  },
+  {
+    material:'1978 年 12 月 18—22 日，中国共产党十一届三中全会在北京召开。全会重新确立了解放思想、实事求是的思想路线，作出把党和国家工作重心转移到经济建设上来、实行改革开放的历史性决策。',
+    src:'《中国共产党简史》',
+    question:'该会议在中国现代史上的历史定位是？',
+    opts:['社会主义建设的开端','改革开放的起点','中共一大','社会主义改造完成'],
+    correct:1,
+    fb:'十一届三中全会是改革开放的起点和里程碑，"历史转折"定位；不是社会主义建设开端（一五计划）或改造完成（1956）。'
+  },
+  {
+    material:'"朕非好名，亦非好胜，所愿者不过使天下臣民安乐，使万国来朝耳。"——康熙帝（转述）',
+    src:'《康熙起居注》',
+    question:'该史料体现了康熙帝怎样的治国心态？',
+    opts:['保守封闭、拒绝改革','追求多民族国家统一与对外交流','完全西化、学习欧洲','彻底否定传统儒学'],
+    correct:1,
+    fb:'"使万国来朝"体现开放心态与"大一统"民族国家的自信，与康熙朝中西交流（如利玛窦后继传教士）相吻合。'
+  },
+  {
+    material:'"人类只有一个地球，各国人民应该共享发展成果。"——在联合国大会发言（节选）',
+    src:'中国外交文件',
+    question:'该史料体现的中国外交理念是？',
+    opts:['强权政治','单边主义','人类命运共同体','冷战思维'],
+    correct:2,
+    fb:'"各国人民共享发展成果"是"人类命运共同体"理念的核心表述（2013 年提出），属于当代中国外交的积极主张。'
+  }
+];
+var sourceIndex = 0;
+var sourceScore = 0;
+var sourceAsked = 0;
+function loadNextSource(){
+  var q = sourceData[sourceIndex];
+  sourceAsked++;
+  document.getElementById('st-material').innerHTML =
+    '"' + q.material + '"' +
+    '<span class="src">出处：' + q.src + '</span>';
+  document.getElementById('st-question').textContent = q.question;
+  var optDiv = document.getElementById('st-opts');
+  optDiv.innerHTML = '';
+  q.opts.forEach(function(opt, i){
+    var b = document.createElement('button');
+    b.textContent = String.fromCharCode(65+i) + '. ' + opt;
+    b.onclick = function(){ checkSource(i, b, q); };
+    optDiv.appendChild(b);
+  });
+  document.getElementById('st-fb').classList.remove('show');
+  document.getElementById('st-score').textContent = '正确：' + sourceScore + ' / ' + sourceAsked;
+}
+function checkSource(chosen, btn, q){
+  var all = document.querySelectorAll('#st-opts button');
+  all.forEach(function(b){ b.disabled = true; });
+  var fb = document.getElementById('st-fb');
+  if (chosen === q.correct){
+    btn.classList.add('ok');
+    sourceScore++;
+    fb.innerHTML = '✅ 正确！' + q.fb;
+  } else {
+    btn.classList.add('no');
+    all[q.correct].classList.add('ok');
+    fb.innerHTML = '❌ 选错。正确答案：' + String.fromCharCode(65+q.correct) + '。' + q.fb;
+  }
+  fb.classList.add('show');
+  document.getElementById('st-score').textContent = '正确：' + sourceScore + ' / ' + sourceAsked;
+  sourceIndex = (sourceIndex + 1) % sourceData.length;
+}
+
+/* ============ 5. 历史人物卡片 ============ */
+var figureData = [
+  {name:'司马迁', era:'西汉', avatar:'史', tag:'《史记》作者',
+   bio:'字子长，龙门（今山西河津）人，曾任郎官、太史令。遭李陵之祸，受宫刑而发愤著书。',
+   deeds:'《史记》为第一部纪传体通史，上起黄帝，下迄汉武，分 130 篇（本纪、表、书、世家、列传）；被鲁迅誉为"史家之绝唱，无韵之离骚"。',
+   exam:'考点：史学贡献 + "究天人之际，通古今之变，成一家之言"治史精神。'},
+  {name:'曹操', era:'三国', avatar:'曹', tag:'魏王',
+   bio:'字孟德，沛国谯县人。东汉末年权臣，"挟天子以令诸侯"，奠定曹魏基础。',
+   deeds:'官渡之战（200）以少胜多破袁绍；统一北方；推行屯田制；建安文学领袖。',
+   exam:'考点：评价曹操（复杂历史人物）——"治世之能臣，乱世之奸雄"的两面史观。'},
+  {name:'唐太宗', era:'唐', avatar:'贞', tag:'李世民',
+   bio:'字世民，陇西成纪人，唐朝第二任皇帝，"贞观之治"开创者。',
+   deeds:'虚心纳谏（魏征），完善科举与三省六部；"贞观之治"轻徭薄赋，人口增长；唐与突厥之战奠定北方和平。',
+   exam:'考点：贞观之治的成因 + "兼听则明，偏信则暗"的治国经验。'},
+  {name:'岳飞', era:'南宋', avatar:'岳', tag:'抗金名将',
+   bio:'字鹏举，相州汤阴（今河南）人，南宋抗金将领。',
+   deeds:'"精忠报国"，创建岳家军；郾城大捷、朱仙镇之战，北伐至五里坡。后被以"莫须有"罪杀于风波亭。',
+   exam:'考点：岳飞与"靖康之耻"；民族气节与"民族"概念的现代辨析（避免混淆"中华民族"内部冲突）。'},
+  {name:'郑和', era:'明', avatar:'郑', tag:'航海家',
+   bio:'本名马和，云南昆阳（今晋宁）人，明成祖赐姓"郑"。',
+   deeds:'1405—1433 七下西洋，最远达东非；带船队两万七千余人，宝船 60 艘；促进海上贸易与文化交流。',
+   exam:'考点：郑和下西洋与西欧新航路（目的、规模、影响对比——"求同存异"）。'},
+  {name:'林则徐', era:'清（鸦片战争）', avatar:'林', tag:'"睁眼看世界"第一人',
+   bio:'字元抚，福建侯官人，湖广总督、两广总督。',
+   deeds:'1839 年虎门销烟；主持编译《四洲志》；"苟利国家生死以，岂因祸福避趋之"。',
+   exam:'考点：鸦片战争背景 + "开眼看世界"的历史意义。'},
+  {name:'毛泽东', era:'现代', avatar:'毛', tag:'新中国缔造者',
+   bio:'字润之，湖南湘潭人，中国共产党创始人之一。',
+   deeds:'井冈山道路、"农村包围城市"；长征指挥；抗战《论持久战》；解放战争三大战役指挥；1949 开国大典。',
+   exam:'考点：新民主主义革命道路 + "实事求是"思想路线 + 新中国制度构建。'},
+  {name:'鲁迅', era:'现代', avatar:'鲁', tag:'文学巨匠',
+   bio:'原名周树人，浙江绍兴人，笔名"鲁迅"。',
+   deeds:'《狂人日记》（1918）中国现代文学开端；《呐喊》《彷徨》；"横眉冷对千夫指，俯首甘为孺子牛"。',
+   exam:'考点：新文化运动 + 文学革命（"白话文运动"）+ 近代思想解放史。'},
+  {name:'甘地', era:'世界（印度）', avatar:'甘', tag:'非暴力不合作',
+   bio:'莫罕达斯·卡拉姆昌德·甘地，印度民族解放运动领袖。',
+   deeds:'1920、1930、1942 三次非暴力不合作运动；食盐进军；"以非暴力对抗殖民统治"。',
+   exam:'考点：二战前民族解放运动 + 非暴力抗争的历史评价（利与弊）。'},
+  {name:'爱因斯坦', era:'世界（近代）', avatar:'爱', tag:'相对论',
+   bio:'阿尔伯特·爱因斯坦，德裔犹太物理学家（后入美籍）。',
+   deeds:'狭义相对论（1905）与广义相对论（1915）；E=mc²；1921 年获诺贝尔物理学奖（光电效应）。',
+   exam:'考点：19 世纪末 20 世纪初"现代科学革命" + 三次科技革命递进关系。'},
+  {name:'罗斯福', era:'世界（现代）', avatar:'罗', tag:'新政与二战',
+   bio:'富兰克林·罗斯福，美国第 32 任总统（1933—1945）。',
+   deeds:'"新政"（1933 起）缓解大萧条；领导美国参加二战；1943 开罗会议 + 1945 雅尔塔会议。',
+   exam:'考点：罗斯福新政"国家干预经济" + 雅尔塔体系与战后国际秩序。'},
+  {name:'哥伦布', era:'世界（近代）', avatar:'哥', tag:'发现新大陆',
+   bio:'克里斯托弗·哥伦布，意大利航海家（为西班牙服务）。',
+   deeds:'1492 年横渡大西洋发现美洲（巴哈马群岛）；后续三次航行；"大航海时代"代表。',
+   exam:'考点：新航路开辟 + "哥伦布大交换"（物种、疾病、贸易的全球互联）。'}
+];
+var figFilter = document.getElementById('fig-filter');
+var figEras = ['全部','古代','中古','近代','现代','世界'];
+figEras.forEach(function(e){
+  var b = document.createElement('button');
+  b.textContent = e;
+  if (e === '全部') b.classList.add('on');
+  b.onclick = function(){
+    figFilter.querySelectorAll('button').forEach(function(x){ x.classList.remove('on'); });
+    b.classList.add('on');
+    renderFigures(e);
+  };
+  figFilter.appendChild(b);
+});
+function eraMatch(figEra, filter){
+  if (filter === '全部') return true;
+  if (filter === '古代') return figEra.indexOf('唐') > -1 || figEra.indexOf('汉') > -1 || figEra.indexOf('三国') > -1 || figEra.indexOf('隋') > -1 || figEra.indexOf('晋') > -1;
+  if (filter === '中古') return figEra.indexOf('宋') > -1 || figEra.indexOf('元') > -1 || figEra.indexOf('明') > -1 || figEra.indexOf('清') > -1;
+  if (filter === '近代') return figEra.indexOf('清') > -1;
+  if (filter === '现代') return figEra.indexOf('现代') > -1;
+  if (filter === '世界') return figEra.indexOf('世界') > -1;
+  return true;
+}
+function renderFigures(filter){
+  var grid = document.getElementById('fig-grid');
+  grid.innerHTML = '';
+  figureData.forEach(function(f){
+    if (!eraMatch(f.era, filter)) return;
+    var card = document.createElement('div');
+    card.className = 'fig-card';
+    card.innerHTML =
+      '<h4><span class="avatar">' + f.avatar + '</span>' + f.name + '</h4>' +
+      '<div class="era-tag">' + f.era + ' · ' + f.tag + '</div>' +
+      '<div class="tagline">点击翻面，看生平 · 事迹 · 考点 →</div>' +
+      '<div class="fig-flip">' +
+        '<h4>' + f.name + '</h4>' +
+        '<div class="f-row"><b>生平：</b>' + f.bio + '</div>' +
+        '<div class="f-row"><b>事迹：</b>' + f.deeds + '</div>' +
+        '<div class="f-row"><b>考点：</b>' + f.exam + '</div>' +
+        '<button>翻回正面</button>' +
+      '</div>';
+    card.querySelector('button').onclick = function(ev){
+      ev.stopPropagation();
+      card.querySelector('.fig-flip').classList.remove('show');
+    };
+    card.onclick = function(){
+      var flip = card.querySelector('.fig-flip');
+      flip.classList.toggle('show');
+    };
+    grid.appendChild(card);
+  });
+}
+renderFigures('全部');
+
+/* ============ 初始化 ============ */
+loadNextSource();
+</script>
+
+<div id="agent-panel" style="margin:20px auto;max-width:720px;border:2px solid #4a90d9;border-radius:12px;padding:16px;background:#f7fbff;font-family:system-ui">
+  <h3 style="margin:0 0 8px;color:#2c5d8f">🤖 史鉴君·历史专家团 · 智能体问答（本地题库模式）</h3>
+  <p style="font-size:13px;color:#555;margin:0 0 10px">本地题库模式（离线·零外链）：关键词匹配本站本地题库作答。在线 AI 问答待李老师定 key 策略后统一开通。</p>
+  <div style="display:flex;flex-wrap:wrap;gap:8px;margin-bottom:10px"><button style="padding:6px 10px;border-radius:8px;border:1px solid #888;background:#fff;color:#333;cursor:pointer;font-size:12px" onclick="agentAsk('贞观 vs 开元年号辨析')">贞观 vs 开元年号辨析</button><button style="padding:6px 10px;border-radius:8px;border:1px solid #888;background:#fff;color:#333;cursor:pointer;font-size:12px" onclick="agentAsk('秦统一/西汉/东汉/三国时间线')">秦统一/西汉/东汉/三国时间线</button><button style="padding:6px 10px;border-radius:8px;border:1px solid #888;background:#fff;color:#333;cursor:pointer;font-size:12px" onclick="agentAsk('一道史料实证题')">一道史料实证题</button>
+    <button style="padding:6px 12px;border-radius:8px;border:1px solid #4a90d9;background:#4a90d9;color:#fff;cursor:pointer" onclick="agentAsk('')">问 史鉴君·历史专家团</button>
+  </div>
+  <textarea id="agent-q" placeholder="输入问题，匹配 史鉴君·历史专家团 本地题库..." style="width:100%;height:60px;padding:8px;border:1px solid #ccc;border-radius:8px;font-size:14px;box-sizing:border-box"></textarea>
+  <button style="margin-top:8px;padding:8px 16px;border-radius:8px;border:none;background:#2c8a3d;color:#fff;cursor:pointer;font-size:14px" onclick="agentAsk(document.getElementById('agent-q').value)">匹配本地题库</button>
+  <div id="agent-a" style="margin-top:12px;padding:12px;background:#fff;border-left:4px solid #2c8a3d;border-radius:6px;font-size:14px;min-height:40px;white-space:pre-wrap;color:#333">（等待回答）</div>
+  <script>
+  // 本地题库模式: 离线·零外链·无 key。在线(key 注入)待李老师定 key 策略后统一切, 此处 AGENT_MODE 为切换点。
+  var AGENT_MODE="local";
+  var AGENT_KB=(typeof window.AGENT_KB==="object"&&window.AGENT_KB)?window.AGENT_KB:[];
+  var LOCAL_TIPS=["时间线按'朝代+大事+人物'成块记; 结论须有史源依据。", "读史料先判一手/二手, 再看作者时代与立场。"];
+  function _kbTokens(q){
+    var t=[];
+    (q.toLowerCase().match(/[a-z0-9]+/g)||[]).forEach(function(x){t.push(x);});
+    q.replace(/[^\u4e00-\u9fff]/g,'').split('').forEach(function(c){t.push(c);});
+    return t;
+  }
+  function agentAsk(q){
+    if(!q)q=document.getElementById('agent-q').value;
+    if(!q){document.getElementById('agent-a').textContent='请输入问题';return;}
+    document.getElementById('agent-q').value=q;
+    var a=document.getElementById('agent-a');
+    var uniq=Array.from(new Set(_kbTokens(q)));
+    var hits=AGENT_KB.map(function(it){
+      var hay=((it.q||"")+" "+(it.a||"")).toLowerCase();
+      var n=uniq.filter(function(t){return hay.indexOf(t)>-1;}).length;
+      return {s:n,it:it};
+    }).filter(function(x){return x.s>=Math.min(uniq.length,2);}).sort(function(x,y){return y.s-x.s;}).slice(0,3);
+    if(hits.length){
+      a.textContent="\u{1F4D6} 本地题库 · 离线（史鉴君·历史专家团 本地条目）\n\n"+hits.map(function(h){return "Q: "+h.it.q+"\nA: "+h.it.a;}).join("\n\n")+"\n\n（在线 AI 问答待李老师定 key 策略后开通）";
+    } else {
+      a.textContent="\u26A0\uFE0F 本地题库模式（离线）：未匹配到本地条目。在线 AI 问答待李老师定 key 策略后开通。\n学习提示：\n- "+LOCAL_TIPS.join("\n- ")+"\n并见站内【题库/知识】模块。";
+    }
+  }
+  </script>
+</div>
+</body>
+</html>

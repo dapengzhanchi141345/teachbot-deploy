@@ -1,0 +1,77 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>AI 助教</title>
+<style>
+:root{--bg:#05070f;--card:rgba(17,24,44,.66);--line:rgba(148,163,215,.28);--text:#e8eefc;--t2:#a7b3d1;
+--cy:#22d3ee;--vi:#818cf8;--gr:#34d399}
+*{margin:0;box-sizing:border-box}
+body{background:var(--bg);color:var(--text);font-family:"Microsoft YaHei",system-ui;min-height:100vh;display:flex;flex-direction:column;
+background-image:linear-gradient(rgba(120,150,255,.045) 1px,transparent 1px),linear-gradient(90deg,rgba(120,150,255,.045) 1px,transparent 1px);background-size:34px 34px}
+.wrap{flex:1;max-width:760px;width:100%;margin:0 auto;padding:20px 14px;display:flex;flex-direction:column;min-height:0}
+h1{font-size:20px;background:linear-gradient(120deg,var(--cy),var(--vi));-webkit-background-clip:text;background-clip:text;color:transparent}
+.ctx{display:flex;gap:8px;margin:10px 0}
+select{background:rgba(5,7,15,.6);border:1px solid var(--line);border-radius:9px;color:var(--text);padding:8px 10px;font-size:14px;outline:none}
+#chat{flex:1;overflow:auto;background:var(--card);border:1px solid var(--line);border-radius:14px;padding:12px;min-height:260px;max-height:55vh}
+.m{border-radius:10px;padding:9px 12px;margin-bottom:8px;font-size:14px;line-height:1.7;white-space:pre-wrap;max-width:88%}
+.m.u{background:rgba(34,211,238,.1);border:1px solid rgba(34,211,238,.3);margin-left:auto}
+.m.a{background:rgba(129,140,252,.08);border:1px solid rgba(129,140,252,.28)}
+.chips{display:flex;gap:6px;flex-wrap:wrap;margin:8px 0}
+.chip{border:1px solid var(--line);background:transparent;color:var(--t2);border-radius:99px;padding:6px 12px;font-size:13px;cursor:pointer}
+.chip:hover{border-color:var(--cy);color:var(--text)}
+.inrow{display:flex;gap:8px;margin-top:8px}
+input[type=text]{flex:1;background:rgba(5,7,15,.6);border:1px solid var(--line);border-radius:9px;color:var(--text);padding:10px 12px;font-size:14px;outline:none}
+input[type=text]:focus{border-color:var(--cy)}
+button{background:linear-gradient(120deg,#0891b2,#6d5ae0);border:none;border-radius:9px;color:#fff;padding:10px 18px;font-size:14px;cursor:pointer}
+button:disabled{opacity:.5}
+.foot{text-align:center;color:var(--t2);font-size:12px;padding:10px}
+</style>
+</head>
+<body>
+<div class="wrap">
+<h1>🤖 AI 助教</h1>
+<div class="ctx">
+<select id="subj"><option>信息科技</option><option>数学</option><option>语文</option><option>英语</option><option>物理</option><option>化学</option><option>生物</option><option>地理</option><option>历史</option><option>道德与法治</option></select>
+<select id="grade"><option>七年级</option><option>八年级</option><option>九年级</option><option>小学</option><option>高中</option></select>
+</div>
+<div class="chips">
+<span class="chip" onclick="ask('给我出 3 道选择题并附答案解析')">出题练手</span>
+<span class="chip" onclick="ask('解释一下这个概念：')">讲解概念</span>
+<span class="chip" onclick="ask('我这道题这样做对吗：把题目和我的答案贴在这里 →')">帮我批改</span>
+<span class="chip" onclick="ask('这个知识点最容易错的地方有哪些？')">易错点</span>
+</div>
+<div id="chat"></div>
+<div class="inrow">
+<input type="text" id="q" placeholder="问 AI 助教任何问题（解题 / 讲解 / 出题 / 批改）" onkeydown="if(event.key==='Enter')send()">
+<button id="bSend" onclick="send()">发送</button>
+</div>
+</div>
+<div class="foot">李彦明 15684394135 · AI 助教（Agnes 模型驱动 · 回答仅供参考，以老师讲解为准）</div>
+<script>
+const $=id=>document.getElementById(id);
+const MSGS=[];
+function esc(s){return String(s||"").replace(/&/g,"&amp;").replace(/</g,"&lt;").replace(/>/g,"&gt;")}
+function add(role,txt){
+  const d=document.createElement("div");d.className="m "+(role==="u"?"u":"a");
+  if(role==="a")d.innerHTML=txt.replace(/\n/g,"<br>");else d.textContent=txt;
+  $("chat").appendChild(d);$("chat").scrollTop=1e9;return d;
+}
+function ask(t){$("q").value=t;send();}
+function send(){
+  const t=$("q").value.trim();if(!t)return;
+  $("q").value="";add("u",t);MSGS.push({role:"user",content:t});
+  const el=add("a","思考中…（约 10~40 秒）");$("bSend").disabled=true;
+  fetch("/api/ai/chat",{method:"POST",headers:{"Content-Type":"application/json"},
+    body:JSON.stringify({subject:$("subj").value,grade:$("grade").value,messages:MSGS})})
+  .then(r=>r.json()).then(d=>{
+    if(d.error)throw new Error(d.error);
+    el.innerHTML=esc(d.reply).replace(/\n/g,"<br>");MSGS.push({role:"assistant",content:d.reply});
+  }).catch(e=>{el.textContent="AI 暂时不可用："+e+"（可稍后重试；课堂不受影响，可先用站内题库）";MSGS.pop();})
+  .finally(()=>{$("bSend").disabled=false;});
+}
+add("a","你好！我是你的 AI 助教。选好学段，直接问：解题、讲解、出题、批改都行。");
+</script>
+</body>
+</html>

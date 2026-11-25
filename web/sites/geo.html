@@ -1,0 +1,941 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>山海客·地理专家团 | 地理知识体系全学段导航</title>
+<style>
+:root {
+  --primary: #0f6e8c;
+  --primary-light: #17a2b8;
+  --primary-lighter: #6fd0d8;
+  --primary-bg: #e3f6f8;
+  --accent: #2a9d8f;
+  --white: #ffffff;
+  --off-white: #f4faf9;
+  --dark: #084c5d;
+  --text: #263238;
+  --text-light: #546e7a;
+  --gray: #f0f4f5;
+  --border: #b8dfe3;
+  --shadow: rgba(15,110,140,0.1);
+  --ok: #2a9d8f;
+  --bad: #e07856;
+}
+* { margin: 0; padding: 0; box-sizing: border-box; }
+body {
+  font-family: "Microsoft YaHei", "PingFang SC", "Helvetica Neue", sans-serif;
+  background: var(--off-white);
+  color: var(--text);
+  line-height: 1.6;
+}
+/* Header */
+header {
+  background: linear-gradient(135deg, var(--dark) 0%, var(--primary) 45%, var(--accent) 100%);
+  color: var(--white);
+  padding: 24px 32px;
+  text-align: center;
+  position: relative;
+}
+header h1 {
+  font-size: 2.2em;
+  margin-bottom: 8px;
+  text-shadow: 0 2px 4px rgba(0,0,0,0.25);
+  letter-spacing: 1px;
+}
+header p { font-size: 1em; opacity: 0.95; }
+/* Nav */
+nav {
+  background: var(--white);
+  border-bottom: 3px solid var(--primary);
+  padding: 0 32px;
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: center;
+  gap: 0;
+  position: sticky;
+  top: 0;
+  z-index: 100;
+}
+nav button {
+  background: none;
+  border: none;
+  padding: 14px 22px;
+  font-size: 1.02em;
+  cursor: pointer;
+  color: var(--text-light);
+  border-bottom: 3px solid transparent;
+  transition: all 0.2s;
+  font-weight: 500;
+}
+nav button:hover { color: var(--primary); background: var(--primary-bg); }
+nav button.active {
+  color: var(--primary);
+  border-bottom: 3px solid var(--primary);
+  font-weight: 700;
+  background: var(--primary-bg);
+}
+/* Main */
+main { max-width: 1100px; margin: 0 auto; padding: 24px 16px; }
+.section { display: none; }
+.section.active { display: block; }
+/* Knowledge map */
+.kmap {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(240px, 1fr));
+  gap: 16px;
+  margin-top: 16px;
+}
+.kmap-card {
+  background: var(--white);
+  border-radius: 12px;
+  padding: 20px;
+  box-shadow: 0 2px 12px var(--shadow);
+  border-top: 4px solid var(--accent);
+  cursor: pointer;
+  transition: transform 0.2s, box-shadow 0.2s;
+}
+.kmap-card:hover { transform: translateY(-3px); box-shadow: 0 6px 20px var(--shadow); }
+.kmap-card h3 { color: var(--primary); font-size: 1.12em; margin-bottom: 8px; }
+.kmap-card .stage { font-size: 0.85em; color: var(--text-light); margin-bottom: 10px; }
+.kmap-card ul { list-style: none; font-size: 0.95em; }
+.kmap-card ul li { padding: 3px 0; }
+.kmap-card ul li::before { content: "•"; color: var(--primary-light); margin-right: 6px; }
+.detail-panel {
+  background: var(--white);
+  border-radius: 12px;
+  padding: 24px;
+  margin-top: 20px;
+  box-shadow: 0 2px 12px var(--shadow);
+  display: none;
+}
+.detail-panel.show { display: block; }
+.detail-panel h2 { color: var(--primary); margin-bottom: 12px; }
+.detail-panel .points li { margin-bottom: 8px; padding-left: 4px; }
+/* Tool box */
+.tool-box {
+  background: var(--white);
+  border-radius: 12px;
+  padding: 24px;
+  box-shadow: 0 2px 12px var(--shadow);
+  margin-bottom: 20px;
+}
+.tool-box h2 { color: var(--primary); margin-bottom: 12px; font-size: 1.3em; }
+.tool-box label { display: block; margin-bottom: 6px; font-weight: 600; }
+.tool-box select, .tool-box input {
+  width: 100%;
+  padding: 10px;
+  border: 2px solid var(--border);
+  border-radius: 8px;
+  font-size: 1em;
+  margin-bottom: 12px;
+  background: var(--white);
+}
+.tool-box button {
+  background: var(--primary);
+  color: var(--white);
+  border: none;
+  padding: 12px 24px;
+  border-radius: 8px;
+  font-size: 1em;
+  cursor: pointer;
+  transition: background 0.2s;
+}
+.tool-box button:hover { background: var(--primary-light); }
+.result-box {
+  background: var(--primary-bg);
+  border-radius: 8px;
+  padding: 16px;
+  margin-top: 16px;
+  display: none;
+  white-space: pre-line;
+}
+.result-box.show { display: block; }
+/* 时区计算 */
+.tz-form { display: flex; flex-wrap: wrap; gap: 8px; align-items: center; margin-bottom: 8px; }
+.tz-form label { font-weight: 600; margin-right: 4px; width: auto; margin-bottom: 0; }
+.tz-form input { width: 110px; margin-bottom: 0; }
+.tz-form select { width: auto; margin-bottom: 0; }
+.tz-note { font-size: 0.9em; color: var(--text-light); margin-top: 10px; }
+/* 等值线判读 */
+.iso-canvas-wrap { display: flex; flex-wrap: wrap; gap: 16px; }
+.iso-canvas-wrap canvas { border: 2px solid var(--border); border-radius: 8px; background: #fbfeff; }
+.iso-side { flex: 1; min-width: 240px; }
+.iso-legend { font-size: 0.9em; margin-top: 8px; }
+.iso-legend div { padding: 4px 0; }
+/* 气候识别 */
+.clim-card {
+  display: grid;
+  grid-template-columns: 260px 1fr;
+  gap: 20px;
+}
+.clim-card canvas { border: 2px solid var(--border); border-radius: 8px; background: #fff; width: 260px; height: 180px; }
+.clim-meta { display: flex; flex-wrap: wrap; gap: 16px; margin-bottom: 12px; }
+.clim-meta div { background: var(--gray); border-radius: 8px; padding: 10px 14px; min-width: 130px; }
+.clim-meta .k { font-size: 0.8em; color: var(--text-light); }
+.clim-meta .v { font-size: 1.15em; font-weight: 700; color: var(--dark); }
+/* 地图填色 */
+.map-legend { display: flex; flex-wrap: wrap; gap: 10px; margin: 12px 0; }
+.swatch { width: 40px; height: 26px; border-radius: 6px; cursor: pointer; border: 3px solid transparent; transition: all 0.15s; }
+.swatch.sel { border-color: var(--dark); transform: scale(1.08); }
+.map-status { font-weight: 700; color: var(--dark); margin-top: 10px; }
+.map-region-info { margin-top: 12px; background: var(--primary-bg); border-radius: 8px; padding: 14px; display: none; }
+.map-region-info.show { display: block; }
+.map-region-info h3 { color: var(--primary); margin-bottom: 8px; font-size: 1.1em; }
+/* Quiz */
+.quiz-box {
+  background: var(--white);
+  border-radius: 12px;
+  padding: 24px;
+  box-shadow: 0 2px 12px var(--shadow);
+}
+.quiz-box h2 { color: var(--primary); margin-bottom: 12px; font-size: 1.3em; }
+.quiz-box .prompt { font-size: 1.05em; margin-bottom: 12px; padding: 12px; background: var(--primary-bg); border-radius: 8px; }
+.quiz-box .options { display: flex; flex-wrap: wrap; gap: 8px; }
+.opt-btn {
+  padding: 8px 16px;
+  border: 2px solid var(--border);
+  border-radius: 8px;
+  background: var(--white);
+  cursor: pointer;
+  font-size: 0.95em;
+  transition: all 0.2s;
+}
+.opt-btn:hover { border-color: var(--primary-light); background: var(--primary-bg); }
+.opt-btn.correct { border-color: var(--ok); background: #e5f5f1; }
+.opt-btn.wrong { border-color: var(--bad); background: #fdeee7; }
+.quiz-box .feedback { margin-top: 12px; font-size: 0.95em; display: none; }
+/* Footer */
+footer {
+  background: var(--dark);
+  color: rgba(255,255,255,0.92);
+  padding: 20px 32px;
+  text-align: center;
+  margin-top: 32px;
+}
+footer .watermark { margin-top: 8px; font-size: 0.95em; letter-spacing: 1px; opacity: 0.9; }
+/* 打印样式 */
+@media print {
+  nav, .tool-box button, .swatch { display: none !important; }
+  body { background: #fff; }
+  .section { display: block !important; }
+  header, footer { background: none; color: #222; }
+}
+/* 响应式 */
+@media (max-width: 600px) {
+  header h1 { font-size: 1.6em; }
+  nav { padding: 0 8px; }
+  nav button { padding: 10px 12px; font-size: 0.9em; }
+  .kmap { grid-template-columns: 1fr; }
+  .clim-card { grid-template-columns: 1fr; }
+  .clim-card canvas { width: 100%; height: auto; }
+  .iso-canvas-wrap canvas { width: 100%; height: auto; }
+  .iso-side { min-width: 0; }
+  #map-canvas { width: 100%; height: auto; }
+}
+</style>
+</head>
+<body>
+<header>
+  <h1>山海客·地理专家团</h1>
+  <p>全学段地理知识体系导航 · 初中→高中 · 交互学习工具</p>
+</header>
+<nav>
+  <button class="active" data-target="sec-kmap">知识地图</button>
+  <button data-target="sec-tz">时区计算</button>
+  <button data-target="sec-iso">等值线判读</button>
+  <button data-target="sec-clim">气候识别</button>
+  <button data-target="sec-map">地图填色</button>
+  <button data-target="sec-quiz">概念快测</button>
+</nav>
+<main>
+<!-- Section 1: Knowledge Map -->
+<div id="sec-kmap" class="section active">
+  <h2 style="color:var(--primary);margin-bottom:16px;">🗺️ 地理知识体系导航（初中→高中）</h2>
+  <p style="color:var(--text-light);margin-bottom:16px;">点击卡片展开各模块核心知识点，覆盖自然地理、人文地理、区域地理、地球运动四大主线。</p>
+  <div class="kmap" id="kmap-grid"></div>
+  <div class="detail-panel" id="detail-panel">
+    <h2 id="detail-title"></h2>
+    <div id="detail-content"></div>
+  </div>
+</div>
+
+<!-- Section 2: Time Zone Calculator -->
+<div id="sec-tz" class="section">
+  <h2 style="color:var(--primary);margin-bottom:16px;">⏰ 时区计算器</h2>
+  <div class="tool-box">
+    <p style="color:var(--text-light);margin-bottom:16px;">已知 A 地的时区与时刻，求 B 地的区时。东时区取 +，西时区取 −（0 时区填 0）。</p>
+    <div class="tz-form">
+      <label for="tz-a">A 地时区：</label>
+      <input id="tz-a" type="number" value="8" min="-12" max="12">
+      <span>时</span>
+      <label for="tz-ah">时刻（时:分）：</label>
+      <input id="tz-ah" type="text" value="15:00" style="width:80px;">
+    </div>
+    <div class="tz-form">
+      <label for="tz-b">B 地时区：</label>
+      <input id="tz-b" type="number" value="0" min="-12" max="12">
+      <span>时</span>
+      <button onclick="calcTZ()">计算 B 地时刻</button>
+    </div>
+    <div class="tz-form">
+      <label style="font-weight:600;margin-right:4px;width:auto;margin-bottom:0;cursor:pointer;"><input id="tz-dl" type="checkbox" style="width:auto;margin:0 6px 0 0;">跨日界线（A、B 一东一西时，看 ±1 天规则）</label>
+    </div>
+    <div class="result-box" id="tz-result"></div>
+    <div class="tz-note">📌 规则：B 地时刻 = A 地时刻 + (B 区时数 − A 区时数)。结果超过 24 小时则日期 +1 天；为负数则日期 −1 天。跨日界线口诀：向东越线减一天、向西越线加一天（勾选「跨日界线」看判定）。</div>
+  </div>
+</div>
+
+<!-- Section 3: Isovalue -->
+<div id="sec-iso" class="section">
+  <h2 style="color:var(--primary);margin-bottom:16px;">📈 等值线判读练习</h2>
+  <div class="tool-box">
+    <p style="color:var(--text-light);margin-bottom:16px;">图中为某区域等值线（可能是等压线/等温线/等高线）。找出标注 ①②③ 处的判读结论，点击你认为是正确答案的选项。</p>
+    <div class="iso-canvas-wrap">
+      <canvas id="iso-canvas" width="360" height="260"></canvas>
+      <div class="iso-side">
+        <div class="iso-legend">
+          <div style="font-weight:700;color:var(--dark);margin-bottom:6px;">本题判读点：</div>
+          <div id="iso-points"></div>
+        </div>
+        <div class="iso-legend" id="iso-options" style="margin-top:16px;"></div>
+        <div class="result-box" id="iso-result"></div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- Section 4: Climate -->
+<div id="sec-clim" class="section">
+  <h2 style="color:var(--primary);margin-bottom:16px;">🌦️ 气候类型识别</h2>
+  <div class="tool-box">
+    <p style="color:var(--text-light);margin-bottom:16px;">先「判断步骤」三步走：① 看月均温定位半球与温度带 → ② 看最热月/最冷月气温与最热月/最冷月降水，判断雨热配合 → ③ 对照气候类型判读表。下面随机出一站，看图识别。</p>
+    <div class="clim-card">
+      <canvas id="clim-canvas" width="260" height="180"></canvas>
+      <div>
+        <div class="clim-meta" id="clim-meta"></div>
+        <div style="display:flex;flex-wrap:wrap;gap:8px;margin-bottom:12px;" id="clim-opts"></div>
+        <div class="result-box" id="clim-result"></div>
+        <div style="margin-top:10px;"><button onclick="drawClim(true)">换一站 →</button></div>
+      </div>
+    </div>
+    <details style="margin-top:16px;">
+      <summary style="cursor:pointer;font-weight:700;color:var(--primary);">📖 常用气候判读速查表</summary>
+      <div style="margin-top:8px;font-size:0.92em;">
+        <p>① 温度带：最冷月均温 &gt; 15℃ → 热带；0~15℃（最冷月）→ 亚热带（或温带海洋性）；&lt; 0℃ → 温带。</p>
+        <p>② 雨热配合：雨热同期（夏季高温多雨）→ 季风性气候；雨热异期（夏季炎热干燥、冬季温和多雨）→ 地中海气候。</p>
+        <p>③ 年降水量：&gt; 1000mm 且全年多雨 → 热带雨林/温带海洋性；分干湿两季 → 热带草原；分干热湿凉 → 热带季风。</p>
+      </div>
+    </details>
+  </div>
+</div>
+
+<!-- Section 5: Map Color -->
+<div id="sec-map" class="section">
+  <h2 style="color:var(--primary);margin-bottom:16px;">🖍️ 中国地图填色练习</h2>
+  <div class="tool-box">
+    <p style="color:var(--text-light);margin-bottom:8px;">题目：给「青藏地区」涂 <b>紫色</b>，给「北方地区」涂 <b>红色</b>。先点色块选色，再点地图上的区域上色。</p>
+    <div class="map-legend" id="map-swatches"></div>
+    <canvas id="map-canvas" width="440" height="330" style="border:2px solid var(--border);border-radius:8px;background:#fff;"></canvas>
+    <div class="map-status" id="map-status">进度：0 / 2</div>
+    <div class="map-region-info" id="map-info"></div>
+    <div style="margin-top:10px;"><button onclick="initMap()">重新填色</button></div>
+  </div>
+</div>
+
+<!-- Section 6: Quiz -->
+<div id="sec-quiz" class="section">
+  <h2 style="color:var(--primary);margin-bottom:16px;">📝 概念快测（全学段混合）</h2>
+  <div class="quiz-box">
+    <div class="prompt" id="quiz-prompt">加载中...</div>
+    <div class="options" id="quiz-options"></div>
+    <div class="feedback" id="quiz-feedback"></div>
+    <div style="margin-top:12px;">
+      <button style="background:var(--primary);color:#fff;border:none;padding:10px 20px;border-radius:8px;cursor:pointer;font-size:1em;" onclick="loadNextQuiz()">下一题 →</button>
+      <span id="quiz-score" style="margin-left:12px;font-weight:700;color:var(--primary);">得分：0</span>
+    </div>
+  </div>
+</div>
+</main>
+<footer>
+  <div>山海客·地理专家团 — 全学段地理学习导航</div>
+  <div class="watermark">李彦明 15684394135</div>
+
+<div style="background:#fffbe6;border-left:4px solid #f5a623;padding:10px;margin:12px 0;font-size:14px">📅 2026-10-05 升级 · 【判读+2026-10-05】等压线: 气旋=中心低(低压, 多雨), 反气旋=中心高(高压, 晴)</div>
+
+<div style="background:#fffbe6;border-left:4px solid #f5a623;padding:10px;margin:12px 0;font-size:14px">📅 2026-10-09 升级 · 【地球+2026-10-09】晨昏线：随太阳直射点移动，二分日过两极(全球昼夜平分)</div>
+
+<div style="background:#fffbe6;border-left:4px solid #f5a623;padding:10px;margin:12px 0;font-size:14px">📅 2026-10-09 升级 · 【农业+2026-10-09】区位选择优先看地形/水源，再看市场/交通/政策</div>
+
+<div style="background:#fffbe6;border-left:4px solid #f5a623;padding:10px;margin:12px 0;font-size:14px">📅 2026-10-09 升级 · 【人口+2026-10-09】人口迁移：推力(灾祸/贫穷)+拉力(就业/环境)</div>
+
+<div style="background:#fffbe6;border-left:4px solid #f5a623;padding:10px;margin:12px 0;font-size:14px">📅 2026-10-10 升级 · 【水系+2026-10-10】雨水补给径流季节变化大，冰雪融水补给夏季最大</div>
+
+<div style="background:#fffbe6;border-left:4px solid #f5a623;padding:10px;margin:12px 0;font-size:14px">📅 2026-10-11 升级 · 【工业+2026-10-11】布局看原料/动力/市场/劳动力四类指向，按主导因素归类</div>
+
+<div style="background:#fffbe6;border-left:4px solid #f5a623;padding:10px;margin:12px 0;font-size:14px">📅 2026-10-12 升级 · 【板块+2026-10-12】消亡边界多火山地震(环太平洋)，生长边界形成海岭</div>
+
+<div style="background:#fffbe6;border-left:4px solid #f5a623;padding:10px;margin:12px 0;font-size:14px">📅 2026-10-13 升级 · 【等高线+2026-10-13】等高线密坡陡、疏坡缓；闭合线里小为大洼、大为小岭</div>
+
+<div style="background:#fffbe6;border-left:4px solid #f5a623;padding:10px;margin:12px 0;font-size:14px">📅 2026-10-14 升级 · 【判读+2026-10-14】山地：河流发源、分水岭为山脊，河谷可修水库大坝(口袋形)</div>
+
+<div style="background:#fffbe6;border-left:4px solid #f5a623;padding:10px;margin:12px 0;font-size:14px">📅 2026-10-15 升级 · 【时区+2026-10-15】东西十二区跨日界线：向东越过减一天，向西越过加一天</div>
+
+<div style="background:#fffbe6;border-left:4px solid #f5a623;padding:10px;margin:12px 0;font-size:14px">📅 2026-10-16 升级 · 【地质+2026-10-16】背斜成山(向上拱)、向斜成谷；背斜储气、向斜储水</div>
+
+<div style="background:#fffbe6;border-left:4px solid #f5a623;padding:10px;margin:12px 0;font-size:14px">📅 2026-10-17 升级 · 【气候+2026-10-17】地中海气候：夏干热(副高)、冬温和多雨(西风带)</div>
+
+<div style="background:#fffbe6;border-left:4px solid #f5a623;padding:10px;margin:12px 0;font-size:14px">📅 2026-10-18 升级 · 【洋流+2026-10-18】北半球暖流增温增湿、寒流降温减湿；顺洋流航行快</div>
+
+<div style="background:#fffbe6;border-left:4px solid #f5a623;padding:10px;margin:12px 0;font-size:14px">📅 2026-10-20 升级 · 【气候+2026-10-20】季风气候：夏季风带来丰沛降水，夏季高温多雨冬季温和少雨(亚热带)</div>
+
+<div style="background:#fffbe6;border-left:4px solid #f5a623;padding:10px;margin:12px 0;font-size:14px">📅 2026-10-21 升级 · 【河流+2026-10-21】外流河补给以雨水为主(夏汛)；内流河(塔里木河)靠冰雪融水夏季汛期</div>
+
+<div style="background:#fffbe6;border-left:4px solid #f5a623;padding:10px;margin:12px 0;font-size:14px">📅 2026-10-22 升级 · 【地质+2026-10-22】褶皱山(阿尔卑斯/喜马拉雅)由背斜成山；断层谷(地堑/渭河平原)</div>
+
+<div style="background:#fffbe6;border-left:4px solid #f5a623;padding:10px;margin:12px 0;font-size:14px">📅 2026-10-23 升级 · 【能源+2026-10-23】太阳能、风能、水能、生物能=可再生能源；煤油天然气=不可再生</div>
+
+<div style="background:#fffbe6;border-left:4px solid #f5a623;padding:10px;margin:12px 0;font-size:14px">📅 2026-10-24 升级 · 【城市+2026-10-24】中心地理论：等级越高服务范围越大、数量越少、彼此距离远</div>
+
+<div style="background:#fffbe6;border-left:4px solid #f5a623;padding:10px;margin:12px 0;font-size:14px">📅 2026-10-25 升级 · 【人口+2026-10-25】发达国家=出生率低/自然增长率低/老龄化；发展中国家=高出生率/年轻型</div>
+
+<div style="background:#fffbe6;border-left:4px solid #f5a623;padding:10px;margin:12px 0;font-size:14px">📅 2026-10-26 升级 · 【资源+2026-10-26】我国耕地"南稻北麦"分界线≈秦岭-淮河；水资源南多北少</div>
+
+<div style="background:#fffbe6;border-left:4px solid #f5a623;padding:10px;margin:12px 0;font-size:14px">📅 2026-10-27 升级 · 【交通+2026-10-27】交通运输布局变化推动聚落空间形态：公路时代沿公路延伸</div>
+
+<div style="background:#fffbe6;border-left:4px solid #f5a623;padding:10px;margin:12px 0;font-size:14px">📅 2026-11-02 升级 · 【农业+2026-11-02】商品谷物农业(美国大农场) vs 季风水田农业(亚洲水稻)，规模化不同</div>
+
+<div style="background:#fffbe6;border-left:4px solid #f5a623;padding:10px;margin:12px 0;font-size:14px">📅 2026-11-03 升级 · 【时区+2026-11-03】地方时计算：经度差 15°=1 小时；东加西减</div>
+
+<div style="background:#fffbe6;border-left:4px solid #f5a623;padding:10px;margin:12px 0;font-size:14px">📅 2026-11-06 升级 · 【气候+2026-11-06】热带雨林气候全年高温多雨(亚马孙/刚果/东南亚)；草原气候干湿季分明</div>
+
+<div style="background:#fffbe6;border-left:4px solid #f5a623;padding:10px;margin:12px 0;font-size:14px">📅 2026-11-12 升级 · 【地质+2026-11-12】喀斯特：石灰岩溶蚀成溶洞/地下河/石笋，集中云贵高原</div>
+
+<div style="background:#fffbe6;border-left:4px solid #f5a623;padding:10px;margin:12px 0;font-size:14px">📅 2026-11-12 升级 · 【洋流+2026-11-12】日本暖流(黑潮)沿东海北上；与千岛寒流交汇成著名渔场</div>
+
+<div style="background:#fffbe6;border-left:4px solid #f5a623;padding:10px;margin:12px 0;font-size:14px">📅 2026-11-13 升级 · 【农业+2026-11-13】青藏高寒农业(青稞)：昼夜温差大、光照强、低温抑制病虫害</div>
+
+<div style="background:#fffbe6;border-left:4px solid #f5a623;padding:10px;margin:12px 0;font-size:14px">📅 2026-11-14 升级 · 【人口+2026-11-14】老龄化+低出生率→社保负担重；我国已放开三孩政策</div>
+
+<div style="background:#fffbe6;border-left:4px solid #f5a623;padding:10px;margin:12px 0;font-size:14px">📅 2026-11-15 升级 · 【工业+2026-11-15】钢铁布局三指向：临原料(铁)/临动力(煤电)/临市场</div>
+
+<div style="background:#fffbe6;border-left:4px solid #f5a623;padding:10px;margin:12px 0;font-size:14px">📅 2026-11-16 升级 · 【灾害+2026-11-16】滑坡/泥石流：坡陡+松散物质+暴雨共发，主汛期夏季</div>
+
+<div style="background:#fffbe6;border-left:4px solid #f5a623;padding:10px;margin:12px 0;font-size:14px">📅 2026-11-17 升级 · 【河流+2026-11-17】黄河下游"地上河"：泥沙淤积抬升河床需加固大堤</div>
+
+<div style="background:#fffbe6;border-left:4px solid #f5a623;padding:10px;margin:12px 0;font-size:14px">📅 2026-11-18 升级 · 【城市+2026-11-18】城市热岛：建筑密+人为热使城区温度高于郊区，形成对流</div>
+
+<div style="background:#fffbe6;border-left:4px solid #f5a623;padding:10px;margin:12px 0;font-size:14px">📅 2026-11-19 升级 · 【能源+2026-11-19】潮汐能集中在大潮差海湾；世界最早潮汐电站在法国朗斯河</div>
+
+<div style="background:#fffbe6;border-left:4px solid #f5a623;padding:10px;margin:12px 0;font-size:14px">📅 2026-11-20 升级 · 【土壤+2026-11-20】红壤酸而淋溶(南方)、黑土肥沃(东北)、荒漠土干旱</div>
+
+<div style="background:#fffbe6;border-left:4px solid #f5a623;padding:10px;margin:12px 0;font-size:14px">📅 2026-11-21 升级 · 【地质+2026-11-21】喜马拉雅：印度板块与欧亚板块碰撞(消亡边界)成最高山系</div>
+
+<div style="background:#fffbe6;border-left:4px solid #f5a623;padding:10px;margin:12px 0;font-size:14px">📅 2026-11-22 升级 · 【气候+2026-11-22】雨影效应：山脉背风坡气流下沉增温→干旱(阿塔卡马沙漠)</div>
+
+<div style="background:#fffbe6;border-left:4px solid #f5a623;padding:10px;margin:12px 0;font-size:14px">📅 2026-11-23 升级 · 【河流+2026-11-23】冰川补给河(雅鲁藏布江上游)：夏汛、日变化大</div>
+
+<div style="background:#fffbe6;border-left:4px solid #f5a623;padding:10px;margin:12px 0;font-size:14px">📅 2026-11-24 升级 · 【人口+2026-11-24】第七次人口普查(2020)：全国总人口约14.1亿、城镇人口占比63.9%、劳动年龄人口比重下降</div>
+
+<div style="background:#fffbe6;border-left:4px solid #f5a623;padding:10px;margin:12px 0;font-size:14px">📅 2026-11-25 升级 · 【判读+2026-11-25】等温线：北半球1月陆地等温线向低纬凸出、7月向高纬凸出(陆地冷热快于海洋)</div>
+</footer>
+<script>
+/* ============ 公共：Tab 切换 ============ */
+(function(){
+  var btns = document.querySelectorAll('nav button');
+  btns.forEach(function(b){
+    b.addEventListener('click', function(){
+      btns.forEach(function(x){ x.classList.remove('active'); });
+      b.classList.add('active');
+      document.querySelectorAll('.section').forEach(function(s){ s.classList.remove('active'); });
+      document.getElementById(b.dataset.target).classList.add('active');
+    });
+  });
+})();
+
+/* ============ 知识地图 ============ */
+var KMAP = [
+  { title: "自然地理", stage: "初中 + 高中必修一", keys: ["地壳与圈层结构","水循环与洋流","大气受热与天气系统","地貌（褶皱、断层、风成地貌）"],
+    detail: ["三圈环流与气压带风带是天气系统判读的基础", "水循环：蒸发→水汽输送→降水→径流，能量驱动", "洋流：暖流增温增湿，寒流降温减湿，对渔场/航行影响", "内营力建山、外营力削平：地质作用判读口诀"] },
+  { title: "人文地理", stage: "初中 + 高中必修二", keys: ["人口迁移与分布","农业区位（气候/市场/交通）","工业区位与集聚","城市化与城市功能分区"],
+    detail: ["农业区位五要素：气候、地形、土壤、水源、市场", "工业指向型：原料/市场/技术/劳动力/动力，看成本结构", "城市功能分区：中心商务、居住、工业区的区位逻辑", "人口金字塔判读：年龄结构→人口问题（老龄化/抚养比）"] },
+  { title: "区域地理", stage: "初中 + 高中选择性必修", keys: ["中国四大地理区域","世界主要区域概况","中国区域发展（长三角/珠三角/京津冀）","区际联系与区域合作"],
+    detail: ["南方/北方/西北/青藏：气候、地形、农业、工业的差异对比", "东南亚/南亚/西欧/中东/巴西/澳大利亚：位置+气候+资源", "区域发展案例：先区位条件、再产业结构、再环境问题", "区际联系：资源跨区域调配（南水北调、西气东输）"] },
+  { title: "地球运动", stage: "初中入门 → 高中必修一核心", keys: ["自转：昼夜交替、时差、地转偏向力","公转：四季、昼夜长短变化、正午太阳高度","五带划分与晨昏线","区时与日界线计算"],
+    detail: ["自转线速度赤道最大、向两极递减；角速度各地相等", "晨昏线判读：晨线与昏线分界、随地球自转方向推进", "正午太阳高度 H = 90° − |φ − δ|（φ 当地纬度，δ 直射点纬度）", "区时：东加西减；新一天与旧一天的分界是 0 时经线与 180°"]
+  }
+];
+(function(){
+  var grid = document.getElementById('kmap-grid');
+  KMAP.forEach(function(item, i){
+    var card = document.createElement('div');
+    card.className = 'kmap-card';
+    card.innerHTML = '<h3>' + item.title + '</h3><div class="stage">' + item.stage + '</div><ul>' +
+      item.keys.map(function(k){ return '<li>' + k + '</li>'; }).join('') + '</ul>';
+    card.addEventListener('click', function(){
+      var panel = document.getElementById('detail-panel');
+      document.getElementById('detail-title').textContent = item.title + ' · 核心考点拆解';
+      document.getElementById('detail-content').innerHTML =
+        '<ul class="points">' + item.detail.map(function(d){ return '<li>' + d + '</li>'; }).join('') + '</ul>';
+      panel.classList.add('show');
+      panel.scrollIntoView({ behavior: 'smooth', block: 'nearest' });
+    });
+    grid.appendChild(card);
+  });
+})();
+
+/* ============ 时区计算 ============ */
+function calcTZ(){
+  var a = parseInt(document.getElementById('tz-a').value, 10);
+  var b = parseInt(document.getElementById('tz-b').value, 10);
+  var tm = document.getElementById('tz-ah').value;
+  var m = tm.match(/^(\d{1,2})[:：](\d{1,2})$/);
+  var box = document.getElementById('tz-result');
+  if (isNaN(a) || isNaN(b)) { showResult(box, '请填入有效的时区数（−12 到 12）'); return; }
+  var hh = 0, mm = 0, dateNote = '';
+  if (m) { hh = parseInt(m[1],10); mm = parseInt(m[2],10); }
+  else { var n = parseInt(tm,10); if (isNaN(n)) { showResult(box, '时刻格式：15:00（时:分）'); return; } hh = n; }
+  if (mm > 59) { hh += 1; mm -= 60; }
+  var diff = b - a;
+  var total = hh * 60 + mm + diff * 60;
+  var dayShift = 0;
+  if (total >= 24*60) { dayShift = Math.floor(total / (24*60)); total -= dayShift * 24*60; dateNote = '（' + (dayShift>0?'+':'') + dayShift + ' 天）'; }
+  if (total < 0) { total += 24*60; dayShift = -1; dateNote = '（−1 天）'; }
+  hh = Math.floor(total/60); mm = total%60;
+  var out = 'B 地区时：' + pad(hh) + ':' + pad(mm) + dateNote + '\n算式：' + tm + ' + (' + b + ' − (' + a + ')) × 1h = ' + pad(hh)+':'+pad(mm) + dateNote +
+    '\n📌 ' + (b>a ? 'B 地在 A 地偏东，时刻比 A 地早（数值更大）' : b<a ? 'B 地在 A 地偏西，时刻比 A 地晚（数值更小）' : '两地同一时区') + '；东加西减。';
+  if (document.getElementById('tz-dl').checked) {
+    if (diff > 12) out += '\n🌐 日界线核对：A（西时区/0 时区）→ B（东时区），向西越线「加一天」：' + (dayShift > 0 ? '本次算式超 24h，B 地日期 = A 地日期 +1 天 ✓' : '本次时刻未跨午夜，B 地日期与 A 地相同，日期无需 ±1 天。');
+    else if (diff < -12) out += '\n🌐 日界线核对：A（东时区）→ B（西时区），向东越线「减一天」：' + (dayShift < 0 ? '本次算式为负，B 地日期 = A 地日期 −1 天 ✓' : '本次时刻未跨午夜，B 地日期与 A 地相同，日期无需 ±1 天。');
+    else out += '\n🌐 日界线核对：时区差 ' + Math.abs(diff) + 'h，A、B 未跨国际日界线（180°），日期只看时刻是否越过 24h/0 点。';
+  }
+  showResult(box, out);
+}
+function pad(n){ return n<10 ? '0'+n : ''+n; }
+function showResult(el, txt){ el.textContent = txt; el.classList.add('show'); }
+
+/* ============ 等值线判读 ============ */
+var ISO_SETS = [
+  {
+    name: "北半球某季节近地面等压线分布（单位：hPa）",
+    points: [
+      { t: "① 处等压线闭合、数值中间低四周高，为低压中心，多阴雨天气", a: "① 为低压中心，近地面气旋，盛行上升气流，多阴雨" },
+      { t: "② 处等压线密集，水平气压梯度力大，风力强", a: "② 等压线越密，气压梯度力越大，风力越强（判读口诀：密强疏弱）" },
+      { t: "③ 处位于高压脊（等压线向低值凸出），天气晴朗", a: "③ 等压线向低压方向凸出为高压脊，脊线处盛行下沉气流，多晴天" },
+      { t: "④ 闭合区 ①③：① 中心值低于四周为低压中心，③ 中心值高于四周为高压中心", a: "闭合中心判读：中心值低于四周=低压中心（气旋，上升气流，多阴雨）；中心值高于四周=高压中心（反气旋，下沉气流，多晴朗）" }
+    ],
+    opts: [
+      { label: "① 为高压中心，盛行下沉气流", ok: false },
+      { label: "② 处风力强（等压线密集）", ok: true },
+      { label: "③ 位于低压槽，多阴雨", ok: false },
+      { label: "等值距为 4 hPa", ok: true },
+      { label: "闭合中心判读：① 中心值低于四周为低压中心（气旋、多阴雨），③ 中心值高于四周为高压中心（反气旋、多晴朗）", ok: true },
+      { label: "③ 处为低压中心，盛行上升气流，多阴雨", ok: false }
+    ]
+  },
+  {
+    name: "某山区等高线（单位：米，等高距 50 m）",
+    points: [
+      { t: "等高线密集处坡度陡，① 处为陡坡，不宜建梯田", a: "等高线密集 → 坡度大 → 陡坡（判读口诀：密陡疏缓）" },
+      { t: "② 处等高线向高处凸出，为山谷，易发育河流", a: "等高线向高值凸出为山谷（集水线），向低值凸出为山脊（分水岭）" },
+      { t: "③ 处为山顶，海拔在 450~500 m 之间", a: "山顶判读：闭合等高线中心数值最高；数值 = 内圈等高值（450），上限 = 450+50=500" }
+    ],
+    opts: [
+      { label: "① 处为陡坡（等高线密集）", ok: true },
+      { label: "② 处为山脊，不可能发育河流", ok: false },
+      { label: "③ 处海拔 500~550 m", ok: false },
+      { label: "等高距为 100 m", ok: false }
+    ]
+  }
+];
+var isoCur = 0, isoSel = null;
+function initIso(){
+  var set = ISO_SETS[isoCur];
+  var cv = document.getElementById('iso-canvas');
+  var ctx = cv.getContext('2d');
+  ctx.clearRect(0,0,cv.width,cv.height);
+  if (set.name.indexOf('等压') === 0) {
+    // 画两组闭合等压线：①低压中心，②密集区，③高压脊
+    ctx.strokeStyle = '#17a2b8'; ctx.lineWidth = 1.6;
+    // 低压中心（①）
+    for (var r=18; r<=54; r+=12) { ellipseIso(ctx, 110, 100, r, r*0.7); }
+    ctx.fillStyle='#084c5d'; ctx.font='12px sans-serif'; ctx.fillText('1002', 96, 96);
+    ctx.fillText('1000', 120, 128);
+    mark(ctx, 110, 100, '①');
+    // 高压脊（③）
+    for (var r2=22; r2<=58; r2+=12) { ellipseIso(ctx, 300, 100, r2, r2*0.7); }
+    ctx.fillText('1024', 286, 96);
+    ctx.fillText('1028', 308, 130);
+    mark(ctx, 300, 100, '③');
+    // 密集等压线（②）
+    for (var i=0;i<6;i++){
+      ctx.beginPath();
+      var y = 170 + i*8;
+      ctx.moveTo(60, y);
+      ctx.bezierCurveTo(140, y-6, 220, y+6, 340, y-2);
+      ctx.stroke();
+    }
+    ctx.fillText('②', 200, 176);
+  } else {
+    // 等高线：①陡坡、②山谷、③山顶
+    ctx.strokeStyle = '#2a9d8f'; ctx.lineWidth = 1.6;
+    for (var r3=14; r3<=56; r3+=12) { ellipseIso(ctx, 300, 80, r3, r3*0.85); }
+    ctx.fillStyle='#084c5d'; ctx.font='12px sans-serif';
+    ctx.fillText('450', 288, 60); ctx.fillText('500', 308, 112);
+    mark(ctx, 300, 80, '③');
+    // 密集等高线（① 陡坡）
+    for (var j=0;j<7;j++){
+      ctx.beginPath();
+      var x = 40 + j*10;
+      ctx.moveTo(x, 60); ctx.quadraticCurveTo(x+10, 150, x-4, 250);
+      ctx.stroke();
+    }
+    ctx.fillText('①', 36, 156);
+    // 山谷（② 向高处凸出）
+    ctx.beginPath();
+    ctx.moveTo(80, 250);
+    ctx.quadraticCurveTo(150, 180, 220, 250);
+    ctx.stroke();
+    ctx.fillText('②', 150, 210);
+  }
+  document.getElementById('iso-points').innerHTML =
+    '<div style="font-weight:700;margin-bottom:6px;">' + set.name + '</div>' +
+    set.points.map(function(p){ return '<div>• ' + p.t + '</div>'; }).join('');
+  var og = document.getElementById('iso-options');
+  og.innerHTML = '<div style="font-weight:700;margin-bottom:6px;">点击下方判断，正确的是（可多选）：</div>' +
+    set.opts.map(function(o,i){
+      return '<button class="opt-btn" style="margin:4px;" onclick="isoPick('+i+',this)">' + o.label + '</button>';
+    }).join('');
+  isoSel = [];
+  var res = document.getElementById('iso-result');
+  res.classList.remove('show'); res.textContent='';
+}
+function isoPick(i, btn){
+  var set = ISO_SETS[isoCur];
+  var idx = isoSel.indexOf(i);
+  if (idx >= 0) { isoSel.splice(idx,1); btn.classList.remove('selected'); }
+  else { isoSel.push(i); btn.classList.add('selected'); }
+  checkIso();
+}
+function checkIso(){
+  var set = ISO_SETS[isoCur];
+  var done = isoSel.length === set.opts.filter(function(o){return o.ok;}).length;
+  var allRight = isoSel.length === set.opts.length && isoSel.every(function(i){ return set.opts[i].ok; });
+  var box = document.getElementById('iso-result');
+  if (!done) { box.classList.remove('show'); return; }
+  var right = 0; set.opts.forEach(function(o,i){ if (o.ok && isoSel.indexOf(i)>=0) right++; });
+  var wrong = isoSel.length - right;
+  if (wrong === 0) {
+    box.textContent = '✅ 全对！判读要点：' + set.points.map(function(p){ return p.a; }).join('\n');
+  } else {
+    box.textContent = '❌ 有错选。判读要点：' + set.points.map(function(p){ return p.a; }).join('\n');
+  }
+  box.classList.add('show');
+}
+function mark(ctx, x, y, t){
+  ctx.font = '15px sans-serif';
+  ctx.fillStyle = '#e07856';
+  ctx.fillText(t, x+6, y-6);
+}
+function ellipseIso(ctx, cx, cy, rx, ry){
+  ctx.beginPath();
+  ctx.ellipse(cx, cy, rx, ry, 0, 0, Math.PI*2);
+  ctx.stroke();
+}
+function nextIso(){ isoCur = (isoCur+1) % ISO_SETS.length; initIso(); }
+
+/* ============ 气候识别 ============ */
+var CLIM = [
+  { name: '伦敦（温带海洋性气候）', t:[5,6,7,9,11,12,11,9,7,6,5,5], p:[55,45,42,38,42,48,45,48,50,62,65,58], ans: '温带海洋性气候',
+    why: '最冷月 5~7℃（0~15℃ 带）、最热月 12℃，全年温和；月降水 38~65mm 均匀、无旱季 → 温带海洋性气候（西岸、受西风带与暖流影响）。',
+    opts: ['温带海洋性气候','地中海气候','温带季风气候','亚热带季风气候'] },
+  { name: '罗马（地中海气候）', t:[8,9,12,16,21,25,27,26,23,18,13,9], p:[80,72,62,48,28,18,12,15,30,58,88,95], ans: '地中海气候',
+    why: '最冷月 8℃（0~15℃）、最热月 27℃，夏季高温；降水冬季多（80~95mm）、夏季极少（12mm）→ 雨热异期，为地中海气候（30°~40° 大陆西岸，受副高与西风交替控制）。',
+    opts: ['地中海气候','温带海洋性气候','亚热带季风气候','温带大陆性气候'] },
+  { name: '北京（温带季风气候）', t:[-3,0,10,18,23,27,28,26,21,13,3,-1], p:[3,5,10,28,42,75,160,140,60,28,8,2], ans: '温带季风气候',
+    why: '最冷月 −3℃（<0℃）、最热月 28℃，年温差大；降水集中在 7 月（160mm），冬季极少（3mm）→ 雨热同期且冬季寒冷干燥，为温带季风气候（大陆东岸，受季风环流控制）。',
+    opts: ['温带季风气候','温带海洋性气候','亚热带季风气候','温带大陆性气候'] },
+  { name: '孟买（热带季风气候）', t:[29,31,32,31,29,27,26,26,26,27,28,29], p:[1,2,4,8,12,480,720,500,200,50,8,1], ans: '热带季风气候',
+    why: '全年月均温 26℃ 以上 → 热带；降水 6~9 月极多（月 500~720mm），旱季几乎为 0 → 分明显雨两季，为热带季风气候（南亚，夏季西南季风越过印度洋带来大量水汽）。',
+    opts: ['热带季风气候','热带草原气候','热带雨林气候','亚热带季风气候'] },
+  { name: '新加坡（热带雨林气候）', t:[27,28,29,30,31,31,30,30,29,29,28,27], p:[240,220,210,180,170,150,130,140,170,190,220,250], ans: '热带雨林气候',
+    why: '全年高温（月均温 27℃ 以上）、全年多雨（月降水 130~250mm、无旱季）→ 热带雨林气候（赤道附近，受赤道低压带控制，全年太阳辐射强、对流旺盛）。',
+    opts: ['热带雨林气候','热带季风气候','热带草原气候','亚热带季风气候'] },
+  { name: '上海（亚热带季风气候）', t:[5,6,9,14,18,24,29,29,25,19,13,7], p:[60,65,95,100,110,180,150,120,90,70,55,40], ans: '亚热带季风气候',
+    why: '最冷月 5℃（0~15℃）→ 亚热带；最热月 29℃；降水集中在夏季（6~7 月 180/150mm）、冬季偏少（40~60mm），雨热同期 → 亚热带季风气候（亚欧大陆东岸 25°~35°N，受季风环流控制）。',
+    opts: ['亚热带季风气候','温带季风气候','温带海洋性气候','地中海气候'] },
+  { name: '乌鲁木齐（温带大陆性气候）', t:[-15,-10,0,10,18,23,25,24,18,10,0,-12], p:[15,10,12,15,18,25,30,28,20,18,15,15], ans: '温带大陆性气候',
+    why: '最冷月 −15℃（<0℃ 且深冬严寒）、最热月 25℃，年温差约 40℃；年降水仅约 220mm 且集中在夏季 → 深居内陆、距海远、水汽少 → 温带大陆性气候（亚洲内陆分布最广的气候类型）。',
+    opts: ['温带大陆性气候','温带季风气候','亚热带季风气候','温带海洋性气候'] }
+];
+var climCur = 0;
+function drawClim(rand){
+  if (rand) climCur = Math.floor(Math.random()*CLIM.length);
+  var c = CLIM[climCur];
+  var cv = document.getElementById('clim-canvas');
+  var ctx = cv.getContext('2d');
+  ctx.clearRect(0,0,cv.width,cv.height);
+  var W = cv.width, H = cv.height, pad = 24;
+  var maxP = Math.max.apply(null, c.p);
+  var barW = (W - pad*2) / 12 * 0.55;
+  var step = (W - pad*2) / 12;
+  // 坐标轴
+  ctx.strokeStyle = '#b8dfe3'; ctx.lineWidth = 1;
+  ctx.beginPath(); ctx.moveTo(pad, H-pad); ctx.lineTo(W-pad, H-pad); ctx.stroke();
+  ctx.beginPath(); ctx.moveTo(pad, pad); ctx.lineTo(pad, H-pad); ctx.stroke();
+  ctx.fillStyle = '#546e7a'; ctx.font = '9px sans-serif';
+  for (var m=0;m<12;m++){
+    var x = pad + step*m + (step-barW)/2;
+    // 降水柱
+    var hP = (H - pad*2) * (c.p[m] / (maxP*1.1));
+    ctx.fillStyle = 'rgba(23,162,184,0.55)';
+    ctx.fillRect(x, H-pad-hP, barW, hP);
+    ctx.fillStyle = '#546e7a';
+    ctx.fillText(m+1, x+barW/2-3, H-pad+11);
+  }
+  // 温度折线（按本站最低/最高气温自适应标尺，带 2℃ 余量）
+  var cTmin = Math.min.apply(null, c.t), cTmax = Math.max.apply(null, c.t);
+  var cTlo = cTmin - 2, cTrange = (cTmax + 2) - cTlo;
+  ctx.strokeStyle = '#e07856'; ctx.lineWidth = 2;
+  ctx.beginPath();
+  for (var m2=0;m2<12;m2++){
+    var x2 = pad + step*m2 + step/2;
+    var y2 = H-pad - (H-pad*2) * ((c.t[m2]-cTlo) / cTrange);
+    if (m2===0) ctx.moveTo(x2,y2); else ctx.lineTo(x2,y2);
+  }
+  ctx.stroke();
+  // 圆点
+  ctx.fillStyle = '#e07856';
+  for (var m3=0;m3<12;m3++){
+    var x3 = pad + step*m3 + step/2;
+    var y3 = H-pad - (H-pad*2) * ((c.t[m3]-cTlo)/cTrange);
+    ctx.beginPath(); ctx.arc(x3,y3,3,0,Math.PI*2); ctx.fill();
+  }
+  ctx.font='10px sans-serif'; ctx.fillStyle='#e07856';
+  ctx.fillText('— 月均温 ℃', W-72, 12);
+  ctx.fillStyle='#17a2b8';
+  ctx.fillText('▍ 月降水 mm', W-72, 24);
+  // 元数据
+  var maxT = Math.max.apply(null,c.t), minT = Math.min.apply(null,c.t);
+  var totalP = c.p.reduce(function(a,b){return a+b;},0);
+  document.getElementById('clim-meta').innerHTML =
+    '<div><div class="k">最热月均温</div><div class="v">' + maxT + '℃</div></div>' +
+    '<div><div class="k">最冷月均温</div><div class="v">' + minT + '℃</div></div>' +
+    '<div><div class="k">年降水量</div><div class="v">' + totalP + 'mm</div></div>' +
+    '<div><div class="k">站点</div><div class="v" style="font-size:0.95em;">' + c.name + '</div></div>';
+  var og = document.getElementById('clim-opts');
+  og.innerHTML = c.opts.map(function(o,i){
+    return '<button class="opt-btn" onclick="climPick(\''+o+'\',this)">' + o + '</button>';
+  }).join('');
+  var res = document.getElementById('clim-result');
+  res.classList.remove('show'); res.textContent='';
+  climCur = (climCur + 1) % CLIM.length; // 预置下一站（点「换一站」不用 rand）
+}
+function climPick(ans, btn){
+  var c = CLIM[climCur-1]; // 上一轮实际展示的那站
+  if (ans === c.ans) {
+    btn.classList.add('correct');
+    showResult(document.getElementById('clim-result'), '✅ 正确：' + c.name + '\n' + c.why);
+  } else {
+    btn.classList.add('wrong');
+    showResult(document.getElementById('clim-result'), '❌ 答案：' + c.ans + '\n' + c.why + '\n（本站判读步骤：' + c.name + '）');
+  }
+}
+
+/* ============ 地图填色 ============ */
+var MAP_REGIONS = [
+  { name: '青藏地区', pts: [[280,60],[380,50],[420,140],[360,200],[280,180]],
+    info: '平均海拔 4000 m 以上，「世界屋脊」；高寒牧场，太阳能与地热能丰富；主体民族为藏族；主要城市：拉萨、西宁（青海）。' },
+  { name: '北方地区', pts: [[80,60],[260,60],[260,160],[140,180],[60,140]],
+    info: '以温带季风气候为主，旱地农业为主（小麦、玉米）；黄土高原水土流失严重；重工业基地（辽中南、京津唐）；主体地形：华北平原、东北平原、黄土高原。' }
+];
+var MAP_COLORS = { '青藏地区': '#7b4fa6', '北方地区': '#d94f3d' };
+var mapSel = null, mapDone = {};
+function initMap(){
+  mapSel = null; mapDone = {};
+  var lg = document.getElementById('map-swatches');
+  lg.innerHTML = '';
+  Object.keys(MAP_COLORS).forEach(function(k){
+    var s = document.createElement('div');
+    s.className = 'swatch';
+    s.style.background = MAP_COLORS[k];
+    s.title = k;
+    s.onclick = function(){
+      mapSel = k;
+      document.querySelectorAll('.swatch').forEach(function(x){ x.classList.remove('sel'); });
+      s.classList.add('sel');
+    };
+    lg.appendChild(s);
+  });
+  drawMap();
+  updateMapStatus();
+  var info = document.getElementById('map-info');
+  info.classList.remove('show');
+}
+function drawMap(){
+  var cv = document.getElementById('map-canvas');
+  var ctx = cv.getContext('2d');
+  ctx.clearRect(0,0,cv.width,cv.height);
+  // 画简化的中国轮廓（示意）
+  ctx.strokeStyle = '#546e7a'; ctx.lineWidth = 2;
+  ctx.beginPath();
+  ctx.moveTo(100,30); ctx.lineTo(300,15); ctx.lineTo(420,60); ctx.lineTo(430,160);
+  ctx.lineTo(360,270); ctx.lineTo(200,310); ctx.lineTo(90,250); ctx.lineTo(60,140);
+  ctx.closePath(); ctx.stroke();
+  ctx.fillStyle = '#f0f4f5'; ctx.fill();
+  // 区域
+  MAP_REGIONS.forEach(function(r){
+    ctx.beginPath();
+    r.pts.forEach(function(p,i){ if (i===0) ctx.moveTo(p[0],p[1]); else ctx.lineTo(p[0],p[1]); });
+    ctx.closePath();
+    if (mapDone[r.name]) { ctx.fillStyle = MAP_COLORS[r.name]; ctx.fill(); }
+    else { ctx.fillStyle = 'rgba(15,110,140,0.08)'; ctx.fill(); }
+    ctx.strokeStyle = '#084c5d'; ctx.lineWidth = 1.5; ctx.stroke();
+    ctx.fillStyle = mapDone[r.name] ? '#fff' : '#546e7a';
+    ctx.font = '13px sans-serif';
+    var cx = r.pts.reduce(function(a,b){return a+b[0];},0)/r.pts.length;
+    var cy = r.pts.reduce(function(a,b){return a+b[1];},0)/r.pts.length;
+    ctx.fillText(r.name, cx-24, cy+4);
+  });
+}
+function mapClick(e){
+  var cv = document.getElementById('map-canvas');
+  var rect = cv.getBoundingClientRect();
+  // CSS 像素 → canvas 内部像素换算（移动端 width:100% 缩放后仍可点中区域）
+  var x = (e.clientX - rect.left) * (cv.width / rect.width);
+  var y = (e.clientY - rect.top) * (cv.height / rect.height);
+  if (!mapSel) {
+    document.getElementById('map-info').innerHTML = '<div style="color:#e07856;">⚠️ 请先点击色块选择颜色</div>';
+    document.getElementById('map-info').classList.add('show');
+    return;
+  }
+  // 判断点是否在哪个区域内（射线法）
+  var hit = null;
+  MAP_REGIONS.forEach(function(r){
+    var inside = false;
+    for (var i=0,j=r.pts.length-1;i<r.pts.length;j=i++){
+      var xi=r.pts[i][0], yi=r.pts[i][1], xj=r.pts[j][0], yj=r.pts[j][1];
+      if ((yi>y)!=(yj>y) && x < (xj-xi)*(y-yi)/(yj-yi)+xi) inside = !inside;
+    }
+    if (inside) hit = r;
+  });
+  if (!hit) return;
+  if (hit.name === mapSel) {
+    if (!mapDone[hit.name]) { mapDone[hit.name] = true; drawMap(); updateMapStatus(); }
+  } else {
+    // 涂了错误区域，提示
+    document.getElementById('map-info').innerHTML = '<div style="color:#e07856;">❌ 这里不是「' + mapSel + '」，请再试</div>';
+    document.getElementById('map-info').classList.add('show');
+    return;
+  }
+  // 显示该区域信息
+  var info = document.getElementById('map-info');
+  info.innerHTML = '<h3>✅ ' + hit.name + '</h3><p style="font-size:0.92em;">' + hit.info + '</p>';
+  info.classList.add('show');
+  if (Object.keys(mapDone).length === MAP_REGIONS.length) {
+    document.getElementById('map-status').textContent = '🎉 全部正确！进度：2 / 2';
+  }
+}
+function updateMapStatus(){
+  var n = Object.keys(mapDone).length;
+  document.getElementById('map-status').textContent = '进度：' + n + ' / ' + MAP_REGIONS.length;
+}
+document.getElementById('map-canvas').addEventListener('click', mapClick);
+
+/* ============ 概念快测 ============ */
+var QUIZ = [
+  { q: "地球自转产生的地理现象是（  ）",
+    opts: ["昼夜长短的季节变化","太阳直射点南北移动","地方时的差异","四季更替"], a: 2,
+    why: "地球自转 → 昼夜交替 + 时差（地方时/区时）+ 地转偏向力；昼夜长短变化、四季是公转的产物。" },
+  { q: "下列关于水循环的说法，正确的是（  ）",
+    opts: ["水循环只发生在海洋","陆上内循环是水量最大的环节","水汽输送主要由大气运动完成","蒸发只发生在白天"], a: 2,
+    why: "海陆间循环水量最大；水汽输送靠大气运动（风）；蒸发白天黑夜都进行。" },
+  { q: "下列属于沉积岩的是（  ）",
+    opts: ["花岗岩","玄武岩","大理岩","砂岩"], a: 3,
+    why: "花岗岩/玄武岩 = 岩浆岩；大理岩 = 变质岩；砂岩/石灰岩 = 沉积岩（有层理、可含化石）。" },
+  { q: "我国四大地理区域中，位于西北的是（  ）",
+    opts: ["内蒙古高原","塔里木盆地","柴达木盆地","黄土高原"], a: 1,
+    why: "塔里木盆地在西北地区；内蒙古高原跨北/西北，但主要归北方（400mm 等降水量线判读）；柴达木在青藏；黄土高原在北方。" },
+  { q: "地中海气候的典型植被与农业地域类型是（  ）",
+    opts: ["亚热带常绿阔叶林 / 季风水田农业","亚热带常绿硬叶林 / 地中海式农业","温带落叶阔叶林 / 商品谷物农业","热带季雨林 / 种植园农业"], a: 1,
+    why: "地中海气候（夏季炎热干燥）→ 常绿硬叶林（叶片厚、有蜡质层减少蒸腾）→ 典型农业：园艺业（葡萄、橄榄、柑橘）。" }
+];
+var qIdx = 0, qScore = 0;
+function loadNextQuiz(){
+  var q = QUIZ[qIdx];
+  document.getElementById('quiz-prompt').textContent = (qIdx+1) + '. ' + q.q;
+  document.getElementById('quiz-options').innerHTML = q.opts.map(function(o,i){
+    return '<button class="opt-btn" onclick="checkQuiz('+i+',this)">' + String.fromCharCode(65+i) + '. ' + o + '</button>';
+  }).join('');
+  var fb = document.getElementById('quiz-feedback');
+  fb.classList.remove('show');
+  fb.style.display = 'none';
+  fb.textContent = '';
+}
+function checkQuiz(i, btn){
+  var q = QUIZ[qIdx];
+  var all = document.querySelectorAll('#quiz-options .opt-btn');
+  all.forEach(function(b){ b.disabled = true; });
+  if (i === q.a) {
+    btn.classList.add('correct');
+    qScore++;
+    document.getElementById('quiz-feedback').textContent = '✅ 正确。' + q.why;
+  } else {
+    btn.classList.add('wrong');
+    all[q.a].classList.add('correct');
+    document.getElementById('quiz-feedback').textContent = '❌ 答案是 ' + String.fromCharCode(65+q.a) + '。' + q.why;
+  }
+  document.getElementById('quiz-feedback').style.display = 'block';
+  document.getElementById('quiz-score').textContent = '得分：' + qScore;
+  qIdx = (qIdx+1) % QUIZ.length;
+  setTimeout(loadNextQuiz, 4500);
+}
+
+/* ============ 启动 ============ */
+initIso();
+drawClim(false);
+initMap();
+loadNextQuiz();
+</script>
+
+<div id="agent-panel" style="margin:20px auto;max-width:720px;border:2px solid #4a90d9;border-radius:12px;padding:16px;background:#f7fbff;font-family:system-ui">
+  <h3 style="margin:0 0 8px;color:#2c5d8f">🤖 山海客·地理专家团 · 智能体问答（本地题库模式）</h3>
+  <p style="font-size:13px;color:#555;margin:0 0 10px">本地题库模式（离线·零外链）：关键词匹配本站本地题库作答。在线 AI 问答待李老师定 key 策略后统一开通。</p>
+  <div style="display:flex;flex-wrap:wrap;gap:8px;margin-bottom:10px"><button style="padding:6px 10px;border-radius:8px;border:1px solid #888;background:#fff;color:#333;cursor:pointer;font-size:12px" onclick="agentAsk('等压线判读气旋/反气旋')">等压线判读气旋/反气旋</button><button style="padding:6px 10px;border-radius:8px;border:1px solid #888;background:#fff;color:#333;cursor:pointer;font-size:12px" onclick="agentAsk('经度差 1° 时间差 4 分钟计算')">经度差 1° 时间差 4 分钟计算</button><button style="padding:6px 10px;border-radius:8px;border:1px solid #888;background:#fff;color:#333;cursor:pointer;font-size:12px" onclick="agentAsk('区域地理定位题')">区域地理定位题</button>
+    <button style="padding:6px 12px;border-radius:8px;border:1px solid #4a90d9;background:#4a90d9;color:#fff;cursor:pointer" onclick="agentAsk('')">问 山海客·地理专家团</button>
+  </div>
+  <textarea id="agent-q" placeholder="输入问题，匹配 山海客·地理专家团 本地题库..." style="width:100%;height:60px;padding:8px;border:1px solid #ccc;border-radius:8px;font-size:14px;box-sizing:border-box"></textarea>
+  <button style="margin-top:8px;padding:8px 16px;border-radius:8px;border:none;background:#2c8a3d;color:#fff;cursor:pointer;font-size:14px" onclick="agentAsk(document.getElementById('agent-q').value)">匹配本地题库</button>
+  <div id="agent-a" style="margin-top:12px;padding:12px;background:#fff;border-left:4px solid #2c8a3d;border-radius:6px;font-size:14px;min-height:40px;white-space:pre-wrap;color:#333">（等待回答）</div>
+  <script>
+  // 本地题库模式: 离线·零外链·无 key。在线(key 注入)待李老师定 key 策略后统一切, 此处 AGENT_MODE 为切换点。
+  var AGENT_MODE="local";
+  var AGENT_KB=(typeof window.AGENT_KB==="object"&&window.AGENT_KB)?window.AGENT_KB:[];
+  var LOCAL_TIPS=["定位先看经纬度/海岸线/河流; 气候看气温降水年分布图对比。", "工业区位列'原料-市场-劳力-交通-政策'再排权重。"];
+  function _kbTokens(q){
+    var t=[];
+    (q.toLowerCase().match(/[a-z0-9]+/g)||[]).forEach(function(x){t.push(x);});
+    q.replace(/[^\u4e00-\u9fff]/g,'').split('').forEach(function(c){t.push(c);});
+    return t;
+  }
+  function agentAsk(q){
+    if(!q)q=document.getElementById('agent-q').value;
+    if(!q){document.getElementById('agent-a').textContent='请输入问题';return;}
+    document.getElementById('agent-q').value=q;
+    var a=document.getElementById('agent-a');
+    var uniq=Array.from(new Set(_kbTokens(q)));
+    var hits=AGENT_KB.map(function(it){
+      var hay=((it.q||"")+" "+(it.a||"")).toLowerCase();
+      var n=uniq.filter(function(t){return hay.indexOf(t)>-1;}).length;
+      return {s:n,it:it};
+    }).filter(function(x){return x.s>=Math.min(uniq.length,2);}).sort(function(x,y){return y.s-x.s;}).slice(0,3);
+    if(hits.length){
+      a.textContent="\u{1F4D6} 本地题库 · 离线（山海客·地理专家团 本地条目）\n\n"+hits.map(function(h){return "Q: "+h.it.q+"\nA: "+h.it.a;}).join("\n\n")+"\n\n（在线 AI 问答待李老师定 key 策略后开通）";
+    } else {
+      a.textContent="\u26A0\uFE0F 本地题库模式（离线）：未匹配到本地条目。在线 AI 问答待李老师定 key 策略后开通。\n学习提示：\n- "+LOCAL_TIPS.join("\n- ")+"\n并见站内【题库/知识】模块。";
+    }
+  }
+  </script>
+</div>
+</body>
+</html>

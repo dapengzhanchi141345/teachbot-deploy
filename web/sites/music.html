@@ -1,0 +1,408 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>音律工坊·AI音乐 — 全学段音乐系统</title>
+<style>
+:root{--bg:#fdf5f0;--card:#fff;--ink:#4a2f2f;--accent:#c1440e;--accent2:#e8843c;--soft:#fbe5d5;--ok:#16a34a;--bad:#dc2626;--line:#f0d5c0}
+*{margin:0;box-sizing:border-box}
+body{font-family:"Microsoft YaHei",sans-serif;background:var(--bg);color:var(--ink);line-height:1.75}
+header{background:linear-gradient(120deg,#7a2e0e,#e8843c);color:#fff;padding:26px 30px}
+header h1{font-size:26px}
+header p{opacity:.9;font-size:14px;margin-top:6px}
+nav{display:flex;gap:8px;flex-wrap:wrap;padding:12px 30px;background:var(--card);border-bottom:1px solid var(--line);position:sticky;top:0;z-index:5}
+nav button{border:1px solid var(--line);background:#fff;padding:8px 14px;border-radius:8px;cursor:pointer;font-size:14px}
+nav button.on{background:var(--accent);color:#fff;border-color:var(--accent)}
+section{display:none;padding:24px 30px;max-width:1000px;margin:0 auto}
+section.on{display:block}
+h2{color:var(--accent);margin:6px 0 14px;font-size:20px}
+.grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(220px,1fr));gap:12px}
+.card{background:var(--card);border:1px solid var(--line);border-radius:10px;padding:14px}
+.card h3{font-size:15px;color:var(--accent2);margin-bottom:6px}
+.card ul{padding-left:18px;font-size:14px}
+.btn{background:var(--accent);color:#fff;border:none;padding:8px 14px;border-radius:8px;cursor:pointer;font-size:14px;margin:4px}
+input,select{padding:8px;border:1px solid var(--line);border-radius:8px;font-size:14px}
+.out{margin-top:12px;padding:12px;background:var(--soft);border-radius:8px;min-height:40px;font-size:15px}
+.tag{display:inline-block;background:var(--soft);color:var(--accent);padding:2px 8px;border-radius:20px;font-size:12px;margin:2px}
+.note{background:#fff7e6;border:1px solid #ffd580;border-radius:8px;padding:12px;font-size:14px;margin:10px 0}
+.piano{display:flex;gap:2px;margin:14px 0}
+.piano .w{width:54px;height:140px;background:#fff;border:1px solid #888;border-radius:0 0 4px 4px;cursor:pointer;position:relative;font-size:11px;text-align:center;padding-top:6px}
+.piano .b{width:34px;height:88px;background:#222;color:#fff;border-radius:0 0 3px 3px;cursor:pointer;margin:0 -6px;z-index:2;position:relative;text-align:center;padding-top:6px;font-size:11px}
+.chord-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(160px,1fr));gap:10px;margin:12px 0}
+.chord-card{background:var(--card);border:1px solid var(--line);border-radius:10px;padding:12px;cursor:pointer;transition:all .2s}
+.chord-card:hover{border-color:var(--accent);transform:translateY(-2px)}
+.chord-card h4{color:var(--accent);font-size:15px;margin-bottom:4px}
+.chord-card p{font-size:13px;color:#666}
+.chord-active{background:var(--soft);border-color:var(--accent)}
+.form-sec{background:var(--card);border:1px solid var(--line);border-radius:10px;padding:14px;margin:10px 0}
+.form-sec h3{color:var(--accent);font-size:15px;margin-bottom:6px}
+.form-sec .bars{display:flex;gap:6px;flex-wrap:wrap;margin:8px 0}
+.form-sec .bar{width:48px;height:36px;background:var(--soft);border-radius:4px;display:flex;align-items:center;justify-content:center;font-size:13px;font-weight:bold;color:var(--accent)}
+.rhythm-ex{display:flex;gap:16px;flex-wrap:wrap;margin:12px 0}
+.rhythm-ex .box{background:var(--card);border:1px solid var(--line);border-radius:10px;padding:12px;min-width:180px}
+.rhythm-ex .box h4{color:var(--accent);font-size:14px;margin-bottom:6px}
+footer{text-align:center;padding:20px;color:#888;font-size:13px;margin-top:30px;border-top:1px solid var(--line)}
+@media(max-width:600px){.piano{overflow-x:auto}.piano .w{min-width:44px}}
+</style>
+</head>
+<body>
+<header>
+<h1>音律工坊 · AI 音乐专家团</h1>
+<p>全学段音乐系统 · 小学→高中 · 乐理/曲式/聆听/表演 · 钢琴键盘 · 音阶识别 · 和弦听辨 · 节奏打拍 · 双击即用(离线单文件)</p>
+</header>
+<nav>
+<button class="on" data-t="know">知识体系</button>
+<button data-t="piano">电子钢琴</button>
+<button data-t="scale">音阶识别</button>
+<button data-t="chord">和弦听辨</button>
+<button data-t="rhythm">节奏打拍</button>
+<button data-t="form">曲式判断</button>
+</nav>
+
+<section id="know" class="on">
+<h2>全学段知识体系</h2>
+<div class="note">按模块点卡片看考点; 用「电子钢琴」听音高, 用「音阶识别」练调式, 用「和弦听辨」练三和弦, 用「节奏打拍」练律动, 用「曲式判断」练结构感。</div>
+<div class="grid" id="knowGrid"></div>
+</section>
+
+<section id="piano">
+<h2>电子钢琴(点键发声, 离线)</h2>
+<p>白键 C 到 E(两个八度), 黑键全音阶; 点「播放 C 大调音阶」自动弹。黑键点按用同音替代, 实际音高略偏高, 仅作指法练习。</p>
+<div class="piano" id="pianoBox"></div>
+<button class="btn" onclick="playScale()">播放 C 大调音阶</button>
+</section>
+
+<section id="scale">
+<h2>音阶识别(听音阶判断调式)</h2>
+<p>点「随机音阶」听一段, 猜是大调还是小调(离线: 仅生成音阶, 训练耳朵)。</p>
+<select id="st"><option value="major">C 大调</option><option value="minor">A 小调</option><option value="mixo">混合利底亚</option></select>
+<button class="btn" onclick="randScale()">生成音阶</button>
+<div class="out" id="sOut"></div>
+</section>
+
+<section id="chord">
+<h2>和弦听辨(三和弦, 点卡片发声)</h2>
+<p>每个卡片是一个三和弦, 点卡片听三个音同时响(离线 WebAudio 合成)。试着盲听辨认是大三和弦还是小三和弦。</p>
+<div class="note">大三和弦根-大三度-纯五度, 如 C E G; 小三和弦根-小三度-纯五度, 如 A C E。大三度 4 半音, 小三度 3 半音。</div>
+<div class="chord-grid" id="chordGrid"></div>
+<button class="btn" onclick="chordQuiz()">随机和弦测验</button>
+<div class="out" id="chordOut">选一个卡片听, 或用「随机和弦测验」出题盲听。</div>
+</section>
+
+<section id="rhythm">
+<h2>节奏打拍(元音/节奏型)</h2>
+<p>按「4 拍循环」听节拍器(离线 WebAudio 敲鼓), 数对节奏型再跟唱。下方有常见节奏型, 点卡片听对应时值组合。</p>
+<button class="btn" onclick="beat()">启动节拍器(4/4, 120bpm)</button>
+<button class="btn" onclick="stopBeat()">停止</button>
+<div class="out" id="bOut">节拍器已准备</div>
+<div class="rhythm-ex" id="rhythmEx"></div>
+</section>
+
+<section id="form">
+<h2>曲式判断(听结构, 看图示)</h2>
+<p>常见曲式用「方块图」表示, 每块 = 一段独立音乐材料。点卡片听示例(离线合成简化动机), 判断结构。</p>
+<div class="form-sec" id="formSec"></div>
+<div class="out" id="formOut"></div>
+</section>
+
+<footer>李彦明 15684394135 · 音律工坊·AI音乐专家团 · 离线单文件 · 每日升级
+<div style="background:#fffbe6;border-left:4px solid #f5a623;padding:10px;margin:12px 0;font-size:14px">📅 2026-10-07 升级 · 【新增】和弦听辨(大三/小三随机测验) · 【新增】曲式判断(ABA/ABCB方块图+示例) · 【新增】节奏型卡片(四分/八分/十六分组合) · 【乐理】混合利底亚音阶加入音阶识别 · 【修复】黑键发声改为正确黑键频率</div>
+
+<div style="background:#fffbe6;border-left:4px solid #f5a623;padding:10px;margin:12px 0;font-size:14px">📅 2026-10-08 升级 · 【聆听+2026-10-08】莫扎特《小星星变奏曲》= 单主题+30 段变奏 (变奏曲式)</div>
+
+<div style="background:#fffbe6;border-left:4px solid #f5a623;padding:10px;margin:12px 0;font-size:14px">📅 2026-10-09 升级 · 【节奏+2026-10-09】拍号 3/4 = 以四分音符为一拍、一小节三拍(圆舞曲常用)</div>
+
+<div style="background:#fffbe6;border-left:4px solid #f5a623;padding:10px;margin:12px 0;font-size:14px">📅 2026-10-09 升级 · 【乐器+2026-10-09】木管组: 长笛/单簧管；铜管组: 圆号/小号/长号/大号</div>
+
+<div style="background:#fffbe6;border-left:4px solid #f5a623;padding:10px;margin:12px 0;font-size:14px">📅 2026-10-09 升级 · 【乐理+2026-10-09】和弦三度叠置：根音+三度+五度；大三和弦明亮，小三暗淡</div>
+
+<div style="background:#fffbe6;border-left:4px solid #f5a623;padding:10px;margin:12px 0;font-size:14px">📅 2026-10-10 升级 · 【欣赏+2026-10-10】民乐《茉莉花》五声音阶(宫商角徵羽, 无 fa-si)</div>
+
+<div style="background:#fffbe6;border-left:4px solid #f5a623;padding:10px;margin:12px 0;font-size:14px">📅 2026-10-11 升级 · 【调性+2026-10-11】C 大调无升降号，是初学读谱的"无调号"起点</div>
+
+<div style="background:#fffbe6;border-left:4px solid #f5a623;padding:10px;margin:12px 0;font-size:14px">📅 2026-10-12 升级 · 【欣赏+2026-10-12》《梁祝》小提琴协奏曲：爱情悲剧主题，回旋曲式</div>
+
+<div style="background:#fffbe6;border-left:4px solid #f5a623;padding:10px;margin:12px 0;font-size:14px">📅 2026-10-13 升级 · 【欣赏+2026-10-13》《梁祝》小提琴协奏曲：爱情悲剧主题，回旋曲式</div>
+
+<div style="background:#fffbe6;border-left:4px solid #f5a623;padding:10px;margin:12px 0;font-size:14px">📅 2026-10-14 升级 · 【欣赏+2026-10-14》《梁祝》小提琴协奏曲：爱情悲剧主题，回旋曲式</div>
+
+<div style="background:#fffbe6;border-left:4px solid #f5a623;padding:10px;margin:12px 0;font-size:14px">📅 2026-10-15 升级 · 【乐史+2026-10-15】肖邦(夜曲/圆舞曲)、李斯特(匈牙利狂想曲)都属浪漫主义</div>
+
+<div style="background:#fffbe6;border-left:4px solid #f5a623;padding:10px;margin:12px 0;font-size:14px">📅 2026-10-16 升级 · 【乐理+2026-10-16】大调音程: 全全半全全全半；自然小调: 全半全全半全全</div>
+
+<div style="background:#fffbe6;border-left:4px solid #f5a623;padding:10px;margin:12px 0;font-size:14px">📅 2026-10-17 升级 · 【欣赏+2026-10-17】古典曲式最常见"呈示部-展开部-再现部"(奏鸣曲式)</div>
+
+<div style="background:#fffbe6;border-left:4px solid #f5a623;padding:10px;margin:12px 0;font-size:14px">📅 2026-10-18 升级 · 【音程+2026-10-18】八度=12个半音，纯五度=7个半音；八度最协和</div>
+
+<div style="background:#fffbe6;border-left:4px solid #f5a623;padding:10px;margin:12px 0;font-size:14px">📅 2026-10-19 升级 · 【记谱+2026-10-19】五线谱：线上/间自上而下 5b4 3b2 1b；高音谱号 G 线</div>
+
+<div style="background:#fffbe6;border-left:4px solid #f5a623;padding:10px;margin:12px 0;font-size:14px">📅 2026-10-20 升级 · 【乐史+2026-10-20】贝多芬第九交响曲第四乐章=《欢乐颂》(席勒诗)</div>
+
+<div style="background:#fffbe6;border-left:4px solid #f5a623;padding:10px;margin:12px 0;font-size:14px">📅 2026-10-21 升级 · 【欣赏+2026-10-21》《梁祝》小提琴协奏曲：爱情悲剧主题，回旋曲式</div>
+
+<div style="background:#fffbe6;border-left:4px solid #f5a623;padding:10px;margin:12px 0;font-size:14px">📅 2026-10-22 升级 · 【欣赏+2026-10-22》《梁祝》小提琴协奏曲：爱情悲剧主题，回旋曲式</div>
+
+<div style="background:#fffbe6;border-left:4px solid #f5a623;padding:10px;margin:12px 0;font-size:14px">📅 2026-10-23 升级 · 【欣赏+2026-10-23》《梁祝》小提琴协奏曲：爱情悲剧主题，回旋曲式</div>
+
+<div style="background:#fffbe6;border-left:4px solid #f5a623;padding:10px;margin:12px 0;font-size:14px">📅 2026-10-24 升级 · 【欣赏+2026-10-24》《梁祝》小提琴协奏曲：爱情悲剧主题，回旋曲式</div>
+
+<div style="background:#fffbe6;border-left:4px solid #f5a623;padding:10px;margin:12px 0;font-size:14px">📅 2026-10-25 升级 · 【欣赏+2026-10-25》《梁祝》小提琴协奏曲：爱情悲剧主题，回旋曲式</div>
+
+<div style="background:#fffbe6;border-left:4px solid #f5a623;padding:10px;margin:12px 0;font-size:14px">📅 2026-10-26 升级 · 【欣赏+2026-10-26》《梁祝》小提琴协奏曲：爱情悲剧主题，回旋曲式</div>
+
+<div style="background:#fffbe6;border-left:4px solid #f5a623;padding:10px;margin:12px 0;font-size:14px">📅 2026-10-27 升级 · 【欣赏+2026-10-27》《梁祝》小提琴协奏曲：爱情悲剧主题，回旋曲式</div>
+
+<div style="background:#fffbe6;border-left:4px solid #f5a623;padding:10px;margin:12px 0;font-size:14px">📅 2026-11-02 升级 · 【欣赏+2026-11-02》《梁祝》小提琴协奏曲：爱情悲剧主题，回旋曲式</div>
+
+<div style="background:#fffbe6;border-left:4px solid #f5a623;padding:10px;margin:12px 0;font-size:14px">📅 2026-11-03 升级 · 【欣赏+2026-11-03》《梁祝》小提琴协奏曲：爱情悲剧主题，回旋曲式</div>
+
+<div style="background:#fffbe6;border-left:4px solid #f5a623;padding:10px;margin:12px 0;font-size:14px">📅 2026-11-04 升级 · 【欣赏+2026-11-04》《梁祝》小提琴协奏曲：爱情悲剧主题，回旋曲式</div>
+
+<div style="background:#fffbe6;border-left:4px solid #f5a623;padding:10px;margin:12px 0;font-size:14px">📅 2026-11-05 升级 · 【欣赏+2026-11-05》《梁祝》小提琴协奏曲：爱情悲剧主题，回旋曲式</div>
+
+<div style="background:#fffbe6;border-left:4px solid #f5a623;padding:10px;margin:12px 0;font-size:14px">📅 2026-11-06 升级 · 【欣赏+2026-11-06》《梁祝》小提琴协奏曲：爱情悲剧主题，回旋曲式</div>
+
+<div style="background:#fffbe6;border-left:4px solid #f5a623;padding:10px;margin:12px 0;font-size:14px">📅 2026-11-12 升级 · 【乐理+2026-11-12】和声：I-IV-V-I 属大调最常用进行；V7(属七)解决到 I 张力最大</div>
+
+<div style="background:#fffbe6;border-left:4px solid #f5a623;padding:10px;margin:12px 0;font-size:14px">📅 2026-11-12 升级 · 【欣赏+2026-11-12】贝多芬《月光奏鸣曲》=C♯小调第14号钢琴奏鸣曲op.27-2；"月光"雅称源于1838年评论以第一乐章喻月夜湖光</div>
+
+<div style="background:#fffbe6;border-left:4px solid #f5a623;padding:10px;margin:12px 0;font-size:14px">📅 2026-11-13 升级 · 【乐理+2026-11-13】等音=音高相同记谱不同(C♯=D♭)；等音调=同一调的不同记号</div>
+
+<div style="background:#fffbe6;border-left:4px solid #f5a623;padding:10px;margin:12px 0;font-size:14px">📅 2026-11-14 升级 · 【欣赏+2026-11-14】德沃夏克《第九自新大陆》：写于美国，引捷克民谣调性</div>
+
+<div style="background:#fffbe6;border-left:4px solid #f5a623;padding:10px;margin:12px 0;font-size:14px">📅 2026-11-15 升级 · 【乐理+2026-11-15】节拍强弱：4/4 拍强-次强-弱-次强；切分=重音移位制造律动感</div>
+
+<div style="background:#fffbe6;border-left:4px solid #f5a623;padding:10px;margin:12px 0;font-size:14px">📅 2026-11-16 升级 · 【聆听+2026-11-16】《梁祝》小提琴协奏曲：陈钢/何占豪作曲、徐丽珍配词，单乐章叙事(中国影视化协奏曲代表作)</div>
+
+<div style="background:#fffbe6;border-left:4px solid #f5a623;padding:10px;margin:12px 0;font-size:14px">📅 2026-11-17 升级 · 【乐理+2026-11-17】对位法：多声部独立旋律同时进行(巴洛克赋格核心技法)</div>
+
+<div style="background:#fffbe6;border-left:4px solid #f5a623;padding:10px;margin:12px 0;font-size:14px">📅 2026-11-18 升级 · 【欣赏+2026-11-18】肖邦夜曲=独奏钢琴体裁(钢琴诗人)，代表作 op.9 之 2(A♭大调)</div>
+
+<div style="background:#fffbe6;border-left:4px solid #f5a623;padding:10px;margin:12px 0;font-size:14px">📅 2026-11-19 升级 · 【乐理+2026-11-19】五线谱每线每间=一个音；中央 C(C4) 在上加一线下方</div>
+
+<div style="background:#fffbe6;border-left:4px solid #f5a623;padding:10px;margin:12px 0;font-size:14px">📅 2026-11-20 升级 · 【聆听+2026-11-20】《蓝色多瑙河》小圆舞曲(约翰·施特劳斯)，被誉为「奥国第二国歌」</div>
+
+<div style="background:#fffbe6;border-left:4px solid #f5a623;padding:10px;margin:12px 0;font-size:14px">📅 2026-11-21 升级 · 【乐理+2026-11-21】音程：纯五度=7 半音；大三度=4 半音(大调明亮、小调阴郁)</div>
+
+<div style="background:#fffbe6;border-left:4px solid #f5a623;padding:10px;margin:12px 0;font-size:14px">📅 2026-11-22 升级 · 【欣赏+2026-11-22】马勒《第五交响曲》第四乐章=庄严变奏曲，「死亡之舞」素材</div>
+
+<div style="background:#fffbe6;border-left:4px solid #f5a623;padding:10px;margin:12px 0;font-size:14px">📅 2026-11-23 升级 · 【欣赏+2026-11-23》《梁祝》小提琴协奏曲：爱情悲剧主题，回旋曲式</div>
+
+<div style="background:#fffbe6;border-left:4px solid #f5a623;padding:10px;margin:12px 0;font-size:14px">📅 2026-11-24 升级 · 【欣赏+2026-11-24》《梁祝》小提琴协奏曲：爱情悲剧主题，回旋曲式</div>
+
+<div style="background:#fffbe6;border-left:4px solid #f5a623;padding:10px;margin:12px 0;font-size:14px">📅 2026-11-25 升级 · 【欣赏+2026-11-25》《梁祝》小提琴协奏曲：爱情悲剧主题，回旋曲式</div>
+</footer>
+
+<script>
+document.querySelectorAll("nav button").forEach(b=>b.onclick=()=>{
+  document.querySelectorAll("nav button").forEach(x=>x.classList.remove("on"));
+  document.querySelectorAll("section").forEach(x=>x.classList.remove("on"));
+  b.classList.add("on");document.getElementById(b.dataset.t).classList.add("on");
+});
+const K=[
+ ["小学","音乐要素(音高/节奏/强弱) · 聆听与演唱 · 乐器初识 · 节奏模仿 · 律动体验"],
+ ["初中","简谱与五线谱 · 乐理基础(音程/三和弦/调式) · 欣赏(中外名曲) · 表演(歌唱) · 曲式初步"],
+ ["高中","和声学 · 曲式分析(ABA/ABCB/奏鸣) · 音乐史(古典/浪漫/现代) · 视唱练耳 · 作曲基础"],
+ ["考试","音乐鉴赏题 · 谱面识读 · 视唱(音程/节奏) · 创作(短旋律) · 和弦辨认"],
+];
+document.getElementById("knowGrid").innerHTML=K.map(s=>`<div class="card"><h3>${s[0]}</h3><ul>${s[1].split(" · ").map(x=>`<li>${x}</li>`).join("")}</ul></div>`).join("");
+
+/* 钢琴: WebAudio 生成近似音高(离线, 不依赖音频文件) */
+const NOTE_FREQ={C:261.63,D:293.66,E:329.63,F:349.23,G:392.00,A:440.00,B:493.88,
+ "C#":277.18,"D#":311.13,"F#":369.99,"G#":415.30,"A#":466.16};
+let actx=null;
+function ensureCtx(){if(!actx)actx=new (window.AudioContext||window.webkitAudioContext)();return actx}
+function beep(n,dur){
+ const ctx=ensureCtx();
+ const o=ctx.createOscillator();const g=ctx.createGain();
+ o.type="sine";o.frequency.value=NOTE_FREQ[n];
+ o.connect(g);g.connect(ctx.destination);
+ o.start();g.gain.setValueAtTime(0.35,ctx.currentTime);
+ g.gain.exponentialRampToValueAtTime(0.001,ctx.currentTime+dur);
+ o.stop(ctx.currentTime+dur);
+}
+function chordBeep(arr,dur){
+ const ctx=ensureCtx();
+ arr.forEach(n=>{
+  const o=ctx.createOscillator();const g=ctx.createGain();
+  o.type="sine";o.frequency.value=NOTE_FREQ[n];
+  o.connect(g);g.connect(ctx.destination);
+  o.start();g.gain.setValueAtTime(0.2,ctx.currentTime);
+  g.gain.exponentialRampToValueAtTime(0.001,ctx.currentTime+dur);
+  o.stop(ctx.currentTime+dur);
+ });
+}
+/* 白键 2 个八度 C-C, 黑键插在正确位置 */
+const whites=["C","D","E","F","G","A","B","C","D","E","F","G","A","B","C"];
+const blacks=["C#","D#","F#","G#","A#"];
+const pbox=document.getElementById("pianoBox");
+whites.forEach((n,i)=>{
+ const d=document.createElement("div");d.className="w";d.textContent=n;
+ d.onclick=()=>beep(n,0.4);
+ pbox.appendChild(d);
+ if(blacks[i] && i<4){
+  const b=document.createElement("div");b.className="b";b.textContent=blacks[i];
+  b.onclick=()=>beep(blacks[i],0.4);
+  pbox.appendChild(b);
+ }
+});
+/* 第二八度黑键(位置略简化, 实际 5 个黑键, 此处演示用) */
+(function(){
+ const second=["C#","D#","F#","G#","A#"];
+ second.forEach(n=>{
+  const b=document.createElement("div");b.className="b";b.textContent=n+"₂";
+  b.onclick=()=>beep(n,0.4);
+  pbox.appendChild(b);
+ });
+})();
+function playScale(){
+ const seq=["C","D","E","F","G","A","B","C"];
+ seq.forEach((n,i)=>setTimeout(()=>beep(n,0.5),i*400));
+}
+function randScale(){
+ const t=document.getElementById("st").value;
+ const major=["C","D","E","F","G","A","B","C"];
+ const minor=["A","B","C","D","E","F","G","A"];
+ const mixo=["C","D","E","F","G","A","Bb","C"];
+ const seq=t==="major"?major:t==="minor"?minor:mixo;
+ seq.forEach((n,i)=>setTimeout(()=>beep(n,0.45),i*380));
+ const names={major:"C 大调",minor:"A 小调",mixo:"C 混合利底亚"};
+ document.getElementById("sOut").textContent="已生成 "+names[t]+" 音阶, 听完后判断调式。混合利底亚: 自然大调 b7, 地中海/蓝调风格。";
+}
+
+/* 和弦听辨 */
+const CHORDS=[
+ {name:"C 大三",notes:["C","E","G"],type:"大"},
+ {name:"F 大三",notes:["F","A","C"],type:"大"},
+ {name:"G 大三",notes:["G","B","D"],type:"大"},
+ {name:"D 大三",notes:["D","F#","A"],type:"大"},
+ {name:"A 小三",notes:["A","C","E"],type:"小"},
+ {name:"E 小三",notes:["E","G","B"],type:"小"},
+ {name:"Bm 小三",notes:["B","D","F#"],type:"小"},
+ {name:"F#m 小三",notes:["F#","A","C#"],type:"小"},
+];
+const cGrid=document.getElementById("chordGrid");
+CHORDS.forEach((c,i)=>{
+ const d=document.createElement("div");d.className="chord-card";d.id="cc"+i;
+ d.innerHTML=`<h4>${c.name}</h4><p>${c.notes.join(" + ")} · ${c.type}三</p>`;
+ d.onclick=()=>{chordBeep(c.notes,1.2);d.classList.add("chord-active");setTimeout(()=>d.classList.remove("chord-active"),1500);};
+ cGrid.appendChild(d);
+});
+function chordQuiz(){
+ const c=CHORDS[Math.floor(Math.random()*CHORDS.length)];
+ chordBeep(c.notes,1.5);
+ document.getElementById("chordOut").textContent="🎵 盲听: 这是一个大三和弦还是小三和弦? (提示: 大三度=4半音, 小三度=3半音; 大三亮, 小三暗)";
+ setTimeout(()=>{
+  document.getElementById("chordOut").textContent=`答案: ${c.name} (${c.type}三和弦) · 根音 ${c.notes[0]} · ${c.notes.join(" + ")}`;
+ },2000);
+}
+
+/* 节拍器: 4/4, 每拍 500ms */
+let beatInt=null;
+function beat(){
+ if(beatInt)return;
+ document.getElementById("bOut").textContent="节拍器运行中 (4/4, 120bpm)";
+ let c=0;
+ beatInt=setInterval(()=>{
+  beep(["C","G","C","E"][c%4],0.25);
+  c++;
+ },500);
+}
+function stopBeat(){clearInterval(beatInt);beatInt=null;document.getElementById("bOut").textContent="节拍器已停止";}
+
+/* 节奏型卡片 */
+const RHYTHMS=[
+ {name:"四分音符 ×4",pattern:[500,500,500,500],desc:"1 2 3 4 · 每拍一个音"},
+ {name:"八分音符 ×8",pattern:[250,250,250,250,250,250,250,250],desc:"1e 2e 3e 4e · 每拍两个音"},
+ {name:"十六分音符 ×16",pattern:[125,125,125,125,125,125,125,125,125,125,125,125,125,125,125,125],desc:"1e&a 2e&a 3e&a 4e&a · 每拍四个音"},
+ {name:"附点四分+八分",pattern:[750,250,500,500],desc:"1 ·  1 | 2 ·  2"},
+];
+const rEx=document.getElementById("rhythmEx");
+RHYTHMS.forEach((r,i)=>{
+ const d=document.createElement("div");d.className="box";
+ d.innerHTML=`<h4>${r.name}</h4><p style="font-size:13px;color:#666">${r.desc}</p>
+ <button class="btn" style="margin-top:8px" onclick="playRhythm(${i})">听节奏</button>`;
+ rEx.appendChild(d);
+});
+function playRhythm(i){
+ const pats=["beep","beep","beep","beep"];
+ const r=RHYTHMS[i];
+ let t=0;const ctx=ensureCtx();
+ r.pattern.forEach(ms=>{
+  const o=ctx.createOscillator();const g=ctx.createGain();
+  o.type="square";o.frequency.value=60;
+  o.connect(g);g.connect(ctx.destination);
+  const startT=ctx.currentTime+t/1000;
+  g.gain.setValueAtTime(0.5,startT);
+  g.gain.exponentialRampToValueAtTime(0.01,startT+Math.min(ms*0.3,80)/1000);
+  o.start(startT);o.stop(startT+ms/1000);
+  t+=ms;
+ });
+ document.getElementById("bOut").textContent="▶ 正在播放节奏型: "+r.name;
+}
+
+/* 曲式判断 */
+const FORMS=[
+ {name:"ABA (三段式)",bars:["A","B","A"],desc:"主部-对比部-主部再现, 如摇篮曲、部分小步舞曲。听辨点: 首尾同, 中间异。"},
+ {name:"ABCB (带尾声)",bars:["A","B","C","B"],desc:"主-副-发展-副再现, 如部分浪漫派小品。听辨点: B 段出现两次。"},
+ {name:"AA'BB' (二部体)",bars:["A","A","B","B"],desc:"两段, 各重复一遍, 如小星星、多数儿歌。听辨点: 四块, 两两相同。"},
+ {name:"ABA (回旋)",bars:["A","B","A"],desc:"与三段式同型, 但 B 更短, A 占比更大, 常见于回旋曲。"},
+];
+const fSec=document.getElementById("formSec");
+FORMS.forEach((f,i)=>{
+ const d=document.createElement("div");d.style.cssText="border-bottom:1px solid var(--line);padding:10px 0";
+ d.innerHTML=`<h3 style="color:var(--accent);font-size:15px;margin-bottom:4px">${f.name} <span style="font-size:13px;color:#888;font-weight:normal">${f.desc}</span></h3>
+ <div class="bars">${f.bars.map(b=>`<div class="bar">${b}</div>`).join("")}</div>
+ <button class="btn" style="margin-top:6px" onclick="playForm(${i})">听简化动机</button>`;
+ fSec.appendChild(d);
+});
+function playForm(i){
+ const forms=[["C","E","G","C","G","E","C"],["C","E","G","F","A","C","F","A","C"],["C","E","G","C","C","E","G","C","F","A","C","F"]];
+ const seq=forms[i]||forms[0];
+ seq.forEach((n,j)=>setTimeout(()=>beep(n,0.45),j*350));
+ document.getElementById("formOut").textContent="▶ 正在播放简化动机: "+FORMS[i].name+" · 听完后尝试判断结构, 与上方方块图对照。";
+}
+</script>
+
+<div id="agent-panel" style="margin:20px auto;max-width:720px;border:2px solid #4a90d9;border-radius:12px;padding:16px;background:#f7fbff;font-family:system-ui">
+  <h3 style="margin:0 0 8px;color:#2c5d8f">🤖 音律工坊·AI音乐专家团 · 智能体问答（本地题库模式）</h3>
+  <p style="font-size:13px;color:#555;margin:0 0 10px">本地题库模式（离线·零外链）：关键词匹配本站本地题库作答。在线 AI 问答待李老师定 key 策略后统一开通。</p>
+  <div style="display:flex;flex-wrap:wrap;gap:8px;margin-bottom:10px"><button style="padding:6px 10px;border-radius:8px;border:1px solid #888;background:#fff;color:#333;cursor:pointer;font-size:12px" onclick="agentAsk('大调/小调音阶全半音')">大调/小调音阶全半音</button><button style="padding:6px 10px;border-radius:8px;border:1px solid #888;background:#fff;color:#333;cursor:pointer;font-size:12px" onclick="agentAsk('莫扎特变奏曲式解析')">莫扎特变奏曲式解析</button><button style="padding:6px 10px;border-radius:8px;border:1px solid #888;background:#fff;color:#333;cursor:pointer;font-size:12px" onclick="agentAsk('一段乐谱视唱')">一段乐谱视唱</button>
+    <button style="padding:6px 12px;border-radius:8px;border:1px solid #4a90d9;background:#4a90d9;color:#fff;cursor:pointer" onclick="agentAsk('')">问 音律工坊·AI音乐专家团</button>
+  </div>
+  <textarea id="agent-q" placeholder="输入问题，匹配 音律工坊·AI音乐专家团 本地题库..." style="width:100%;height:60px;padding:8px;border:1px solid #ccc;border-radius:8px;font-size:14px;box-sizing:border-box"></textarea>
+  <button style="margin-top:8px;padding:8px 16px;border-radius:8px;border:none;background:#2c8a3d;color:#fff;cursor:pointer;font-size:14px" onclick="agentAsk(document.getElementById('agent-q').value)">匹配本地题库</button>
+  <div id="agent-a" style="margin-top:12px;padding:12px;background:#fff;border-left:4px solid #2c8a3d;border-radius:6px;font-size:14px;min-height:40px;white-space:pre-wrap;color:#333">（等待回答）</div>
+  <script>
+  // 本地题库模式: 离线·零外链·无 key。在线(key 注入)待李老师定 key 策略后统一切, 此处 AGENT_MODE 为切换点。
+  var AGENT_MODE="local";
+  var AGENT_KB=(typeof window.AGENT_KB==="object"&&window.AGENT_KB)?window.AGENT_KB:[];
+  var LOCAL_TIPS=["音阶先找主音再数全/半音; 曲式先分段落(引子/主题/尾声)。", "旋律记忆先分句找重复动机, 配合节奏拍手。"];
+  function _kbTokens(q){
+    var t=[];
+    (q.toLowerCase().match(/[a-z0-9]+/g)||[]).forEach(function(x){t.push(x);});
+    q.replace(/[^\u4e00-\u9fff]/g,'').split('').forEach(function(c){t.push(c);});
+    return t;
+  }
+  function agentAsk(q){
+    if(!q)q=document.getElementById('agent-q').value;
+    if(!q){document.getElementById('agent-a').textContent='请输入问题';return;}
+    document.getElementById('agent-q').value=q;
+    var a=document.getElementById('agent-a');
+    var uniq=Array.from(new Set(_kbTokens(q)));
+    var hits=AGENT_KB.map(function(it){
+      var hay=((it.q||"")+" "+(it.a||"")).toLowerCase();
+      var n=uniq.filter(function(t){return hay.indexOf(t)>-1;}).length;
+      return {s:n,it:it};
+    }).filter(function(x){return x.s>=Math.min(uniq.length,2);}).sort(function(x,y){return y.s-x.s;}).slice(0,3);
+    if(hits.length){
+      a.textContent="\u{1F4D6} 本地题库 · 离线（音律工坊·AI音乐专家团 本地条目）\n\n"+hits.map(function(h){return "Q: "+h.it.q+"\nA: "+h.it.a;}).join("\n\n")+"\n\n（在线 AI 问答待李老师定 key 策略后开通）";
+    } else {
+      a.textContent="\u26A0\uFE0F 本地题库模式（离线）：未匹配到本地条目。在线 AI 问答待李老师定 key 策略后开通。\n学习提示：\n- "+LOCAL_TIPS.join("\n- ")+"\n并见站内【题库/知识】模块。";
+    }
+  }
+  </script>
+</div>
+</body>
+</html>

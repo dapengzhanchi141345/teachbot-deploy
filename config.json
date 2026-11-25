@@ -1,0 +1,7 @@
+{
+ "api_base": "https://api.agnes-ai.cn/v1",
+ "api_key": "",
+ "model": "agnes-3.0-flash",
+ "port": 8377,
+ "note": "api_key留空=仓库版。启用AI：在本目录建key.txt(一行粘贴你的sk-...key)后重跑 bash run.sh；或直接编辑config.json填api_key"
+}

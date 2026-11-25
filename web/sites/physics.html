@@ -1,0 +1,285 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>格物君·物理专家团 — 全学段物理系统</title>
+<style>
+:root{--bg:#f2f6fa;--card:#fff;--ink:#122438;--accent:#1a4f8f;--accent2:#0e8ba3;--soft:#e2edf7;--ok:#16a34a;--bad:#dc2626;--line:#d5e2ef}
+*{margin:0;box-sizing:border-box}
+body{font-family:"Segoe UI","Microsoft YaHei",sans-serif;background:var(--bg);color:var(--ink);line-height:1.7}
+header{background:linear-gradient(120deg,#0f3460,#0e8ba3);color:#fff;padding:26px 30px}
+header h1{font-size:26px}
+header p{opacity:.9;font-size:14px;margin-top:6px}
+nav{display:flex;gap:8px;flex-wrap:wrap;padding:12px 30px;background:var(--card);border-bottom:1px solid var(--line);position:sticky;top:0;z-index:5}
+nav button{border:1px solid var(--line);background:#fff;padding:8px 14px;border-radius:8px;cursor:pointer;font-size:14px}
+nav button.on{background:var(--accent);color:#fff;border-color:var(--accent)}
+section{display:none;padding:24px 30px;max-width:1000px;margin:0 auto}
+section.on{display:block}
+h2{color:var(--accent);margin:6px 0 14px;font-size:20px}
+.grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(220px,1fr));gap:12px}
+.card{background:var(--card);border:1px solid var(--line);border-radius:10px;padding:14px}
+.card h3{font-size:15px;color:var(--accent2);margin-bottom:6px}
+.card ul{padding-left:18px;font-size:14px}
+.btn{background:var(--accent);color:#fff;border:none;padding:8px 14px;border-radius:8px;cursor:pointer;font-size:14px;margin:4px}
+input,select{padding:8px;border:1px solid var(--line);border-radius:8px;font-size:14px}
+.out{margin-top:12px;padding:12px;background:var(--soft);border-radius:8px;min-height:40px;font-size:15px}
+.tag{display:inline-block;background:var(--soft);color:var(--accent);padding:2px 8px;border-radius:20px;font-size:12px;margin:2px}
+.note{background:#fff7e6;border:1px solid #ffd580;border-radius:8px;padding:12px;font-size:14px;margin:10px 0}
+canvas{border:1px solid var(--line);background:#0f3460;border-radius:8px;margin:10px 0}
+footer{text-align:center;padding:20px;color:#888;font-size:13px;margin-top:30px;border-top:1px solid var(--line)}
+</style>
+</head>
+<body>
+<header>
+<h1>格物君 · 物理专家团</h1>
+<p>全学段物理系统 · 初中→高中→竞赛 · 力学/电磁/光学/热学 · 公式计算器 · 受力分析画板 · 电路模拟 · 双击即用(离线单文件)</p>
+</header>
+<nav>
+<button class="on" data-t="know">知识体系</button>
+<button data-t="calc">公式计算器</button>
+<button data-t="force">受力分析</button>
+<button data-t="circuit">电路模拟</button>
+<button data-t="exp">实验探究</button>
+</nav>
+
+<section id="know" class="on">
+<h2>全学段知识体系</h2>
+<div class="note">按模块点卡片看核心考点; 力学用「公式计算器」, 电学用「电路模拟」。</div>
+<div class="grid" id="knowGrid"></div>
+</section>
+
+<section id="calc">
+<h2>物理公式计算器</h2>
+<select id="fType" onchange="calcF()">
+ <option value="s">运动学: s = v₀t + ½at²</option>
+ <option value="v">速度: v = v₀ + at</option>
+ <option value="F">牛顿第二: F = ma</option>
+ <option value="E">动能: E = ½mv²</option>
+ <option value="W">功: W = F·s·cosθ</option>
+ <option value="P">功率: P = Fv</option>
+ <option value="U">欧姆: U = IR</option>
+ <option value="Q">电热: Q = I²Rt</option>
+ <option value="g">重力: G = mg</option>
+ <option value="cent">向心力: F = mv²/r = mω²r</option>
+ <option value="grav">万有引力: F = GMm/r²</option>
+ <option value="EP">引力势能: Ep = -GMm/r</option>
+ <option value="T">单摆周期: T = 2π√(L/g)</option>
+</select>
+<input id="a" value="1" style="width:70px"> <input id="b" value="2" style="width:70px"> <input id="c" value="3" style="width:70px">
+<button class="btn" onclick="calcF()">计算</button>
+<div class="out" id="fOut"></div>
+</section>
+
+<section id="force">
+<h2>受力分析画板(拖画力矢量)</h2>
+<p>在画板上按住拖动画出物体受力, 松手显示力的大小(按拖拽距离估), 支持加多个力。</p>
+<canvas id="cvs" width="500" height="300"></canvas>
+<button class="btn" onclick="clearF()">清空</button> <button class="btn" onclick="sumF()">求合力</button>
+<div class="out" id="fSum"></div>
+</section>
+
+<section id="circuit">
+<h2>电路模拟(串并联 + 欧姆定律)</h2>
+<p>电动势 E = <input id="E" value="12" style="width:60px"> V, 内阻 r = <input id="r" value="1" style="width:60px"> Ω</p>
+<p>外电阻 R = <input id="R" value="3" style="width:60px"> Ω</p>
+<button class="btn" onclick="cir()">计算</button>
+<div class="out" id="cOut"></div>
+</section>
+
+<section id="exp">
+<h2>实验探究(高频实验)</h2>
+<div class="grid" id="eGrid"></div>
+</section>
+
+<footer>李彦明 15684394135 · 格物君·物理专家团 · 离线单文件 · 每日升级
+<div style="background:#fffbe6;border-left:4px solid #f5a623;padding:10px;margin:12px 0;font-size:14px">📅 2026-10-07 升级 · 【公式计算器+4】向心力 F=mv²/r / 万有引力 F=GMm/r² / 引力势能 Ep=-GMm/r / 单摆周期 T=2π√(L/g), 物理独立站认领维护(双署: 格物君·格实验 × hermes调度)</div>
+<div style="background:#fffbe6;border-left:4px solid #f5a623;padding:10px;margin:12px 0;font-size:14px">【公式+2026-10-05】向心力 F = mv²/r = mω²r (方向指向圆心, 不是一种新的力)</div>
+
+<div style="background:#fffbe6;border-left:4px solid #f5a623;padding:10px;margin:12px 0;font-size:14px">📅 2026-10-09 升级 · 【公式+2026-10-09】电容器 C=Q/U；平行板电容 C∝ε·S/d</div>
+
+<div style="background:#fffbe6;border-left:4px solid #f5a623;padding:10px;margin:12px 0;font-size:14px">📅 2026-10-09 升级 · 【实验+2026-10-09】打点计时器逐差法求加速度 a=(x4+x5+x6-x1-x2-x3)/9T²</div>
+
+<div style="background:#fffbe6;border-left:4px solid #f5a623;padding:10px;margin:12px 0;font-size:14px">📅 2026-10-09 升级 · 【公式+2026-10-09】动量 p=mv；动量定理 Ft=Δp (冲量=动量变化量)</div>
+
+<div style="background:#fffbe6;border-left:4px solid #f5a623;padding:10px;margin:12px 0;font-size:14px">📅 2026-10-10 升级 · 【光学+2026-10-10】折射 n=sin i/sin r；全反射临界角 sin C=1/n</div>
+
+<div style="background:#fffbe6;border-left:4px solid #f5a623;padding:10px;margin:12px 0;font-size:14px">📅 2026-10-11 升级 · 【公式+2026-10-11】平抛 x=v0·t, y=½gt²；落地时间只由高度决定</div>
+
+<div style="background:#fffbe6;border-left:4px solid #f5a623;padding:10px;margin:12px 0;font-size:14px">📅 2026-10-12 升级 · 【实验+2026-10-12】验证牛顿第二定律：小车质量 M 远大于砝码 m，F≈mg 才成立</div>
+
+<div style="background:#fffbe6;border-left:4px solid #f5a623;padding:10px;margin:12px 0;font-size:14px">📅 2026-10-13 升级 · 【公式+2026-10-13】交流电 e=E·sin(ωt+φ)，ω=2πf=2π/T，频率变周期也变</div>
+
+<div style="background:#fffbe6;border-left:4px solid #f5a623;padding:10px;margin:12px 0;font-size:14px">📅 2026-10-14 升级 · 【公式+2026-10-14】动能 Ek=½mv²；势能 Ep=mgh；机械能守恒 Ek1+Ep1=Ek2+Ep2</div>
+
+<div style="background:#fffbe6;border-left:4px solid #f5a623;padding:10px;margin:12px 0;font-size:14px">📅 2026-10-15 升级 · 【实验+2026-10-15】伏安法测电阻：大电阻内接(测得偏大)/小电阻外接(测得偏小)</div>
+
+<div style="background:#fffbe6;border-left:4px solid #f5a623;padding:10px;margin:12px 0;font-size:14px">📅 2026-10-16 升级 · 【公式+2026-10-16】功 W=Fs·cosθ；功率 P=W/t，匀速时 P=Fv</div>
+
+<div style="background:#fffbe6;border-left:4px solid #f5a623;padding:10px;margin:12px 0;font-size:14px">📅 2026-10-17 升级 · 【力学+2026-10-17】超重=加速度向上(N>mg)；失重=加速度向下(N<mg)；完全失重 a=g</div>
+
+<div style="background:#fffbe6;border-left:4px solid #f5a623;padding:10px;margin:12px 0;font-size:14px">📅 2026-10-18 升级 · 【电学+2026-10-18】串联分压、并联分流；欧姆定律 I=U/R 只对定值电阻成立</div>
+
+<div style="background:#fffbe6;border-left:4px solid #f5a623;padding:10px;margin:12px 0;font-size:14px">📅 2026-10-20 升级 · 【公式+2026-10-20】向心力 F=mv²/r=ω²mr；卫星 g=GM/r²，轨道越高速度越小</div>
+
+<div style="background:#fffbe6;border-left:4px solid #f5a623;padding:10px;margin:12px 0;font-size:14px">📅 2026-10-21 升级 · 【公式+2026-10-21】库仑力 F=kQq/r²；场强 E=F/q=kQ/r²，点电荷场强只与源电荷有关</div>
+
+<div style="background:#fffbe6;border-left:4px solid #f5a623;padding:10px;margin:12px 0;font-size:14px">📅 2026-10-22 升级 · 【力学+2026-10-22】斜面分解：沿斜面 mg·sinθ 下滑、垂直 mg·cosθ 压紧，θ 越大越易滑</div>
+
+<div style="background:#fffbe6;border-left:4px solid #f5a623;padding:10px;margin:12px 0;font-size:14px">📅 2026-10-23 升级 · 【光学+2026-10-23】光的色散：棱镜中紫偏折大(折射率大)、红偏折小；白光分光得七色</div>
+
+<div style="background:#fffbe6;border-left:4px solid #f5a623;padding:10px;margin:12px 0;font-size:14px">📅 2026-10-24 升级 · 【热学+2026-10-24】气体实验定律：玻意耳 pV=恒(C)、查理 p/T=恒(V)、盖-吕萨克 V/T=恒(p)</div>
+
+<div style="background:#fffbe6;border-left:4px solid #f5a623;padding:10px;margin:12px 0;font-size:14px">📅 2026-10-25 升级 · 【公式+2026-10-25】电场力做功 W=qU；电势能 Ep=qφ，正电荷在电势高处电势能大</div>
+
+<div style="background:#fffbe6;border-left:4px solid #f5a623;padding:10px;margin:12px 0;font-size:14px">📅 2026-10-26 升级 · 【力学+2026-10-26】连接体：先整体求加速、再隔离求内力；超重失重看加速度方向</div>
+
+<div style="background:#fffbe6;border-left:4px solid #f5a623;padding:10px;margin:12px 0;font-size:14px">📅 2026-10-27 升级 · 【电磁+2026-10-27】洛伦兹力 f=qvB，方向由左手定则(运动电荷)；对带电粒子不做功</div>
+
+<div style="background:#fffbe6;border-left:4px solid #f5a623;padding:10px;margin:12px 0;font-size:14px">📅 2026-11-02 升级 · 【公式+2026-11-02】动能定理：合外力做功=ΔEk，只关心初末状态，不关心过程</div>
+
+<div style="background:#fffbe6;border-left:4px solid #f5a623;padding:10px;margin:12px 0;font-size:14px">📅 2026-11-03 升级 · 【波动+2026-11-03】机械波传播需要介质；波速 v=λf 由介质决定，与频率无关</div>
+
+<div style="background:#fffbe6;border-left:4px solid #f5a623;padding:10px;margin:12px 0;font-size:14px">📅 2026-11-06 升级 · 【公式+2026-11-06】理想气体状态方程 pV=nRT；等温过程 p₁V₁=p₂V₂</div>
+
+<div style="background:#fffbe6;border-left:4px solid #f5a623;padding:10px;margin:12px 0;font-size:14px">📅 2026-11-12 升级 · 【力学+2026-11-12】静摩擦力不做功(无相对位移)；滑动摩擦力总阻碍相对滑动</div>
+
+<div style="background:#fffbe6;border-left:4px solid #f5a623;padding:10px;margin:12px 0;font-size:14px">📅 2026-11-12 升级 · 【电学+2026-11-12】电动势 E=W_非静/q；电动势是电源属性，与外电路无关</div>
+
+<div style="background:#fffbe6;border-left:4px solid #f5a623;padding:10px;margin:12px 0;font-size:14px">📅 2026-11-13 升级 · 【光学+2026-11-13】双缝干涉条纹间距 Δx=Ld/λ：波长越长条纹越宽</div>
+
+<div style="background:#fffbe6;border-left:4px solid #f5a623;padding:10px;margin:12px 0;font-size:14px">📅 2026-11-14 升级 · 【热学+2026-11-14】热力学第一定律 ΔU=W+Q；对气体做功 W>0、吸热 Q>0</div>
+
+<div style="background:#fffbe6;border-left:4px solid #f5a623;padding:10px;margin:12px 0;font-size:14px">📅 2026-11-15 升级 · 【力学+2026-11-15】银行公路 tanθ=v²/(rg)：设计速度下无需侧向摩擦</div>
+
+<div style="background:#fffbe6;border-left:4px solid #f5a623;padding:10px;margin:12px 0;font-size:14px">📅 2026-11-16 升级 · 【电学+2026-11-16】原电池负极氧化(出电子)、正极还原(进电子)</div>
+
+<div style="background:#fffbe6;border-left:4px solid #f5a623;padding:10px;margin:12px 0;font-size:14px">📅 2026-11-17 升级 · 【波动+2026-11-17】多普勒效应：波源靠近→接收频率升(音调变高)，远离→降</div>
+
+<div style="background:#fffbe6;border-left:4px solid #f5a623;padding:10px;margin:12px 0;font-size:14px">📅 2026-11-18 升级 · 【分子+2026-11-18】布朗运动：悬浮微粒无规则运动，反映液体分子热运动(粒越小越明显)</div>
+
+<div style="background:#fffbe6;border-left:4px solid #f5a623;padding:10px;margin:12px 0;font-size:14px">📅 2026-11-19 升级 · 【核+2026-11-19】质量亏损 Δm 与结合能 ΔE=Δmc²；比结合能越大核越稳定</div>
+
+<div style="background:#fffbe6;border-left:4px solid #f5a623;padding:10px;margin:12px 0;font-size:14px">📅 2026-11-20 升级 · 【力学+2026-11-20】万有引力提供向心力 GMm/r²=mv²/r：轨道越高周期越长</div>
+
+<div style="background:#fffbe6;border-left:4px solid #f5a623;padding:10px;margin:12px 0;font-size:14px">📅 2026-11-21 升级 · 【电学+2026-11-21】电流 I=q/t(平均)；金属导体载流子是电子，方向与电子运动相反</div>
+
+<div style="background:#fffbe6;border-left:4px solid #f5a623;padding:10px;margin:12px 0;font-size:14px">📅 2026-11-22 升级 · 【光学+2026-11-22】色散：折射率紫>红，紫偏折最大；光谱红橙黄绿蓝靛紫</div>
+
+<div style="background:#fffbe6;border-left:4px solid #f5a623;padding:10px;margin:12px 0;font-size:14px">📅 2026-11-23 升级 · 【热学+2026-11-23】热机与第二定律：热量不能自发从冷传向热而不补偿(克劳修斯)</div>
+
+<div style="background:#fffbe6;border-left:4px solid #f5a623;padding:10px;margin:12px 0;font-size:14px">📅 2026-11-24 升级 · 【力学+2026-11-24】弹性碰撞：等质量两球碰后交换速度；完全非弹性碰撞动量守恒但动能损失最大</div>
+
+<div style="background:#fffbe6;border-left:4px solid #f5a623;padding:10px;margin:12px 0;font-size:14px">📅 2026-11-25 升级 · 【电学+2026-11-25】自感：电流增大时自感电动势阻碍增大、减小时阻碍减小；电感 L 越大自感现象越显著</div>
+</footer>
+
+<script>
+document.querySelectorAll("nav button").forEach(b=>b.onclick=()=>{
+  document.querySelectorAll("nav button").forEach(x=>x.classList.remove("on"));
+  document.querySelectorAll("section").forEach(x=>x.classList.remove("on"));
+  b.classList.add("on");document.getElementById(b.dataset.t).classList.add("on");
+});
+const K=[
+ ["力学","质点运动 · 牛顿三定律 · 功和能 · 动量 · 万有引力 · 曲线运动 · 机械能守恒"],
+ ["电磁","静电场 · 恒定电流 · 磁场 · 电磁感应 · 交变电流 · 电路计算"],
+ ["光学","几何光学(折射/全反射) · 波动光学(干涉/衍射/偏振) · 光电效应"],
+ ["热学","气体定律 · 热力学第一定律 · 分子动理论 · 物态变化"],
+ ["实验","力学实验 · 电学实验 · 光电效应 · 碰撞 · 误差分析"],
+];
+document.getElementById("knowGrid").innerHTML=K.map(s=>`<div class="card"><h3>${s[0]}</h3><ul>${s[1].split(" · ").map(x=>`<li>${x}</li>`).join("")}</ul></div>`).join("");
+
+function calcF(){
+ const t=document.getElementById("fType").value;
+ const a=parseFloat(document.getElementById("a").value)||0;
+ const b=parseFloat(document.getElementById("b").value)||0;
+ const c=parseFloat(document.getElementById("c").value)||0;
+ let r;
+ switch(t){
+  case "s": r=`s = ${a}*${b} + 0.5*${c}*${b}^2 = ${(a*b+0.5*c*b*b).toFixed(2)} m`;break;
+  case "v": r=`v = ${a} + ${c}*${b} = ${(a+c*b).toFixed(2)} m/s`;break;
+  case "F": r=`F = ${a}*${b} = ${(a*b).toFixed(2)} N (m=${a}, a=${b})`;break;
+  case "E": r=`E = 0.5*${a}*${b}^2 = ${(0.5*a*b*b).toFixed(2)} J (m=${a}, v=${b})`;break;
+  case "W": r=`W = ${a}*${b}*cos(${c}°) = ${(a*b*Math.cos(c*Math.PI/180)).toFixed(2)} J`;break;
+  case "P": r=`P = ${a}*${b} = ${(a*b).toFixed(2)} W`;break;
+  case "U": r=`U = ${a}*${b} = ${(a*b).toFixed(2)} V (I=${a}, R=${b})`;break;
+  case "Q": r=`Q = ${a}^2*${b}*${c} = ${(a*a*b*c).toFixed(2)} J`;break;
+  case "g": r=`G = ${a}*${b} = ${(a*b).toFixed(2)} N (m=${a}, g=${b})`;break;
+  case "cent": r=`F = m v²/r = ${a}×${b}²/${c} = ${(a*b*b/c).toFixed(2)} N (m=${a}kg, v=${b}m/s, r=${c}m)`;break;
+  case "grav": r=`F = GMm/r² = 6.67e-11×${a}×${b}/${c}² = ${(6.67e-11*a*b/(c*c)).toExponential(3)} N`;break;
+  case "EP": r=`Ep = -GMm/r = -6.67e-11×${a}×${b}/${c} = ${(-6.67e-11*a*b/c).toExponential(3)} J`;break;
+  case "T": r=`T = 2π√(L/g) = 2π×√(${a}/${b}) = ${(2*Math.PI*Math.sqrt(a/b)).toFixed(3)} s (L=${a}m, g=${b}m/s²)`;break;
+ }
+ document.getElementById("fOut").textContent=r;
+}
+/* 受力分析画板 */
+const cvs=document.getElementById("cvs"),ctx=cvs.getContext("2d");
+let forces=[];
+function clearF(){forces=[];ctx.clearRect(0,0,cvs.width,cvs.height);drawObj();document.getElementById("fSum").textContent="";}
+function drawObj(){ctx.fillStyle="#fff";ctx.beginPath();ctx.arc(cvs.width/2,cvs.height/2,12,0,7);ctx.fill();ctx.strokeStyle="#0e8ba3";ctx.lineWidth=2;ctx.stroke();}
+let dragging=false,px,py;
+cvs.addEventListener("mousedown",e=>{const r=cvs.getBoundingClientRect();px=e.clientX-r.left;py=e.clientY-r.top;dragging=true;});
+cvs.addEventListener("mousemove",e=>{if(!dragging)return;const r=cvs.getBoundingClientRect();const cx=e.clientX-r.left,cy=e.clientY-r.top;ctx.strokeStyle="#16a34a";ctx.lineWidth=3;ctx.beginPath();ctx.moveTo(cvs.width/2,cvs.height/2);ctx.lineTo(cx,cy);ctx.stroke();});
+cvs.addEventListener("mouseup",e=>{if(!dragging)return;dragging=false;const r=cvs.getBoundingClientRect();const cx=e.clientX-r.left,cy=e.clientY-r.top;const dx=cx-cvs.width/2,dy=cy-cvs.height/2;const len=Math.hypot(dx,dy);if(len>5)forces.push({dx,dy,len});drawObj();});
+function sumF(){
+ const sx=forces.reduce((s,f)=>s+f.dx,0),sy=forces.reduce((s,f)=>s+f.dy,0);
+ const mag=Math.hypot(sx,sy);
+ document.getElementById("fSum").textContent=`共 ${forces.length} 个力, 合力大小≈${(mag/10).toFixed(1)} (按 10px=1N 估), 方向角 ${Math.atan2(sy,sx).toFixed(2)} rad`;
+}
+/* 电路 */
+function cir(){
+ const E=parseFloat(document.getElementById("E").value)||0;
+ const r=parseFloat(document.getElementById("r").value)||0;
+ const R=parseFloat(document.getElementById("R").value)||0;
+ const I=E/(R+r);const U=I*R;const Pr=I*I*r;const PrR=I*I*R;
+ document.getElementById("cOut").textContent=`总电阻=${R+r}Ω, 电流 I=${I.toFixed(2)}A, 路端电压 U=${U.toFixed(2)}V, 内阻热=${Pr.toFixed(2)}W, 外阻热=${PrR.toFixed(2)}W`;
+}
+/* 实验 */
+const EX=[
+ ["力学","验证牛顿第二定律 · 探究加速度与力质量关系 · 验证机械能守恒 · 测动摩擦因数"],
+ ["电学","测电阻(伏安法) · 测电动势内阻 · 描绘 I-U 曲线 · 半偏法测电阻"],
+ ["光电","光电效应 · 测普朗克常数 · 双缝干涉测波长"],
+ ["热学","测比热容 · 气体等温变化"],
+];
+document.getElementById("eGrid").innerHTML=EX.map(f=>`<div class="card"><h3>${f[0]}</h3><ul>${f[1].split(" · ").map(x=>`<li>${x}</li>`).join("")}</ul></div>`).join("");
+</script>
+
+<div id="agent-panel" style="margin:20px auto;max-width:720px;border:2px solid #4a90d9;border-radius:12px;padding:16px;background:#f7fbff;font-family:system-ui">
+  <h3 style="margin:0 0 8px;color:#2c5d8f">🤖 格物君·物理专家团 · 智能体问答（本地题库模式）</h3>
+  <p style="font-size:13px;color:#555;margin:0 0 10px">本地题库模式（离线·零外链）：关键词匹配本站本地题库作答。在线 AI 问答待李老师定 key 策略后统一开通。</p>
+  <div style="display:flex;flex-wrap:wrap;gap:8px;margin-bottom:10px"><button style="padding:6px 10px;border-radius:8px;border:1px solid #888;background:#fff;color:#333;cursor:pointer;font-size:12px" onclick="agentAsk('推导向心力 F=mv²/r=mω²r')">推导向心力 F=mv²/r=mω²r</button><button style="padding:6px 10px;border-radius:8px;border:1px solid #888;background:#fff;color:#333;cursor:pointer;font-size:12px" onclick="agentAsk('单摆测 g 实验误差分析')">单摆测 g 实验误差分析</button><button style="padding:6px 10px;border-radius:8px;border:1px solid #888;background:#fff;color:#333;cursor:pointer;font-size:12px" onclick="agentAsk('一道力学综合题')">一道力学综合题</button>
+    <button style="padding:6px 12px;border-radius:8px;border:1px solid #4a90d9;background:#4a90d9;color:#fff;cursor:pointer" onclick="agentAsk('')">问 格物君·物理专家团</button>
+  </div>
+  <textarea id="agent-q" placeholder="输入问题，匹配 格物君·物理专家团 本地题库..." style="width:100%;height:60px;padding:8px;border:1px solid #ccc;border-radius:8px;font-size:14px;box-sizing:border-box"></textarea>
+  <button style="margin-top:8px;padding:8px 16px;border-radius:8px;border:none;background:#2c8a3d;color:#fff;cursor:pointer;font-size:14px" onclick="agentAsk(document.getElementById('agent-q').value)">匹配本地题库</button>
+  <div id="agent-a" style="margin-top:12px;padding:12px;background:#fff;border-left:4px solid #2c8a3d;border-radius:6px;font-size:14px;min-height:40px;white-space:pre-wrap;color:#333">（等待回答）</div>
+  <script>
+  // 本地题库模式: 离线·零外链·无 key。在线(key 注入)待李老师定 key 策略后统一切, 此处 AGENT_MODE 为切换点。
+  var AGENT_MODE="local";
+  var AGENT_KB=(typeof window.AGENT_KB==="object"&&window.AGENT_KB)?window.AGENT_KB:[];
+  var LOCAL_TIPS=["力学先画受力/过程图, 列已知未知再选方程; 末尾核单位量纲。", "实验先明每步目的与控制变量; 误差分析看系统/随机来源。"];
+  function _kbTokens(q){
+    var t=[];
+    (q.toLowerCase().match(/[a-z0-9]+/g)||[]).forEach(function(x){t.push(x);});
+    q.replace(/[^\u4e00-\u9fff]/g,'').split('').forEach(function(c){t.push(c);});
+    return t;
+  }
+  function agentAsk(q){
+    if(!q)q=document.getElementById('agent-q').value;
+    if(!q){document.getElementById('agent-a').textContent='请输入问题';return;}
+    document.getElementById('agent-q').value=q;
+    var a=document.getElementById('agent-a');
+    var uniq=Array.from(new Set(_kbTokens(q)));
+    var hits=AGENT_KB.map(function(it){
+      var hay=((it.q||"")+" "+(it.a||"")).toLowerCase();
+      var n=uniq.filter(function(t){return hay.indexOf(t)>-1;}).length;
+      return {s:n,it:it};
+    }).filter(function(x){return x.s>=Math.min(uniq.length,2);}).sort(function(x,y){return y.s-x.s;}).slice(0,3);
+    if(hits.length){
+      a.textContent="\u{1F4D6} 本地题库 · 离线（格物君·物理专家团 本地条目）\n\n"+hits.map(function(h){return "Q: "+h.it.q+"\nA: "+h.it.a;}).join("\n\n")+"\n\n（在线 AI 问答待李老师定 key 策略后开通）";
+    } else {
+      a.textContent="\u26A0\uFE0F 本地题库模式（离线）：未匹配到本地条目。在线 AI 问答待李老师定 key 策略后开通。\n学习提示：\n- "+LOCAL_TIPS.join("\n- ")+"\n并见站内【题库/知识】模块。";
+    }
+  }
+  </script>
+</div>
+</body></html>
