@@ -1,5 +1,5 @@
 {
- "api_base": "https://api.agnes-ai.cn/v1",
+ "api_base": "https://apihub.agnes-ai.com/v1",
  "api_key": "",
  "model": "agnes-3.0-flash",
  "port": 8377,
