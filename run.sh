@@ -35,12 +35,12 @@ if not cfg.get('api_key'):
         print('  启用方法：在本目录建一个 key.txt，内容一行粘贴 sk-... 的 key，再重跑 bash run.sh')
 PYEOF
 
-if pgrep -f "teachbot.py" >/dev/null 2>&1; then
+if pgrep -f '^python3 teachbot.py' >/dev/null 2>&1; then
   echo "✔ 服务已在运行"
 else
   nohup python3 teachbot.py >> server.log 2>&1 &
   sleep 2
-  if pgrep -f "teachbot.py" >/dev/null 2>&1; then
+  if pgrep -f '^python3 teachbot.py' >/dev/null 2>&1; then
     echo "✔ 服务已启动"
   else
     echo "✘ 启动失败，看日志：cat server.log"
@@ -56,7 +56,7 @@ IP=$(hostname -I 2>/dev/null | awk '{print $1}')
 SELF="$(cd "$(dirname "$0")"; pwd)"
 ( crontab -l 2>/dev/null | grep -v "teachbot" ; \
   echo "@reboot cd $SELF && bash run.sh >/dev/null 2>&1"; \
-  echo "*/5 * * * * pgrep -f 'teachbot.py' >/dev/null || cd $SELF && bash run.sh >/dev/null 2>&1" ) | crontab -
+  echo "*/5 * * * * pgrep -f '^python3 teachbot.py' >/dev/null || cd $SELF && bash run.sh >/dev/null 2>&1" ) | crontab -
 
 echo "======================================================"
 echo " 学生/老师打开:  http://$IP:8377/"
